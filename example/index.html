@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enriched Highstock Demo</title>
+    <link rel="stylesheet" href="../bower_components/angular-bootstrap/ui-bootstrap-csp.css"/>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css"/>
+</head>
+<body ng-app="Example">
+<div class="container" ng-controller="MainCtrl">
+    <br/>
+    <h1>Demo</h1>
+    <hr/>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <decorated-stock-chart securities="securities"
+                                   default-security-attribute="defaultSecurityAttribute"
+                                   available-security-attributes="availableSecurityAttributes"
+                                   on-attribute-select="onAttributeSelect(attr, security)"
+                                   api-handle="apiHandle">
+
+            </decorated-stock-chart>
+        </div>
+    </div>
+</div>
+
+<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../bower_components/underscore/underscore.js"></script>
+<script src="../bower_components/moment/moment.js"></script>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="../bower_components/highstock-release/highstock-all.js"></script>
+<script src="../src/DecoratedStockChart.js"></script>
+<script src="MainCtrl.js"></script>
+</body>
+</html>
