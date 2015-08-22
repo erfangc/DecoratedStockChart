@@ -14,6 +14,10 @@ angular.module("DecoratedStockChart", [])
                  */
                 onAttributeSelect: "&",
                 /**
+                 * callback for when user remove a security entirely from the Chart
+                 */
+                onSecurityRemove: "&",
+                /**
                  * callback for when the user changes the primary attribute
                  * expects an Array of Highchart.Series objects each with securityId populated
                  * @param newAttr Object describing the new attribute
@@ -26,7 +30,29 @@ angular.module("DecoratedStockChart", [])
                 apiHandle: "="
             },
             link: function (scope, elem) {
-
+                /**
+                 * keep track of directive states other than the scope
+                 * these states are private to the directive
+                 */
+                const states = {
+                    /**
+                     * a map of which security has which attribute enabled
+                     */
+                    securityAttrMap: _.chain(scope.securities).map(function (security) {
+                        return [security, [scope.defaultSecurityAttribute]];
+                    }).object().value(),
+                    /**
+                     * to hold the Highstock object
+                     */
+                    chart: null
+                };
+                /**
+                 * define the API exposed to the parent component
+                 */
+                scope.apiHandle.api = {
+                    addSecurity: null, // TODO implement a handler for adding new securities
+                    removeSecurity: null // TODO implement a handler for removing security
+                };
             }
         };
     });
