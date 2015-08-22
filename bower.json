@@ -1,0 +1,29 @@
+{
+  "name": "DecoratedStockChart",
+  "version": "0.0.0",
+  "description": "Better Highstock",
+  "main": [
+    "decorated-stock-chart.js"
+  ],
+  "keywords": [
+    "highstock"
+  ],
+  "authors": [
+    "Erfang Chen"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "underscore": "~1.8.3",
+    "angular": "~1.4.4",
+    "highstock-release": "~2.1.8",
+    "angular-bootstrap": "~0.13.3"
+  }
+}
