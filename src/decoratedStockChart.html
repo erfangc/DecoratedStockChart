@@ -5,7 +5,11 @@
             Selected Securities <i class="fa"
                                    ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i>
         </a>
-        |
+
+        <label>Default Attribute:&nbsp;</label>
+        <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
+               style="width: initial; display: inline;"
+                typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
         <a>1M</a>
         &nbsp;
         <a>3M</a>
@@ -16,30 +20,32 @@
         &nbsp;
         <a>All</a>
 
-        <div class="security-control" style="display: none;">
-            <hr/>
-            <div ng-repeat="securityAttrPair in states.securityAttrMap">
-                <!-- TODO use flex box styling -->
+
+    </div>
+    <div class="security-control" style="display: none;">
+        <hr/>
+        <div class="flex-container">
+            <div class="flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
                 <!-- selected attributes display -->
-                <span class="label label-success">{{securityAttrPair[0].label}} | <i
-                        class="fa fa-remove"></i></span>
-                <span class="label label-primary" ng-repeat="attr in securityAttrPair[1]">
-                    {{attr}} | <i class="fa fa-remove"
-                                  ng-click="removeAttr(attr, securityAttrPair)"></i>
-                </span>
-                &nbsp;
+                    <span class="label label-success">{{securityAttrPair[0].label}} | <i class="fa fa-remove"
+                                                                                         ng-click="apiHandle.api.removeSecurity(securityAttrPair[0].id)"></i></span>
+                    <span class="label label-primary" ng-repeat="attr in securityAttrPair[1]">
+                            {{attr.label}} | <i class="fa fa-remove" ng-click="removeAttr(attr, securityAttrPair)"></i>
+                    </span>
                 <!-- input to select more attributes-->
+                &nbsp;
                 <input type="text"
                        placeholder="Attribute to Plot"
                        ng-disabled="securityAttrPair[1].length >= 2"
                        ng-model="selected"
-                       typeahead="attr for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"
+                       typeahead="attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"
                        class="form-control"
                        style="width: initial; display: inline;"
                        typeahead-on-select="addAttr($item, securityAttrPair); selected = ''">
-            </div>
 
+            </div>
         </div>
+
     </div>
     <hr/>
     <div id="enriched-highstock-1" class="row">

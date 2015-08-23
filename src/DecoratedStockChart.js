@@ -29,7 +29,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                 /**
                  * options object for the underlying Highstock object
                  */
-                highStockOptions: "=",
+                highstockOptions: "=",
                 /**
                  * the API through which this directive exposes behavior to external (parent) components
                  * this component's behavior can be accessed via scope.apiHandle.api
@@ -51,13 +51,54 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                  * define the API exposed to the parent component
                  */
                 scope.apiHandle.api = {
-                    addSecurity: null, // TODO implement a handler for adding new securities
-                    removeSecurity: null // TODO implement a handler for removing security
+                    /**
+                     * add a security
+                     * @param security
+                     */
+                    addSecurity: function (security) {
+                        // check for redundancy (i.e. a security with the given security's ID already exists)
+                        const isRedundant = _.chain(scope.states.securityAttrMap)
+                                .map(function (securityAttrPair) {
+                                    return securityAttrPair[0].id;
+                                }).uniq().value().indexOf(security.id) != -1;
+
+                        if (isRedundant)
+                            return;
+
+                        const securityAttrPair = [security, []];
+                        scope.states.securityAttrMap.push(securityAttrPair);
+                        scope.addAttr(scope.defaultSecurityAttribute, securityAttrPair);
+                    },
+                    /**
+                     * remove a security by ID
+                     * @param id
+                     */
+                    removeSecurity: function (id) {
+                        // remove the security with this ID from state
+                        const idx = _.findIndex(scope.states.securityAttrMap, function (securityAttrPair) {
+                            return securityAttrPair[0].id == id;
+                        });
+                        if (idx == -1)
+                            return;
+                        scope.states.securityAttrMap.splice(idx, 1);
+
+                        // remove outstanding series on the Highchart object
+                        // * Note we cannot use a regular for loop b/c the Chart.series object re-shuffles after each remove
+                        // and we will run into concurrent modification problems
+                        _.chain(scope.states.chart.series).filter(function (series) {
+                            return series && series.options.securityId == id;
+                        }).each(function (series) {
+                            series.remove();
+                        });
+
+                        // fire callback if provided
+                        if (_.isFunction(scope.onSecurityRemove))
+                            scope.onSecurityRemove({id: id});
+                    }
                 };
 
                 // default highstock options
-                const highstockOptions = {
-                    // TODO fill this out
+                const highstockOptions = _.extend({
                     chart: {
                         renderTo: "enriched-highstock-1"
                     },
@@ -69,7 +110,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                     },
                     series: [],
                     credits: {enabled: false}
-                };
+                }, scope.highstockOptions);
 
                 /**
                  * the seriesTransformer object exposes
@@ -82,8 +123,9 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                             name: origSeries.name + " 30 Day Moving Average",
                             data: origSeries.data.map(function (data) {
                                 return [data.x, data.y * Math.random()];
-                            })
-                        }
+                            }),
+                            securityId: origSeries.options.securityId || null
+                        };
                     },
                     toMovingVol: function (origSeries) {
                         return {
@@ -91,8 +133,9 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                             name: origSeries.name + " 30 Day Moving Vol",
                             data: origSeries.data.map(function (data) {
                                 return [data.x, data.y * Math.random()];
-                            })
-                        }
+                            }),
+                            securityId: origSeries.options.securityId || null
+                        };
                     }
                 };
 
@@ -107,14 +150,13 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                  * @param securityAttrPair
                  */
                 scope.addAttr = function ($item, securityAttrPair) {
-                    // add $item to securityAttrPair
                     securityAttrPair[1].push($item);
-                    // get series
                     const series = scope.onAttributeSelect({attr: $item, security: securityAttrPair[0]});
+                    series.securityId = securityAttrPair[0].id;
+                    series.id = generateSeriesID(securityAttrPair[0],$item);
                     series.onRemove = function () {
                         scope.removeAttr($item, securityAttrPair);
                     };
-                    // add to chart
                     scope.addSeries(series);
                 };
 
@@ -126,7 +168,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                  */
                 scope.removeAttr = function (attr, securityAttrPair) {
                     // remove attr from chart
-                    const series = scope.states.chart.get(generateSeriesID(securityAttrPair, attr));
+                    const series = scope.states.chart.get(generateSeriesID(securityAttrPair[0], attr));
                     if (series)
                         series.remove();
                     // remove attr from state
@@ -181,9 +223,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                  */
                 scope.states.chart = new Highcharts.Chart(highstockOptions);
                 _.each(scope.securities, function (security) {
-                    const securityAttrPair = [security, []];
-                    scope.states.securityAttrMap.push(securityAttrPair);
-                    scope.addAttr(scope.defaultSecurityAttribute, securityAttrPair);
+                    scope.apiHandle.api.addSecurity(security);
                 });
 
 
@@ -200,33 +240,36 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
 function getMenuItems(args) {
     const scope = args.scope;
     const seriesTransformer = scope.seriesTransformer;
+    const series = args.series;
+    const disableTransformation = series.options.disableFurtherTransformation;
     const addMA = function () {
         return $("<li><a>Add Moving Average</a></li>").click(function () {
-            const series = seriesTransformer.toMovingAvg(args.series);
-            scope.addSeries(series);
+            const transformedSeries = seriesTransformer.toMovingAvg(series);
+            transformedSeries.disableFurtherTransformation = true;
+            scope.addSeries(transformedSeries);
         });
     };
     const addMV = function () {
         return $("<li><a>Add Moving Volatility</a></li>").click(function () {
-            const series = seriesTransformer.toMovingVol(args.series);
-            scope.addSeries(series);
+            const transformedSeries = seriesTransformer.toMovingVol(series);
+            transformedSeries.disableFurtherTransformation = true;
+            scope.addSeries(transformedSeries);
         });
     };
     const removeSeries = function () {
         return $("<li><a>Remove</a></li>").click(function () {
             scope.$apply(function () {
-                scope.removeSeries(args.series);
+                scope.removeSeries(series);
             });
         });
     };
-    return [addMA(), addMV(), removeSeries()];
+    return disableTransformation ? [ removeSeries() ] : [addMA(), addMV(), removeSeries()];
 }
 
 /**
- *
- * creates a context menu for the given args
+ * attach the proper event listener behavior to legend elements
+ * enabling dynamic context menu creation
  * @param args
- * @constructor
  */
 function attachContextMenuEvents(args) {
 
@@ -285,10 +328,10 @@ function createCtxMenu(elem) {
 
 /**
  * generates the Series ID for security time series
- * @param securityAttrPair
+ * @param security
  * @param attr
  * @returns {string}
  */
-function generateSeriesID(securityAttrPair, attr) {
-    return "securitySeries." + securityAttrPair[0].id + "." + attr;
+function generateSeriesID(security, attr) {
+    return ["Security", security.id, attr.tag].join(".");
 }

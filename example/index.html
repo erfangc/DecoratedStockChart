@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="../bower_components/angular-bootstrap/ui-bootstrap-csp.css"/>
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="../DecoratedStockChart.css"/>
 </head>
-<body ng-app="Example">
+<body ng-app="Example" style="position: relative;">
 <div class="container" ng-controller="MainCtrl">
+    <div style="position: absolute; left: 40%; display: none; width: 20%;" id="alert"><alert type="success" close="closeAlert()">{{message}}</alert></div>
     <h1>Demo</h1>
     <hr/>
     <div class="panel panel-default">
@@ -17,13 +19,21 @@
                                    default-security-attribute="defaultSecurityAttribute"
                                    available-security-attributes="availableSecurityAttributes"
                                    on-attribute-select="onAttributeSelect(attr, security)"
+                                   highstock-options="highstockOptions"
+                                   on-security-remove="onSecurityRemove(id)"
                                    api-handle="apiHandle">
 
             </decorated-stock-chart>
         </div>
     </div>
+    <hr/>
+        <div class="container">
+            <button class="btn btn-success" ng-click="addSecurity({id: 4, label:'BAC'})"><i class="fa fa-plus"></i> BAC</button>
+            <button class="btn btn-danger" ng-click="apiHandle.api.removeSecurity(1)"><i class="fa fa-minus"></i> T</button>
+        </div>
+
 </div>
-<br/><br/>
+<br/><br/><br/><br/>
 <script src="../bower_components/jquery/dist/jquery.min.js"></script>
 <script src="../bower_components/underscore/underscore.js"></script>
 <script src="../bower_components/moment/moment.js"></script>

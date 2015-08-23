@@ -1,23 +1,38 @@
 angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", function ($scope) {
 
-    $scope.securities = [{id: 1, label:"T"}, {id: 2, label:"VZ"}, {id: 3, label:"GS"}];
-    $scope.defaultSecurityAttribute = "Price";
-    $scope.availableSecurityAttributes = ["Price", "Volume"];
+    $scope.securities = [{id: 1, label: "T"}, {id: 2, label: "VZ"}, {id: 3, label: "GS"}];
+    $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
+    $scope.availableSecurityAttributes = [{tag: "price", label: "Price"}, {tag: "volumne", label: "Volume"}];
+    $scope.highstockOptions = {
+        title: {text: "Example Title - Overrides the Default"}
+    };
     $scope.onAttributeSelect = function (attr, security) {
         return {
-            id: "securitySeries."+security.id+"."+attr,
-            securityId: security.id,
-            name: security.label + " " + attr,
+            name: security.label + " " + attr.label,
             data: generateRandomPairs(domain(), [0, 100])
         };
     };
+    $scope.onSecurityRemove = function (id) {
+        $scope.message = id + " was removed!";
+        $("#alert").slideDown(500);
+    };
+    $scope.closeAlert = function () {
+        $("#alert").slideUp(500);
+    };
     $scope.apiHandle = {};
+    // demo functions
+    $scope.addSecurity = function (security) {
+        $scope.apiHandle.api.addSecurity(security);
+    };
+
 });
 
 const domain = function () {
-    return _.map(["2015-01-01", "2015-01-02", "2015-01-03", "2015-01-04","2015-01-05"], function (date) {
-        return moment(date).valueOf();
-    })
+    const x = [];
+    const now = moment();
+    for (var i = 0; i < 30; i++)
+        x.push(now.clone().subtract(i, 'd').valueOf());
+    return x;
 };
 
 /**
