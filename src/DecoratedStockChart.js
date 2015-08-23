@@ -108,6 +108,9 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                     xAxis: {
                         type: "datetime"
                     },
+                    legend: {
+                        useHTML: true
+                    },
                     series: [],
                     credits: {enabled: false}
                 }, scope.highstockOptions);
@@ -153,7 +156,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                     securityAttrPair[1].push($item);
                     const series = scope.onAttributeSelect({attr: $item, security: securityAttrPair[0]});
                     series.securityId = securityAttrPair[0].id;
-                    series.id = generateSeriesID(securityAttrPair[0],$item);
+                    series.id = generateSeriesID(securityAttrPair[0], $item);
                     series.onRemove = function () {
                         scope.removeAttr($item, securityAttrPair);
                     };
@@ -263,7 +266,21 @@ function getMenuItems(args) {
             });
         });
     };
-    return disableTransformation ? [ removeSeries() ] : [addMA(), addMV(), removeSeries()];
+    const moveToNewAxis = function () {
+        return $("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
+            const chart = scope.states.chart;
+            chart.addAxis({
+                title: {text: series.name},
+                opposite: chart.axes.length % 2 == 0
+            });
+            // FIXME the only way I know how to move axis is to destroy and recreate the series, figure out a better way if possible
+            const seriesOptions = series.options;
+            seriesOptions.yAxis = chart.axes.length - 2;
+            series.remove();
+            scope.addSeries(seriesOptions);
+        });
+    };
+    return disableTransformation ? [moveToNewAxis(), removeSeries()] : [moveToNewAxis(), addMA(), addMV(), removeSeries()];
 }
 
 /**
@@ -275,7 +292,9 @@ function attachContextMenuEvents(args) {
 
     const $ctxMenu = args.ctxMenu;
     const $legendElement = args.legendElement;
-
+    $legendElement.css({
+        "user-select": "none"
+    });
     /**
      * this code executed when the legend is right-clicked, therefore
      * this is when we mutate the DOM (not before)

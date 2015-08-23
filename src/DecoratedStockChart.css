@@ -8,7 +8,7 @@
     justify-content: flex-start;
 }
 
-.flex-item {
+.wrappable-flex-item {
     padding-bottom: .5em;
     padding-right: .5em;
 }

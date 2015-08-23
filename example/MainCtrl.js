@@ -4,7 +4,8 @@ angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", functi
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
     $scope.availableSecurityAttributes = [{tag: "price", label: "Price"}, {tag: "volumne", label: "Volume"}];
     $scope.highstockOptions = {
-        title: {text: "Example Title - Overrides the Default"}
+        title: {text: "Example Title - Overrides the Default"},
+        yAxis: {title: {text: "USD"}}
     };
     $scope.onAttributeSelect = function (attr, security) {
         return {
@@ -32,6 +33,7 @@ const domain = function () {
     const now = moment();
     for (var i = 0; i < 30; i++)
         x.push(now.clone().subtract(i, 'd').valueOf());
+    x.reverse();
     return x;
 };
 

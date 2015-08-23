@@ -25,7 +25,7 @@
     <div class="security-control" style="display: none;">
         <hr/>
         <div class="flex-container">
-            <div class="flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
+            <div class="wrappable-flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
                 <!-- selected attributes display -->
                     <span class="label label-success">{{securityAttrPair[0].label}} | <i class="fa fa-remove"
                                                                                          ng-click="apiHandle.api.removeSecurity(securityAttrPair[0].id)"></i></span>
