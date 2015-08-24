@@ -12,3 +12,9 @@
     padding-bottom: .5em;
     padding-right: .5em;
 }
+
+.floating-input {
+    width: initial;
+    display: inline;
+    position: absolute;
+}

@@ -20,12 +20,13 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.5",
-    "underscore": "~1.8.3",
     "angular": "~1.4.4",
-    "highstock-release": "~2.1.8",
     "angular-bootstrap": "~0.13.3",
-    "font-awesome": "~4.4.0"
+    "bootstrap": "~3.3.5",
+    "Custom-Events": "https://github.com/blacklabel/custom_events.git#~1.1.1",
+    "font-awesome": "~4.4.0",
+    "highstock-release": "~2.1.8",
+    "underscore": "~1.8.3"
   },
   "devDependencies": {
     "moment": "~2.10.6"

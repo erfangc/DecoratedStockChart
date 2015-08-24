@@ -4,7 +4,6 @@ angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", functi
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
     $scope.availableSecurityAttributes = [{tag: "price", label: "Price"}, {tag: "volumne", label: "Volume"}];
     $scope.highstockOptions = {
-        title: {text: "Example Title - Overrides the Default"},
         yAxis: {title: {text: "USD"}}
     };
     $scope.onAttributeSelect = function (attr, security) {

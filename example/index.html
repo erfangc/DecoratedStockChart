@@ -24,6 +24,7 @@
                                    on-attribute-select="onAttributeSelect(attr, security)"
                                    highstock-options="highstockOptions"
                                    on-security-remove="onSecurityRemove(id)"
+                                   title="Example Chart of Stock Prices"
                                    api-handle="apiHandle">
 
             </decorated-stock-chart>
@@ -42,7 +43,11 @@
 <script src="../bower_components/angular/angular.js"></script>
 <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="../bower_components/highstock-release/highstock-all.js"></script>
+<script src="../bower_components/Custom-Events/customEvents.js"></script>
+<!-- Component src JS -->
+<script src="../src/Util.js"></script>
 <script src="../src/DecoratedStockChart.js"></script>
+<!-- example -->
 <script src="MainCtrl.js"></script>
 </body>
 </html>
