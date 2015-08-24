@@ -4,7 +4,17 @@ angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", functi
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
     $scope.availableSecurityAttributes = [{tag: "price", label: "Price"}, {tag: "volume", label: "Volume"}];
     $scope.highstockOptions = {
-        yAxis: {title: {text: "USD"}}
+        yAxis: [{
+            title: {
+                text: "USD",
+                events: {
+                    click: function (event) {
+                        event;
+                        this;
+                    }
+                }
+            }
+        }]
     };
     $scope.onAttributeSelect = function (attr, security) {
         return {

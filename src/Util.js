@@ -63,7 +63,9 @@ function createAxesSubMenu(series, chart, scope) {
     });
     $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
         chart.addAxis({
-            title: {text: series.name},
+            title: {
+                text: series.name,
+            },
             opposite: chart.axes.length % 2 == 0
         });
         const seriesOptions = series.options;
