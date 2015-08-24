@@ -13,7 +13,7 @@ angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", functi
         };
     };
     $scope.onSecurityRemove = function (id) {
-        $scope.message = id + " was removed!";
+        $scope.message = "Callback Fired: Security with ID = " + id + " was Removed!";
         $("#alert").slideDown(500);
     };
     $scope.closeAlert = function () {
@@ -27,6 +27,10 @@ angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", functi
 
 });
 
+/**
+ * this returns the last 30 days in Unix epoch
+ * @returns {Array}
+ */
 const domain = function () {
     const x = [];
     const now = moment();
