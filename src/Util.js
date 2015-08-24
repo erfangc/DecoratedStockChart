@@ -1,4 +1,3 @@
-
 /**
  * resolve the correct context menu items given the series
  * @param args
@@ -9,6 +8,7 @@ function getMenuItems(args) {
     const seriesTransformer = scope.seriesTransformer;
     const series = args.series;
     const disableTransformation = series.options.disableFurtherTransformation;
+    const chart = scope.states.chart;
     const addMA = function () {
         return $("<li><a>Add Moving Average</a></li>").click(function () {
             const transformedSeries = seriesTransformer.toMovingAvg(series);
@@ -30,21 +30,12 @@ function getMenuItems(args) {
             });
         });
     };
-    const moveToNewAxis = function () {
-        return $("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
-            const chart = scope.states.chart;
-            chart.addAxis({
-                title: {text: series.name},
-                opposite: chart.axes.length % 2 == 0
-            });
-            // FIXME the only way I know how to move axis is to destroy and recreate the series, figure out a better way if possible
-            const seriesOptions = series.options;
-            seriesOptions.yAxis = chart.axes.length - 2;
-            series.remove();
-            scope.addSeries(seriesOptions);
-        });
+    const changeAxis = function () {
+        return $("<li class='dropdown-submenu'><a>Change Axis</a></li>")
+            .append(createAxesSubMenu(series, chart, scope));
     };
-    return disableTransformation ? [moveToNewAxis(), removeSeries()] : [moveToNewAxis(), addMA(), addMV(), removeSeries()];
+    return disableTransformation ? [changeAxis(), removeSeries()]
+        : [changeAxis(), addMA(), addMV(), removeSeries()];
 }
 
 /**
@@ -53,18 +44,33 @@ function getMenuItems(args) {
  * given series to the axis represented by the item
  * @param series
  * @param chart
+ * @param scope
  */
-// TODO implement this method!
-function createAxesSubMenu(series, chart) {
-    const $dropdown = $(
-        "<div style='position: fixed; z-index: 10;'>" +
-        "<ul class='dropdown-menu' style='display: block;'></ul>" +
-        "</div>"
-    );
-    _.each(chart.axes, function (axis) {
-        const $menuItem = $("<li><a>"+axis+"</a></li>");
-        $dropdown.find(".dropdown-menu").append($menuItem);
+// FIXME the only way I know how to move axis is to destroy and recreate the series, figure out a better way if possible
+function createAxesSubMenu(series, chart, scope) {
+    const $dropdown = $("<ul class='dropdown-menu'></ul>");
+    _.chain(chart.axes).filter(function (axis) {
+        return !axis.isXAxis;
+    }).each(function (axis, idx) {
+        const $menuItem = $("<li><a>Y-Axis " + (idx + 1) + " " + axis.options.title.text + "</a></li>")
+            .click(function () {
+                const seriesOptions = series.options;
+                seriesOptions.yAxis = idx;
+                series.remove();
+                scope.addSeries(seriesOptions);
+            });
+        $dropdown.append($menuItem);
     });
+    $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
+        chart.addAxis({
+            title: {text: series.name},
+            opposite: chart.axes.length % 2 == 0
+        });
+        const seriesOptions = series.options;
+        seriesOptions.yAxis = chart.axes.length - 2;
+        series.remove();
+        scope.addSeries(seriesOptions);
+    }));
     return $dropdown;
 }
 
@@ -91,7 +97,7 @@ function attachContextMenuEvents(args) {
             e.stopPropagation();
             $ctxMenu.find(".dropdown-menu li").remove();
             _.each(getMenuItems(args), function (menuItem) {
-                $ctxMenu.find(".dropdown-menu").append(menuItem);
+                $ctxMenu.children(".dropdown-menu").append(menuItem);
             });
             $ctxMenu.css({
                 top: e.clientY + "px",
@@ -121,7 +127,7 @@ function attachContextMenuEvents(args) {
 function createCtxMenu(elem) {
     const $ctxMenu = $(
         "<div style='position: fixed; z-index: 10;'>" +
-        "<ul class='dropdown-menu' style='display: block;'></ul>" +
+        "<ul class='dropdown-menu multi-level' style='display: block;'></ul>" +
         "</div>"
     ).hide();
     $ctxMenu.prependTo(elem);
@@ -151,7 +157,7 @@ function onTitleClick(clickEvent) {
     if ($container.find("input.form-control").length != 0)
         return;
 
-    const $input = $("<input class='form-control floating-input' placeholder='Enter a New Title'/>");
+    const $input = $("<input class='form-control floating-input' placeholder='Type a New Title then Hit Enter'/>");
     $input
         .on('keydown', function (keyEvent) {
             if (keyEvent.keyCode == 13 && $input.val() != "") { // ENTER
@@ -162,8 +168,8 @@ function onTitleClick(clickEvent) {
         })
         .css({
             top: $(clickEvent.target).position().top,
-            left: 0,
-            width: "100%"
+            left: "1%",
+            width: "98%"
         }).appendTo($container);
     $input.focus();
-};
+}

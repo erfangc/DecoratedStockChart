@@ -2,14 +2,14 @@ angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", functi
 
     $scope.securities = [{id: 1, label: "T"}, {id: 2, label: "VZ"}, {id: 3, label: "GS"}];
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
-    $scope.availableSecurityAttributes = [{tag: "price", label: "Price"}, {tag: "volumne", label: "Volume"}];
+    $scope.availableSecurityAttributes = [{tag: "price", label: "Price"}, {tag: "volume", label: "Volume"}];
     $scope.highstockOptions = {
         yAxis: {title: {text: "USD"}}
     };
     $scope.onAttributeSelect = function (attr, security) {
         return {
             name: security.label + " " + attr.label,
-            data: generateRandomPairs(domain(), [0, 100])
+            data: generateRandomPairs(domain(), [0, 1000])
         };
     };
     $scope.onSecurityRemove = function (id) {
