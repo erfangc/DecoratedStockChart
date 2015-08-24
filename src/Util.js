@@ -127,7 +127,7 @@ function attachContextMenuEvents(args) {
 function createCtxMenu(elem) {
     const $ctxMenu = $(
         "<div style='position: fixed; z-index: 10;'>" +
-        "<ul class='dropdown-menu multi-level' style='display: block;'></ul>" +
+        "<ul class='clickable dropdown-menu multi-level' style='display: block;'></ul>" +
         "</div>"
     ).hide();
     $ctxMenu.prependTo(elem);

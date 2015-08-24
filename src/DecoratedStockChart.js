@@ -104,13 +104,19 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                 // default highstock options
                 const highstockOptions = _.extend({
                     chart: {
-                        renderTo: "enriched-highstock-1"
+                        renderTo: "enriched-highstock-1",
+                        type: "spline"
                     },
                     title: {
                         text: scope.title || "Untitled",
                         events: {
                             click: onTitleClick
                         }
+                    },
+                    plotOptions: {
+                      spline: {
+                          marker: {enabled: false}
+                      }
                     },
                     xAxis: {
                         type: "datetime"
