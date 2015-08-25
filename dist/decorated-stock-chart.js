@@ -320,7 +320,7 @@
                 });
         }
 
-        root.dsc.editAxisTitle = function () {
+        function editAxisTitle() {
             const $input = $("<input type='text' class='form-control' style='position:relative; left: 10%; width: 80%;'/>");
             $input.val(axis.axisTitle.textStr);
             $input.on('keydown', function (keyEvent) {
@@ -341,7 +341,7 @@
         };
 
         $ctxMenu.children(".dropdown-menu")
-            .append(dsc.editAxisTitle());
+            .append(editAxisTitle());
         if (scope.states.chart.yAxis.length > 1
             && axis.userOptions.id != scope.states.chart.yAxis[0].userOptions.id)
             $ctxMenu.children(".dropdown-menu").append(removeAxis());
@@ -409,6 +409,7 @@
             seriesOptions.yAxis = _.findIndex(scope.states.chart.yAxis, function (x) {
                 return x.userOptions.id == axis.userOptions.id;
             });
+        seriesOptions.color = series.color;
         series.remove();
         scope.addSeries(seriesOptions);
     };
@@ -421,18 +422,12 @@
      * @param chart
      * @param scope
      */
-// FIXME the only way I know how to move axis is to destroy and recreate the series, figure out a better way if possible
     root.dsc.createAxesSubMenu = function (series, chart, scope) {
         const $dropdown = $("<ul class='dropdown-menu'></ul>");
-        _.chain(chart.axes).filter(function (axis) {
-            return !axis.isXAxis;
-        }).each(function (axis, idx) {
+        _.each(chart.yAxis, function (axis, idx) {
             const $menuItem = $("<li><a>Y-Axis " + (idx + 1) + " " + axis.options.title.text + "</a></li>")
                 .click(function () {
-                    const seriesOptions = series.options;
-                    seriesOptions.yAxis = idx;
-                    series.remove();
-                    scope.addSeries(seriesOptions);
+                    dsc.moveAxis(series, idx, scope);
                 });
             $dropdown.append($menuItem);
         });
