@@ -1,0 +1,84 @@
+.flex-container {
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+}
+
+.wrappable-flex-item {
+    padding-bottom: .5em;
+    padding-right: .5em;
+}
+
+div.floating-form {
+    position: absolute;
+    z-index: 1;
+    border: 1px solid rgb(219, 219, 219);
+    padding: 25px;
+    margin-top: 2px;
+    background-color: #fff;
+}
+
+.menu-container {
+    position: relative;
+}
+
+.floating-input {
+    width: initial;
+    display: inline;
+    position: absolute;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu > a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-right-width: 0;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover > a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+.clickable {
+    cursor: pointer;
+}

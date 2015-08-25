@@ -1,0 +1,30 @@
+{
+  "name": "decorated-stock-chart",
+  "version": "0.0.0",
+  "description": "Enriched Highchart",
+  "main": "gulpfile.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erfangc/DecoratedStockChart.git"
+  },
+  "keywords": [
+    "highcharts"
+  ],
+  "author": "Erfang Chen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erfangc/DecoratedStockChart/issues"
+  },
+  "homepage": "https://github.com/erfangc/DecoratedStockChart#readme"
+}
