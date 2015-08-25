@@ -121,9 +121,20 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                     xAxis: {
                         type: "datetime"
                     },
+                    yAxis: {
+                        title: {
+                            text: scope.defaultSecurityAttribute.label,
+                            events: {
+                                click: function (event) {
+                                    onAxisClick.call(this, event, scope);
+                                }
+                            }
+                        }
+                    },
                     legend: {
                         useHTML: true
                     },
+
                     series: [],
                     credits: {enabled: false}
                 }, scope.highstockOptions);
@@ -195,7 +206,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                  * create a reusable context menu to be displayed
                  * at the user's discretion
                  */
-                const $ctxMenu = createCtxMenu(elem);
+                scope.$ctxMenu = createCtxMenu(elem);
 
                 /**
                  * add series objects to the underlying highstock
@@ -209,8 +220,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                     attachContextMenuEvents({
                         series: series,
                         scope: scope,
-                        legendElement: $legend,
-                        ctxMenu: $ctxMenu
+                        legendElement: $legend
                     });
                 };
 
