@@ -44,7 +44,8 @@ function onAxisClick(event, scope) {
     $ctxMenu.children(".dropdown-menu")
         .append(editAxisTitle());
     // TODO do not display this option if only 1 yAxis is left
-    $ctxMenu.children(".dropdown-menu").append(removeAxis());
+    if (scope.states.chart.yAxis.length > 1 && axis.userOptions.id != scope.states.chart.yAxis[0].userOptions.id)
+        $ctxMenu.children(".dropdown-menu").append(removeAxis());
     $ctxMenu.css({
         top: event.clientY + "px",
         left: event.clientX + "px"
