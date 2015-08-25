@@ -5,7 +5,6 @@
     display: -ms-flexbox;
     display: -webkit-flex;
     flex-flow: row wrap;
-    justify-content: flex-start;
 }
 
 .wrappable-flex-item {

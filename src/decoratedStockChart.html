@@ -1,42 +1,39 @@
 <div class="root" style="position: relative">
-    <div class="control" ng-init="showSecurityControl = false">
+    <div class="control flex-container" ng-init="showSecurityControl = false">
         <!-- security & attributes selection -->
-        <span>
-            <a class="clickable"
-               ng-click="toggleSecurityControl(!showSecurityControl); showSecurityControl = !showSecurityControl">Selected
-                Securities</a>
-            <i class="fa"
-               ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i>
+            <span class="wrappable-flex-item">
+
+                <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
+                       style="width: 8em; display: inline;"
+                       typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
+
+            <a><i ng-click="toggleSecurityControl(!showSecurityControl); showSecurityControl = !showSecurityControl" class="fa clickable"
+               ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i></a>
         </span>
-
         <!-- TODO implement these functionalities -->
-        <a class="clickable">1M</a>
-        &nbsp;
-        <a class="clickable">3M</a>
-        &nbsp;
-        <a class="clickable">6M</a>
-        &nbsp;
-        <a class="clickable">1Y</a>
-        &nbsp;
-        <a class="clickable">2Y</a>
-        &nbsp;
-        <a class="clickable"><i class="fa fa-calendar"></i></a>
-
-        <!--TODO implement these functionalities-->
-        <a class="clickable pull-right"><i class="fa fa-plus"></i>&nbsp;Macro Indicator &amp; Market Index</a>
-        <span class="pull-right">&nbsp;|&nbsp;</span>
-        <a class="clickable pull-right"><i class="fa fa-plus"></i>&nbsp;Custom Benchmark</a>
-
-
+        <span class="wrappable-flex-item">
+            <a class="clickable">1M</a>
+            &nbsp;
+            <a class="clickable">3M</a>
+            &nbsp;
+            <a class="clickable">6M</a>
+            &nbsp;
+            <a class="clickable">1Y</a>
+            &nbsp;
+            <a class="clickable">2Y</a>
+            &nbsp;
+            <a class="clickable"><i class="fa fa-calendar"></i></a>
+        </span>
+        <span class="wrappable-flex-item">
+            <!--TODO implement these functionalities-->
+            <span class="flex-container">
+                <a class="clickable"><i class="fa fa-plus"></i>&nbsp;Macro Indicator &amp; Market Index</a>
+                <span> &nbsp; </span>
+                <a class="clickable"><i class="fa fa-plus"></i>&nbsp;Custom Benchmark</a>
+            </span>
+        </span>
     </div>
     <div class="security-control floating-form" style="display: none;">
-        <div>
-            <label>Default Attribute:&nbsp;</label>
-            <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
-                   style="width: 8em; display: inline;"
-                   typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
-        </div>
-        <hr/>
         <div class="flex-container">
             <div class="wrappable-flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
                 <!-- selected attributes display -->
