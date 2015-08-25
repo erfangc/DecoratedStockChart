@@ -1,4 +1,6 @@
 <div class="root" style="position: relative">
+    <i ng-show="isProcessing" style="position: absolute; left: 50%; z-index: 5" class="fa fa-spinner fa-spin fa-3x"></i>
+
     <div class="control flex-container"
          ng-init="showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;">
         <!-- security & attributes selection -->
@@ -23,10 +25,14 @@
             <a class="clickable">2Y</a>
             &nbsp;
             <span ng-init="showDateControl = false">
-                <a class="clickable" ng-click="toggleSlide(!showDateControl, 'date-control'); showDateControl = !showDateControl"><i class="fa fa-calendar"></i></a>
+                <a class="clickable"
+                   ng-click="toggleSlide(!showDateControl, 'date-control'); showDateControl = !showDateControl"><i
+                        class="fa fa-calendar"></i></a>
                 <div class="date-control floating-form" style="display: none;">
-                    <label>From&nbsp;<input type="date" class="form-control" style="display: inline; width: 12em;"/></label>
-                    <label>To&nbsp;<input type="date" class="form-control" style="display: inline; width: 12em;"/></label>
+                    <label>From&nbsp;<input type="date" class="form-control"
+                                            style="display: inline; width: 12em;"/></label>
+                    <label>To&nbsp;<input type="date" class="form-control"
+                                          style="display: inline; width: 12em;"/></label>
                     <button class="btn btn-success"><i class="fa fa-play"></i></button>
                 </div>
             </span>
@@ -41,7 +47,8 @@
                     <div class="indicator-control floating-form" style="display: none; left: -100%">
                         <label>
                             Search&nbsp;
-                            <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control" style="width: 26em;"/>
+                            <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
+                                   style="width: 26em;"/>
                             <!-- TODO implement searching for macro indicators etc through callback -->
                         </label>
                     </div>
@@ -101,7 +108,7 @@
         </div>
     </div>
     <hr/>
-    <div id="enriched-highstock-1" class="row">
+    <div ng-attr-id="{{'enriched-highstock-'+id}}" class="row">
         <!-- this is where the stock chart goes -->
     </div>
 </div>

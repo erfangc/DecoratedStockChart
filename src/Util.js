@@ -43,8 +43,8 @@ function onAxisClick(event, scope) {
 
     $ctxMenu.children(".dropdown-menu")
         .append(editAxisTitle());
-    // TODO do not display this option if only 1 yAxis is left
-    if (scope.states.chart.yAxis.length > 1 && axis.userOptions.id != scope.states.chart.yAxis[0].userOptions.id)
+    if (scope.states.chart.yAxis.length > 1
+        && axis.userOptions.id != scope.states.chart.yAxis[0].userOptions.id)
         $ctxMenu.children(".dropdown-menu").append(removeAxis());
     $ctxMenu.css({
         top: event.clientY + "px",
@@ -113,6 +113,7 @@ function moveAxis(series, axis, scope) {
     series.remove();
     scope.addSeries(seriesOptions);
 }
+
 /**
  * create a sub dropdown for every axes in the chart
  * each item in the dropdown triggers a migration of the
@@ -237,7 +238,6 @@ function onTitleClick(clickEvent) {
     const $container = $(this.container);
     if ($container.find("input.form-control").length != 0)
         return;
-
     const $input = $("<input class='form-control floating-input' placeholder='Type a New Title, Hit Enter to Confirm, ESC to Cancel'/>");
     $input
         .on('keydown', function (keyEvent) {

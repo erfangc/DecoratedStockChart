@@ -1,5 +1,5 @@
 angular.module("DecoratedStockChart", ['ui.bootstrap'])
-    .directive("decoratedStockChart", function () {
+    .directive("decoratedStockChart", function ($timeout) {
         return {
             scope: {
                 securities: "=",
@@ -41,6 +41,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                 apiHandle: "="
             },
             link: function (scope, elem) {
+                scope.id = _.uniqueId();
                 scope.states = {
                     /**
                      * a map of which security has which attribute enabled
@@ -104,7 +105,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                 // default highstock options
                 const highstockOptions = _.extend({
                     chart: {
-                        renderTo: "enriched-highstock-1",
+                        renderTo: "enriched-highstock-" + scope.id,
                         type: "spline"
                     },
                     title: {
@@ -179,13 +180,29 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                  */
                 scope.addAttr = function ($item, securityAttrPair) {
                     securityAttrPair[1].push($item);
-                    const series = scope.onAttributeSelect({attr: $item, security: securityAttrPair[0]});
-                    series.securityId = securityAttrPair[0].id;
-                    series.id = generateSeriesID(securityAttrPair[0], $item);
-                    series.onRemove = function () {
-                        scope.removeAttr($item, securityAttrPair);
-                    };
-                    scope.addSeries(series);
+                    scope.isProcessing = true;
+                    const result = scope.onAttributeSelect({attr: $item, security: securityAttrPair[0]});
+
+                    function processSeries(series) {
+                        series.securityId = securityAttrPair[0].id;
+                        series.id = generateSeriesID(securityAttrPair[0], $item);
+                        series.onRemove = function () {
+                            scope.removeAttr($item, securityAttrPair);
+                        };
+                        scope.addSeries(series);
+                        scope.isProcessing = false;
+                    }
+
+                    if (result && angular.isFunction(result.then))
+                        result.then(function (series) {
+                            processSeries(series);
+                        }, function (error) {
+                            scope.isProcessing = false;
+                        });
+                    else
+                        processSeries(result);
+
+
                 };
 
                 /**
@@ -239,7 +256,7 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                 };
 
                 scope.toggleSlide = function (show, className) {
-                    var $ctrl = elem.find("."+className);
+                    var $ctrl = elem.find("." + className);
                     if (show) {
                         $ctrl.slideDown(500);
                         $ctrl.find("input").first().select();
@@ -248,12 +265,14 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                         $ctrl.slideUp(500);
                 };
 
-                /**
-                 * initialization & initial rendering
-                 */
-                scope.states.chart = new Highcharts.Chart(highstockOptions);
-                _.each(scope.securities, function (security) {
-                    scope.apiHandle.api.addSecurity(security);
+                $timeout(function () {
+                    /**
+                     * initialization & initial rendering
+                     */
+                    scope.states.chart = new Highcharts.Chart(highstockOptions);
+                    _.each(scope.securities, function (security) {
+                        scope.apiHandle.api.addSecurity(security);
+                    });
                 });
 
 
