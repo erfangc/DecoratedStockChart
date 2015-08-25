@@ -30,10 +30,21 @@
             </decorated-stock-chart>
         </div>
     </div>
+    <h3>Externally Control Securities</h3>
     <hr/>
     <div class="container">
-        <button class="btn btn-success" ng-click="addSecurity({id: 4, label:'BAC'})"><i class="fa fa-plus"></i> BAC</button>
-        <button class="btn btn-danger" ng-click="apiHandle.api.removeSecurity(1)"><i class="fa fa-minus"></i> T</button>
+        <span ng-repeat="security in securities">
+            <button class="btn btn-success" ng-click="addSecurity(security)"><i class="fa fa-plus"></i>
+                {{security.label}}
+            </button>&nbsp;
+        </span>
+        <span ng-repeat="security in securities">
+            <button class="btn btn-danger" ng-click="apiHandle.api.removeSecurity(security.id)"><i
+                    class="fa fa-minus"></i>
+                {{security.label}}
+            </button>
+            &nbsp;
+        </span>
     </div>
 </div>
 <br/><br/><br/><br/>

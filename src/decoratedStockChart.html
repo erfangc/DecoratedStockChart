@@ -1,15 +1,13 @@
-<div class="root">
+<div class="root" style="position: relative">
     <div class="control" ng-init="showSecurityControl = false">
         <!-- security & attributes selection -->
-        <a class="clickable" ng-click="toggleSecurityControl(!showSecurityControl); showSecurityControl = !showSecurityControl">
-            Selected Securities <i class="fa"
-                                   ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i>
-        </a>
-
-        <label>Default Attribute:&nbsp;</label>
-        <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
-               style="width: 8em; display: inline;"
-                typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
+        <span>
+            <a class="clickable"
+               ng-click="toggleSecurityControl(!showSecurityControl); showSecurityControl = !showSecurityControl">Selected
+                Securities</a>
+            <i class="fa"
+               ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i>
+        </span>
 
         <!-- TODO implement these functionalities -->
         <a class="clickable">1M</a>
@@ -20,7 +18,9 @@
         &nbsp;
         <a class="clickable">1Y</a>
         &nbsp;
-        <a class="clickable">All</a>
+        <a class="clickable">2Y</a>
+        &nbsp;
+        <a class="clickable"><i class="fa fa-calendar"></i></a>
 
         <!--TODO implement these functionalities-->
         <a class="clickable pull-right"><i class="fa fa-plus"></i>&nbsp;Macro Indicator &amp; Market Index</a>
@@ -29,7 +29,13 @@
 
 
     </div>
-    <div class="security-control" style="display: none;">
+    <div class="security-control floating-form" style="display: none;">
+        <div>
+            <label>Default Attribute:&nbsp;</label>
+            <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
+                   style="width: 8em; display: inline;"
+                   typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
+        </div>
         <hr/>
         <div class="flex-container">
             <div class="wrappable-flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
@@ -37,12 +43,13 @@
                     <span class="label label-success">{{securityAttrPair[0].label}} | <i class="fa fa-remove clickable"
                                                                                          ng-click="apiHandle.api.removeSecurity(securityAttrPair[0].id)"></i></span>
                     <span class="label label-primary" ng-repeat="attr in securityAttrPair[1]">
-                            {{attr.label}} | <i class="fa fa-remove clickable" ng-click="removeAttr(attr, securityAttrPair)"></i>
+                            {{attr.label}} | <i class="fa fa-remove clickable"
+                                                ng-click="removeAttr(attr, securityAttrPair)"></i>
                     </span>
                 <!-- input to select more attributes-->
                 &nbsp;
                 <input type="text"
-                       placeholder="Add More"
+                       placeholder="+ Attribute"
                        ng-disabled="securityAttrPair[1].length >= 2"
                        ng-model="selected"
                        typeahead="attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"
@@ -52,7 +59,6 @@
 
             </div>
         </div>
-
     </div>
     <hr/>
     <div id="enriched-highstock-1" class="row">
