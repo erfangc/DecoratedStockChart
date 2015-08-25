@@ -15,10 +15,9 @@ function onAxisClick(event, scope) {
     function removeAxis() {
         return $("<li><a><i class='fa fa-remove'></i>&nbsp;Remove Axis</a></li>")
             .click(function () {
-                _.each(axis.series, function (series) {
-                    moveAxis(series, 0, scope);
-                    axis.remove();
-                })
+                while (axis.series.length > 0)
+                    moveAxis(axis.series[0], 0, scope);
+                axis.remove();
             });
     }
 
@@ -103,11 +102,15 @@ function getMenuItems(args) {
  */
 function moveAxis(series, axis, scope) {
     const seriesOptions = series.options;
-    if (typeof axis == "number") {
+    if (typeof axis == "number")
         seriesOptions.yAxis = axis;
-        series.remove();
-        scope.addSeries(seriesOptions);
-    }
+    else
+    // figure out the position
+        seriesOptions.yAxis = _.findIndex(scope.states.chart.yAxis, function (x) {
+            return x.userOptions.id == axis.userOptions.id;
+        });
+    series.remove();
+    scope.addSeries(seriesOptions);
 }
 /**
  * create a sub dropdown for every axes in the chart
@@ -132,6 +135,7 @@ function createAxesSubMenu(series, chart, scope) {
             });
         $dropdown.append($menuItem);
     });
+    const axisId = "yAxis." + chart.yAxis.length;
     $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
         chart.addAxis({
             title: {
@@ -142,9 +146,10 @@ function createAxesSubMenu(series, chart, scope) {
                     }
                 }
             },
-            opposite: chart.axes.length % 2 == 0
+            opposite: chart.axes.length % 2 == 0,
+            id: axisId
         });
-        moveAxis(series, chart.axes.length - 2, scope);
+        moveAxis(series, chart.get(axisId), scope);
     }));
     return $dropdown;
 }

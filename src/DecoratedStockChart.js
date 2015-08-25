@@ -128,7 +128,8 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                                 click: function (event) {
                                     onAxisClick.call(this, event, scope);
                                 }
-                            }
+                            },
+                            id: "yAxis.1"
                         }
                     },
                     legend: {
