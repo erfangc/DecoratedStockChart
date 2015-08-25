@@ -114,9 +114,9 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                         }
                     },
                     plotOptions: {
-                      spline: {
-                          marker: {enabled: false}
-                      }
+                        spline: {
+                            marker: {enabled: false}
+                        }
                     },
                     xAxis: {
                         type: "datetime"
@@ -238,11 +238,14 @@ angular.module("DecoratedStockChart", ['ui.bootstrap'])
                         s.remove();
                 };
 
-                scope.toggleSecurityControl = function (showSecurityControl) {
-                    if (showSecurityControl)
-                        elem.find(".security-control").slideDown(500);
+                scope.toggleSlide = function (show, className) {
+                    var $ctrl = elem.find("."+className);
+                    if (show) {
+                        $ctrl.slideDown(500);
+                        $ctrl.find("input").first().select();
+                    }
                     else
-                        elem.find(".security-control").slideUp(500);
+                        $ctrl.slideUp(500);
                 };
 
                 /**

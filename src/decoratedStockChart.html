@@ -1,16 +1,16 @@
 <div class="root" style="position: relative">
-    <div class="control flex-container" ng-init="showSecurityControl = false">
+    <div class="control flex-container"
+         ng-init="showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;">
         <!-- security & attributes selection -->
             <span class="wrappable-flex-item">
-
                 <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                        style="width: 8em; display: inline;"
                        typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
-
-            <a><i ng-click="toggleSecurityControl(!showSecurityControl); showSecurityControl = !showSecurityControl" class="fa clickable"
-               ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i></a>
+            <a><i ng-click="toggleSlide(!showSecurityControl, 'security-control'); showSecurityControl = !showSecurityControl"
+                  class="fa clickable"
+                  ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i></a>
         </span>
-        <!-- TODO implement these functionalities -->
+        <!-- TODO implement these date functionalities -->
         <span class="wrappable-flex-item">
             <a class="clickable">1M</a>
             &nbsp;
@@ -22,14 +22,57 @@
             &nbsp;
             <a class="clickable">2Y</a>
             &nbsp;
-            <a class="clickable"><i class="fa fa-calendar"></i></a>
+            <span ng-init="showDateControl = false">
+                <a class="clickable" ng-click="toggleSlide(!showDateControl, 'date-control'); showDateControl = !showDateControl"><i class="fa fa-calendar"></i></a>
+                <div class="date-control floating-form" style="display: none;">
+                    <label>From&nbsp;<input type="date" class="form-control" style="display: inline; width: 12em;"/></label>
+                    <label>To&nbsp;<input type="date" class="form-control" style="display: inline; width: 12em;"/></label>
+                    <button class="btn btn-success"><i class="fa fa-play"></i></button>
+                </div>
+            </span>
         </span>
         <span class="wrappable-flex-item">
-            <!--TODO implement these functionalities-->
             <span class="flex-container">
-                <a class="clickable"><i class="fa fa-plus"></i>&nbsp;Macro Indicator &amp; Market Index</a>
+                <span class="menu-container">
+                    <a class="clickable"
+                       ng-click="toggleSlide(!showIndicatorControl,'indicator-control'); showIndicatorControl = !showIndicatorControl">
+                        <i class="fa fa-plus"></i>&nbsp;Macro Indicator &amp; Market Index
+                    </a>
+                    <div class="indicator-control floating-form" style="display: none; left: -100%">
+                        <label>
+                            Search&nbsp;
+                            <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control" style="width: 26em;"/>
+                            <!-- TODO implement searching for macro indicators etc through callback -->
+                        </label>
+                    </div>
+                </span>
                 <span> &nbsp; </span>
-                <a class="clickable"><i class="fa fa-plus"></i>&nbsp;Custom Benchmark</a>
+                <span class="menu-container">
+                    <a class="clickable"
+                       ng-click="toggleSlide(!showBenchmarkControl, 'benchmark-control'); showBenchmarkControl = !showBenchmarkControl">
+                        <i class="fa fa-plus"></i>&nbsp;Custom Benchmark
+                    </a>
+                    <div class="benchmark-control floating-form" style="display: none; left: -100%;">
+                        <!-- TODO implement constructing custom benchmark time series -->
+                        <label>
+                            Sector&nbsp;
+                            <input type="text" class="form-control"/>
+                        </label>
+                        <label>
+                            Rating&nbsp;
+                            <input type="text" class="form-control"/>
+                        </label>
+                        <label>
+                            WAL&nbsp;
+                            <input type="text" class="form-control"/>
+                        </label>
+                        <label>
+                            Analytic&nbsp;
+                            <input type="text" class="form-control"/>
+                        </label>
+                        <button class="btn btn-success"><i class="fa fa-play"></i></button>
+                    </div>
+                </span>
             </span>
         </span>
     </div>
