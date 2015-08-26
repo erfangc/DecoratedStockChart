@@ -41,13 +41,10 @@
                 }
             });
             const $menuItem = $("<li><span></span></li>")
-                .click(function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
+                .click(inertClickHandler);
             $menuItem.children("span").append($input);
             return $menuItem;
-        };
+        }
 
         $ctxMenu.children(".dropdown-menu")
             .append(editAxisTitle());
@@ -64,6 +61,35 @@
     };
 
     /**
+     * event handler for trigger a context menu that is series specific
+     * (i.e. right-clicking on a legend or clicking on a series)
+     * this code executed when the legend is right-clicked, therefore
+     * this is when we mutate the DOM (not before)
+
+     * @param event the mouse click event
+     * @param args additional args, containing the series and the scope
+     * @returns {boolean}
+     */
+    root.dsc.triggerSeriesContextMenu = function (event, args) {
+        const $ctxMenu = args.scope.$ctxMenu;
+        $ctxMenu.find(".dropdown-menu li").remove();
+        _.each(dsc.getMenuItems(args), function (menuItem) {
+            $ctxMenu.children(".dropdown-menu").append(menuItem);
+        });
+        $ctxMenu.css({
+            top: event.clientY + "px",
+            left: event.clientX + "px"
+        });
+        $ctxMenu.show();
+        return false;
+    };
+
+    function inertClickHandler(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    /**
      * resolve the correct context menu items given the series
      * @param args
      * @returns {*[]}
@@ -74,20 +100,38 @@
         const series = args.series;
         const disableTransformation = series.options.disableFurtherTransformation;
         const chart = scope.states.chart;
-        const addMA = function () {
-            return $("<li><a>Add Moving Average</a></li>").click(function () {
-                const transformedSeries = seriesTransformer.toMovingAvg(series);
-                transformedSeries.disableFurtherTransformation = true;
-                scope.addSeries(transformedSeries);
-            });
-        };
-        const addMV = function () {
-            return $("<li><a>Add Moving Volatility</a></li>").click(function () {
-                const transformedSeries = seriesTransformer.toMovingVol(series);
-                transformedSeries.disableFurtherTransformation = true;
-                scope.addSeries(transformedSeries);
-            });
-        };
+
+        /**
+         * creates menu item and submenus for transformer functions (i.e. moving avgs etc)
+         * @param transformFn
+         * @param text
+         * @returns {*|jQuery}
+         */
+        function transformerMenuItemGenerator(transformFn, text) {
+            const $input = $("<input type='text' placeholder='Day(s)' class='form-control' style='position: relative; width: 80%; left: 10%;'/>");
+            return $("<li class='dropdown-submenu'><a>" + text + "</a></li>")
+                .click(function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $input.focus();
+                })
+                .append($("<li class='dropdown-menu'><span></span></li>")
+                    .click(inertClickHandler)
+                    .append($input.on('keydown', function (keyEvent) {
+                        if (keyEvent.keyCode == 13) {
+                            if (isNaN(parseInt($input.val())) || $input.val() == '')
+                                return;
+                            const transformedSeries = transformFn(series, parseInt($input.val()));
+                            transformedSeries.disableFurtherTransformation = true;
+                            scope.addSeries(transformedSeries);
+                            scope.$ctxMenu.hide();
+                        }
+                    })));
+        }
+
+        const addMA = transformerMenuItemGenerator.bind(null, seriesTransformer.toMovingAvg, "Add Moving Average");
+        const addMV = transformerMenuItemGenerator.bind(null, seriesTransformer.toMovingVol, "Adding Moving Vol");
+
         const removeSeries = function () {
             return $("<li><a>Remove</a></li>").click(function () {
                 scope.$apply(function () {
@@ -160,43 +204,6 @@
     };
 
     /**
-     * attach the proper event listener behavior to legend elements
-     * enabling dynamic context menu creation
-     * @param args
-     */
-    root.dsc.attachContextMenuEvents = function (args) {
-
-        const $ctxMenu = args.scope.$ctxMenu;
-        const $legendElement = args.legendElement;
-
-        $legendElement.css({
-            "user-select": "none"
-        });
-        /**
-         * this code executed when the legend is right-clicked, therefore
-         * this is when we mutate the DOM (not before)
-         */
-        $legendElement.mousedown(function (e) {
-            if (e.button == 2) {
-                e.preventDefault();
-                e.stopPropagation();
-                $ctxMenu.find(".dropdown-menu li").remove();
-                _.each(dsc.getMenuItems(args), function (menuItem) {
-                    $ctxMenu.children(".dropdown-menu").append(menuItem);
-                });
-                $ctxMenu.css({
-                    top: e.clientY + "px",
-                    left: e.clientX + "px"
-                });
-                $ctxMenu.show();
-                return false;
-            }
-        });
-
-        return $ctxMenu;
-    };
-
-    /**
      * create the reusable context menu
      * this menu becomes visible when user right-clicks
      * the legend. The menu items in this menu is dynamically generated
@@ -252,6 +259,26 @@
                 width: "98%"
             }).appendTo($container);
         $input.focus();
-    }
+    };
 
+    /**
+     * generator function for SMA. Credit: Rosetta Code
+     * @param period MA of this period will be taken by the resulting function
+     * @returns {Function}
+     */
+    root.dsc.simpleMAGenerator = function (period) {
+        var nums = [];
+        return function (num) {
+            nums.push(num);
+            if (nums.length > period)
+                nums.splice(0, 1);  // remove the first element of the array
+            var sum = 0;
+            for (var i in nums)
+                sum += nums[i];
+            var n = period;
+            if (nums.length < period)
+                n = nums.length;
+            return (sum / n);
+        }
+    }
 }());

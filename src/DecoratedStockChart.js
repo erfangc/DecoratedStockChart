@@ -153,20 +153,24 @@
                      * methods to transform the series that is passed in
                      */
                     scope.seriesTransformer = {
-                        toMovingAvg: function (origSeries) {
+                        toMovingAvg: function (origSeries, numDays) {
+                            const sma = dsc.simpleMAGenerator(numDays);
+                            const xy = _.chain(origSeries.data).map(function (datum) {
+                                return [datum.x, sma(datum.y)];
+                            }).value();
+
                             return {
-                                id: origSeries.id + ".30DayMA",
-                                name: origSeries.name + " 30 Day Moving Average",
-                                data: origSeries.data.map(function (data) {
-                                    return [data.x, data.y * Math.random()];
-                                }),
+                                id: origSeries.id + "." + numDays + "DayMA",
+                                name: origSeries.name + " " + numDays + " Day Moving Average",
+                                data: xy,
                                 securityId: origSeries.options.securityId || null
                             };
                         },
-                        toMovingVol: function (origSeries) {
+                        toMovingVol: function (origSeries, numDays) {
+                            // TODO use a real moving variance algo, one that supports incremental computation of variance
                             return {
-                                id: origSeries.id + ".30DayMV",
-                                name: origSeries.name + " 30 Day Moving Vol",
+                                id: origSeries.id + "." + numDays + "DayMV",
+                                name: origSeries.name + " " + numDays + " Day Moving Vol",
                                 data: origSeries.data.map(function (data) {
                                     return [data.x, data.y * Math.random()];
                                 }),
@@ -236,16 +240,22 @@
                     /**
                      * add series objects to the underlying highstock
                      * attach various event listeners
-                     * @param s
+                     * @param seriesOption
                      */
-                    scope.addSeries = function (s) {
-                        scope.states.chart.addSeries(s);
-                        const series = scope.states.chart.get(s.id);
-                        const $legend = $(series.legendItem.element);
-                        dsc.attachContextMenuEvents({
-                            series: series,
-                            scope: scope,
-                            legendElement: $legend
+                    scope.addSeries = function (seriesOption) {
+                        scope.states.chart.addSeries(seriesOption);
+                        const series = scope.states.chart.get(seriesOption.id);
+                        $(series.legendItem.element).css({
+                            "user-select": "none"
+                        }).mousedown(function (event) {
+                            if (event.button == 2) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                return dsc.triggerSeriesContextMenu(event, {
+                                    series: series,
+                                    scope: scope
+                                });
+                            }
                         });
                     };
 
