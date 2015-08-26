@@ -152,16 +152,19 @@
         const callback = args.onClick;
         const currentSeries = args.currentSeries;
         const $subMenu = $("<ul class='dropdown-menu'></ul>");
-        _.chain(chart.series)
-            .filter(function (series) {
-                return currentSeries && series.options.id !== currentSeries.options.id;
-            })
-            .each(function (series) {
-            $("<li><a>" + series.name + "</a></li>")
-                .click(function (event) {
-                    callback(event, series);
-                }).appendTo($subMenu);
+        const filteredSeries = _.filter(chart.series, function (series) {
+            return currentSeries && series.options.id !== currentSeries.options.id;
         });
+        if (filteredSeries.length == 0)
+            $subMenu.append("<li><a>No Other Series to Compare To</a></li>");
+        else
+            _.each(filteredSeries, function (series) {
+                $("<li><a>" + series.name + "</a></li>")
+                    .click(function (event) {
+                        callback(event, series);
+                    }).appendTo($subMenu);
+            });
+
         return $subMenu;
     };
 
@@ -181,12 +184,12 @@
                 return axis.userOptions.id !== series.yAxis.userOptions.id;
             })
             .each(function (axis, idx) {
-            const $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "</a></li>")
-                .click(function () {
-                    dsc.moveAxis(series, idx, scope);
-                });
-            $dropdown.append($menuItem);
-        });
+                const $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "</a></li>")
+                    .click(function () {
+                        dsc.moveAxis(series, idx, scope);
+                    });
+                $dropdown.append($menuItem);
+            });
         const axisId = "yAxis." + (chart.yAxis.length + 1);
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
             chart.addAxis({
