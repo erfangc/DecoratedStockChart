@@ -61,9 +61,15 @@
                         return false;
                     });
 
+                    /**
+                     * Object of passed in user date representaitons (string or number) transformed to Date objects
+                     * @type {{start: Date, end: Date}}
+                     */
                     scope.dateObjs = {
-                        start: scope.startDate && scope.endDate ? new Date(scope.startDate) : null,
-                        end: scope.startDate && scope.endDate ? new Date(scope.endDate) : null
+                        start: scope.startDate && scope.endDate ?
+                            new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
+                        end: scope.startDate && scope.endDate ?
+                            new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
                     };
 
                     /**
@@ -116,13 +122,19 @@
                             if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
                         },
+                        /**
+                         * Change the x axis range of the chart given string representations of start and end
+                         * @param start
+                         * @param end
+                         *
+                         * @returns true if there was an error
+                         */
                         changeDateRange: function(start, end){
                             // Validate date
                             if( !start || !end || start >= end){
                                 return true;
                             }
                             scope.states.chart.xAxis[0].setExtremes(new Date(start).getTime(), new Date(end).getTime());
-                            return false;
                         }
                     };
 
@@ -316,28 +328,6 @@
                         return false;
                     };
 
-                    /**
-                     * Function to retrieve passed-in start and end dates and sets them to state variable.
-                     * @returns Part of a highstock object
-                     */
-                    //function getPassedInDefinedDateRange(){
-                    //    return !scope.startDate || !scope.endDate ? {} : setDefinedDateRange(scope.startDate, scope.endDate);
-                    //}
-                    //
-                    //function setDefinedDateRange(start, end){
-                    //    scope.states.startDate = new Date(start);
-                    //    scope.states.endDate = new Date(end);
-                    //    if( !scope.states.startDate || !scope.states.endDate )
-                    //        return {};
-                    //    else
-                    //        return {
-                    //            xAxis: {
-                    //                min: scope.states.startDate.getTime(),
-                    //                max: scope.states.endDate.getTime()
-                    //            }
-                    //        };
-                    //}
-
                     $timeout(function () {
                         /**
                          * initialization & initial rendering
@@ -346,6 +336,7 @@
                         _.each(scope.securities, function (security) {
                             scope.apiHandle.api.addSecurity(security);
                         });
+                        scope.apiHandle.api.changeDateRange(scope.dateObjs.start, scope.dateObjs.end);
                     });
                 },
                 templateUrl: "DecoratedStockChart.html"

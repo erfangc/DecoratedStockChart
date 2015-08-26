@@ -61,17 +61,21 @@
                         return false;
                     });
 
+                    /**
+                     * Object of passed in user date representaitons (string or number) transformed to Date objects
+                     * @type {{start: Date, end: Date}}
+                     */
                     scope.dateObjs = {
-                        start: scope.startDate && scope.endDate ? new Date(scope.startDate) : null,
-                        end: scope.startDate && scope.endDate ? new Date(scope.endDate) : null
+                        start: scope.startDate && scope.endDate ?
+                            new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
+                        end: scope.startDate && scope.endDate ?
+                            new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
                     };
 
                     /**
                      * define the API exposed to the parent component
                      */
                     scope.apiHandle.api = {
-                        startDate: scope.startDate && scope.endDate ? scope.startDate : null,
-                        endDate: scope.startDate && scope.endDate ? scope.endDate : null,
                         /**
                          * add a security
                          * @param security
@@ -330,6 +334,7 @@
                         _.each(scope.securities, function (security) {
                             scope.apiHandle.api.addSecurity(security);
                         });
+                        scope.apiHandle.api.changeDateRange(scope.dateObjs.start, scope.dateObjs.end);
                     });
                 },
                 templateUrl: "DecoratedStockChart.html"
