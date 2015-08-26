@@ -160,7 +160,7 @@
                             }).value();
 
                             return {
-                                id: origSeries.id + "." + numDays + "DaySMA",
+                                id: origSeries.options.id + "." + numDays + "DaySMA",
                                 name: origSeries.name + " " + numDays + " Day SMA",
                                 data: xy,
                                 securityId: origSeries.options.securityId || null
@@ -169,7 +169,7 @@
                         toExpMA: function (origSeries, numDays) {
                             // TODO use a real moving variance algo, one that supports incremental computation of variance
                             return {
-                                id: origSeries.id + "." + numDays + "DayEMA",
+                                id: origSeries.options.id + "." + numDays + "DayEMA",
                                 name: origSeries.name + " " + numDays + " Day EMA",
                                 data: origSeries.data.map(function (data) {
                                     return [data.x, data.y * Math.random()];
@@ -178,11 +178,22 @@
                             };
                         },
                         toBasis: function (series, otherSeries) {
+                            /**
+                             * we only take basis where 'otherSeries' has data, there is no lookback
+                             */
+                            const otherData = _.chain(otherSeries.data).map(function (datum) {
+                                return [moment(datum.x).format("YYYYMMDD"), datum.y];
+                            }).object().value();
+                            const data = _.chain(series.data).filter(function (datum) {
+                                return otherData[moment(datum.x).format("YYYYMMDD")];
+                            }).map(function (datum) {
+                                return [datum.x, datum.y - otherData[moment(datum.x).format("YYYYMMDD")]];
+                            }).value();
                             return {
-                                id: series.id + ".basisVs." +otherSeries.id,
+                                id: series.options.id + ".basisVs." +otherSeries.options.id,
                                 name: "Basis of " + series.name + " - " + otherSeries.name,
                                 securityId: series.options.securityId || null,
-                                data: []
+                                data: data
                             }
                         }
                     };
