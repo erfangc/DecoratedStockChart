@@ -133,7 +133,7 @@
                 .append(dsc.buildAxesSubMenu(series, chart, scope));
         };
         return disableTransformation ? [changeAxis(), basis(), changeType(), removeSeries()]
-            : [changeAxis(), addMA(), addMV(), basis(), changeType(), removeSeries()];
+            : [changeAxis(), addMA(), basis(), changeType(), removeSeries()];
     };
 
     /**
