@@ -153,29 +153,37 @@
                      * methods to transform the series that is passed in
                      */
                     scope.seriesTransformer = {
-                        toMovingAvg: function (origSeries, numDays) {
-                            const sma = dsc.simpleMAGenerator(numDays);
+                        toSimpleMA: function (origSeries, numDays) {
+                            const sma = dsc.SMAFactory(numDays);
                             const xy = _.chain(origSeries.data).map(function (datum) {
                                 return [datum.x, sma(datum.y)];
                             }).value();
 
                             return {
-                                id: origSeries.id + "." + numDays + "DayMA",
-                                name: origSeries.name + " " + numDays + " Day Moving Average",
+                                id: origSeries.id + "." + numDays + "DaySMA",
+                                name: origSeries.name + " " + numDays + " Day SMA",
                                 data: xy,
                                 securityId: origSeries.options.securityId || null
                             };
                         },
-                        toMovingVol: function (origSeries, numDays) {
+                        toExpMA: function (origSeries, numDays) {
                             // TODO use a real moving variance algo, one that supports incremental computation of variance
                             return {
-                                id: origSeries.id + "." + numDays + "DayMV",
-                                name: origSeries.name + " " + numDays + " Day Moving Vol",
+                                id: origSeries.id + "." + numDays + "DayEMA",
+                                name: origSeries.name + " " + numDays + " Day EMA",
                                 data: origSeries.data.map(function (data) {
                                     return [data.x, data.y * Math.random()];
                                 }),
                                 securityId: origSeries.options.securityId || null
                             };
+                        },
+                        toBasis: function (series, otherSeries) {
+                            return {
+                                id: series.id + ".basisVs." +otherSeries.id,
+                                name: "Basis of " + series.name + " - " + otherSeries.name,
+                                securityId: series.options.securityId || null,
+                                data: []
+                            }
                         }
                     };
 
@@ -235,7 +243,7 @@
                      * create a reusable context menu to be displayed
                      * at the user's discretion
                      */
-                    scope.$ctxMenu = dsc.createCtxMenu(elem);
+                    scope.$ctxMenu = dsc.buildContextMenuContainer(elem);
 
                     /**
                      * add series objects to the underlying highstock

@@ -166,7 +166,7 @@
                                 securityId: origSeries.options.securityId || null
                             };
                         },
-                        toMovingVol: function (origSeries, numDays) {
+                        toExpMovingAvg: function (origSeries, numDays) {
                             // TODO use a real moving variance algo, one that supports incremental computation of variance
                             return {
                                 id: origSeries.id + "." + numDays + "DayMV",
@@ -431,7 +431,7 @@
         }
 
         const addMA = transformerMenuItemGenerator.bind(null, seriesTransformer.toMovingAvg, "Add Moving Average");
-        const addMV = transformerMenuItemGenerator.bind(null, seriesTransformer.toMovingVol, "Adding Moving Vol");
+        const addMV = transformerMenuItemGenerator.bind(null, seriesTransformer.toExpMovingAvg, "Adding Moving Vol");
 
         const removeSeries = function () {
             return $("<li><a>Remove</a></li>").click(function () {
