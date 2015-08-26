@@ -27,7 +27,6 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     $scope.addSecurity = function (security) {
         $scope.apiHandle.api.addSecurity(security);
     };
-
 });
 
 /**

@@ -26,14 +26,15 @@
             &nbsp;
             <span ng-init="showDateControl = false">
                 <a class="clickable"
-                   ng-click="toggleSlide(!showDateControl, 'date-control'); showDateControl = !showDateControl"><i
+                   ng-click="toggleSlide(!showDateControl, 'date-control'); showDateControl = !showDateControl; dateChangeError = false"><i
                         class="fa fa-calendar"></i></a>
                 <div class="date-control floating-form" style="display: none;">
                     <label>From&nbsp;<input type="date" class="form-control"
-                                            style="display: inline; width: 12em;"/></label>
+                                            style="display: inline; width: 12em;" ng-model="dateObjs.start"/></label>
                     <label>To&nbsp;<input type="date" class="form-control"
-                                          style="display: inline; width: 12em;"/></label>
-                    <button class="btn btn-success"><i class="fa fa-play"></i></button>
+                                          style="display: inline; width: 12em;" ng-model="dateObjs.end"/></label>
+                    <button class="btn btn-success" ng-click="dateChangeError = apiHandle.api.changeDateRange(dateObjs.start, dateObjs.end)"><i class="fa fa-play"></i></button>
+                    <p ng-show="dateChangeError">Invalid date range.  Please check and try again.</p>
                 </div>
             </span>
         </span>

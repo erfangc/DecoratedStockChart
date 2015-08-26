@@ -4,6 +4,8 @@
             return {
                 scope: {
                     securities: "=",
+                    startDate: "@?",
+                    endDate: "@?",
                     /**
                      * a list of available security attributes that the user can choose from
                      */
@@ -59,10 +61,17 @@
                         return false;
                     });
 
+                    scope.dateObjs = {
+                        start: scope.startDate && scope.endDate ? new Date(scope.startDate) : null,
+                        end: scope.startDate && scope.endDate ? new Date(scope.endDate) : null
+                    };
+
                     /**
                      * define the API exposed to the parent component
                      */
                     scope.apiHandle.api = {
+                        startDate: scope.startDate && scope.endDate ? scope.startDate : null,
+                        endDate: scope.startDate && scope.endDate ? scope.endDate : null,
                         /**
                          * add a security
                          * @param security
@@ -106,6 +115,20 @@
                             // fire callback if provided
                             if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
+                        },
+                        /**
+                         * Change the x axis range of the chart given string representations of start and end
+                         * @param start
+                         * @param end
+                         *
+                         * @returns true if there was an error
+                         */
+                        changeDateRange: function(start, end){
+                            // Validate date
+                            if( !start || !end || start >= end){
+                                return true;
+                            }
+                            scope.states.chart.xAxis[0].setExtremes(new Date(start).getTime(), new Date(end).getTime());
                         }
                     };
 
@@ -289,6 +312,14 @@
                         }
                         else
                             $ctrl.slideUp(500);
+                    };
+
+                    scope.changeDate = function(){
+                        if( !scope.states.startDate || !scope.states.endDate || scope.states.startDate >= scope.states.endDate){
+                            return true;
+                        }
+                        scope.states.chart.xAxis[0].update(setDefinedDateRange(scope.states.startDate, scope.states.endDate).xAxis);
+                        return false;
                     };
 
                     $timeout(function () {
