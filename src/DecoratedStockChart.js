@@ -1,5 +1,5 @@
 (function () {
-    angular.module("DecoratedStockChart", ['ui.bootstrap'])
+    angular.module("decorated-stock-chart", ['ui.bootstrap'])
         .directive("decoratedStockChart", function ($timeout) {
             return {
                 scope: {
@@ -300,10 +300,8 @@
                             scope.apiHandle.api.addSecurity(security);
                         });
                     });
-
-
                 },
-                templateUrl: "../src/DecoratedStockChart.html"
+                templateUrl: "DecoratedStockChart.html"
             };
         });
 }());

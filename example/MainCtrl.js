@@ -1,4 +1,4 @@
-angular.module('Example', ['DecoratedStockChart']).controller("MainCtrl", function ($scope) {
+angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", function ($scope) {
 
     $scope.securities = [{id: 1, label: "T"}, {id: 2, label: "VZ"}, {id: 3, label: "GS"}];
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
