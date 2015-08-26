@@ -136,14 +136,13 @@
                                     click: function (event) {
                                         dsc.onAxisClick.call(this, event, scope);
                                     }
-                                },
-                                id: "yAxis.1"
-                            }
+                                }
+                            },
+                            id: "yAxis.1"
                         },
                         legend: {
                             useHTML: true
                         },
-
                         series: [],
                         credits: {enabled: false}
                     }, scope.highstockOptions);
@@ -262,20 +261,11 @@
                      * @param seriesOption
                      */
                     scope.addSeries = function (seriesOption) {
-                        scope.states.chart.addSeries(seriesOption);
-                        const series = scope.states.chart.get(seriesOption.id);
-                        $(series.legendItem.element).css({
-                            "user-select": "none"
-                        }).mousedown(function (event) {
-                            if (event.button == 2) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                return dsc.triggerSeriesContextMenu(event, {
-                                    series: series,
-                                    scope: scope
-                                });
-                            }
-                        });
+                        const chart = scope.states.chart;
+                        if (chart.get(seriesOption.id))
+                            return;
+                        chart.addSeries(seriesOption);
+                        dsc.attachLegendEventHandlers(chart.get(seriesOption.id), scope);
                     };
 
                     /**

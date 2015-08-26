@@ -7,6 +7,26 @@
     root.dsc = dsc;
 
     /**
+     * attaches event listener that triggers a context menu appearance when legend item is right-clicked
+     * @param series
+     * @param scope
+     */
+    root.dsc.attachLegendEventHandlers = function (series, scope) {
+        $(series.legendItem.element)
+            .css({"user-select": "none"})
+            .mousedown(function (event) {
+                if (event.button == 2) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return dsc.triggerSeriesContextMenu(event, {
+                        series: series,
+                        scope: scope
+                    });
+                }
+            })
+    };
+
+    /**
      * handles user click on an axis
      * @param event
      * @param scope

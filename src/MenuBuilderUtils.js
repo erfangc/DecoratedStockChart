@@ -99,9 +99,28 @@
                     onClick: function (event, otherSeries) {
                         const transformedSeries = seriesTransformer.toBasis(series, otherSeries);
                         scope.addSeries(transformedSeries);
-                    }
+                    },
+                    currentSeries: series
                 }));
         };
+
+        function changeType() {
+            const $subMenu = $("<ul class='dropdown-menu'></ul>");
+            _.chain([['Line', 'spline', 'line-chart'], ['Area', 'areaspline', 'area-chart'], ['Column', 'column', 'bar-chart']])
+                .filter(function (type) {
+                    return type[1] !== series.type;
+                })
+                .each(function (type) {
+                    $("<li><a><i class='fa fa-" + type[2] + "'></i>&nbsp;" + type[0] + "</a></li>")
+                        .click(function () {
+                            series.update({type: type[1]});
+                            // for some chart update wipes out legend event handler
+                            // so we reattach them here
+                            dsc.attachLegendEventHandlers(series, scope);
+                        }).appendTo($subMenu);
+                });
+            return $("<li class='dropdown-submenu'><a>Change Chart Type</a></li>").append($subMenu);
+        }
 
         const removeSeries = function () {
             return $("<li><a>Remove</a></li>").click(function () {
@@ -114,21 +133,30 @@
             return $("<li class='dropdown-submenu'><a>Change Axis</a></li>")
                 .append(dsc.buildAxesSubMenu(series, chart, scope));
         };
-        return disableTransformation ? [changeAxis(), basis(), removeSeries()]
-            : [changeAxis(), addMA(), addMV(), basis(), removeSeries()];
+        return disableTransformation ? [changeAxis(), basis(), changeType(), removeSeries()]
+            : [changeAxis(), addMA(), addMV(), basis(), changeType(), removeSeries()];
     };
 
     /**
      * create a sub dropdown for every series in the chart. the functionality of
      * clicking on the menu items in this dropdown will be provided as callbacks
      * since there could be multiple behaviors
+     *
+     * if args contain a 'currentSeries' property, which is assumed to be of the type Highchart.Series,
+     * then this series will not be included in the resulting submenu
+     *
      * @param args
      */
     root.dsc.buildSeriesSubMenu = function (args) {
         const chart = args.scope.states.chart;
         const callback = args.onClick;
+        const currentSeries = args.currentSeries;
         const $subMenu = $("<ul class='dropdown-menu'></ul>");
-        _.each(chart.series, function (series) {
+        _.chain(chart.series)
+            .filter(function (series) {
+                return currentSeries && series.options.id !== currentSeries.options.id;
+            })
+            .each(function (series) {
             $("<li><a>" + series.name + "</a></li>")
                 .click(function (event) {
                     callback(event, series);
@@ -147,14 +175,19 @@
      */
     root.dsc.buildAxesSubMenu = function (series, chart, scope) {
         const $dropdown = $("<ul class='dropdown-menu'></ul>");
-        _.each(chart.yAxis, function (axis, idx) {
-            const $menuItem = $("<li><a>Y-Axis " + (idx + 1) + " " + axis.options.title.text + "</a></li>")
+        _.chain(chart.yAxis)
+            .filter(function (axis) {
+                // do not show the axis that the series currently belongs to already
+                return axis.userOptions.id !== series.yAxis.userOptions.id;
+            })
+            .each(function (axis, idx) {
+            const $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "</a></li>")
                 .click(function () {
                     dsc.moveAxis(series, idx, scope);
                 });
             $dropdown.append($menuItem);
         });
-        const axisId = "yAxis." + chart.yAxis.length;
+        const axisId = "yAxis." + (chart.yAxis.length + 1);
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
             chart.addAxis({
                 title: {
