@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "Better Highstock",
   "main": [
-    "decorated-stock-chart.js","decorated-stock-chart.css"
+    "decorated-stock-chart.js",
+    "decorated-stock-chart.css"
   ],
   "keywords": [
     "highstock"

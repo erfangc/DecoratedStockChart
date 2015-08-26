@@ -183,10 +183,10 @@
                 // do not show the axis that the series currently belongs to already
                 return axis.userOptions.id !== series.yAxis.userOptions.id;
             })
-            .each(function (axis, idx) {
+            .each(function (axis) {
                 const $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "</a></li>")
                     .click(function () {
-                        dsc.moveAxis(series, idx, scope);
+                        dsc.moveAxis(series, axis, scope);
                     });
                 $dropdown.append($menuItem);
             });
