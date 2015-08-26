@@ -84,6 +84,9 @@
         </span>
     </div>
     <div class="security-control floating-form" style="display: none;">
+        <div ng-show="states.securityAttrMap.length === 0">
+            <h5>No Security Selected</h5>
+        </div>
         <div class="flex-container">
             <div class="wrappable-flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
                 <!-- selected attributes display -->
