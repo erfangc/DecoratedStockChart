@@ -1,9 +1,9 @@
 angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", function ($scope) {
 
     $scope.securities = [
-        {id: 1, label: "T", mean: 0.08, stddev: 0.25, initPrice: 32},
+        {id: 1, label: "T", mean: 0.08, stddev: 0.17, initPrice: 32},
         {id: 2, label: "VZ", mean: 0.05, stddev: 0.15, initPrice: 45},
-        {id: 3, label: "GS", mean: 0.07, stddev: 0.24, initPrice: 184}];
+        {id: 3, label: "GS", mean: 0.03, stddev: 0.23, initPrice: 184}];
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
     $scope.availableSecurityAttributes = [{tag: "return", label: "Return"}, {
         tag: "price",

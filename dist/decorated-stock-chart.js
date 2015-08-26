@@ -76,8 +76,6 @@
                      * define the API exposed to the parent component
                      */
                     scope.apiHandle.api = {
-                        startDate: scope.startDate && scope.endDate ? scope.startDate : null,
-                        endDate: scope.startDate && scope.endDate ? scope.endDate : null,
                         /**
                          * add a security
                          * @param security
@@ -191,17 +189,6 @@
                                 id: origSeries.options.id + "." + numDays + "DaySMA",
                                 name: origSeries.name + " " + numDays + " Day SMA",
                                 data: xy,
-                                securityId: origSeries.options.securityId || null
-                            };
-                        },
-                        toExpMA: function (origSeries, numDays) {
-                            // TODO use a real moving variance algo, one that supports incremental computation of variance
-                            return {
-                                id: origSeries.options.id + "." + numDays + "DayEMA",
-                                name: origSeries.name + " " + numDays + " Day EMA",
-                                data: origSeries.data.map(function (data) {
-                                    return [data.x, data.y * Math.random()];
-                                }),
                                 securityId: origSeries.options.securityId || null
                             };
                         },
@@ -605,7 +592,6 @@
         }
 
         const addMA = transformerMenuItemGenerator.bind(null, seriesTransformer.toSimpleMA, "Add Simple MA");
-        const addMV = transformerMenuItemGenerator.bind(null, seriesTransformer.toExpMA, "Adding Exp MA");
 
         const basis = function () {
             return $("<li class='dropdown-submenu'><a>Show Basis vs. </a></li>")

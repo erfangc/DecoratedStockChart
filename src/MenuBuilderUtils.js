@@ -90,7 +90,6 @@
         }
 
         const addMA = transformerMenuItemGenerator.bind(null, seriesTransformer.toSimpleMA, "Add Simple MA");
-        const addMV = transformerMenuItemGenerator.bind(null, seriesTransformer.toExpMA, "Adding Exp MA");
 
         const basis = function () {
             return $("<li class='dropdown-submenu'><a>Show Basis vs. </a></li>")

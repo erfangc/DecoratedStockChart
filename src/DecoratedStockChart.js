@@ -192,17 +192,6 @@
                                 securityId: origSeries.options.securityId || null
                             };
                         },
-                        toExpMA: function (origSeries, numDays) {
-                            // TODO use a real moving variance algo, one that supports incremental computation of variance
-                            return {
-                                id: origSeries.options.id + "." + numDays + "DayEMA",
-                                name: origSeries.name + " " + numDays + " Day EMA",
-                                data: origSeries.data.map(function (data) {
-                                    return [data.x, data.y * Math.random()];
-                                }),
-                                securityId: origSeries.options.securityId || null
-                            };
-                        },
                         toBasis: function (series, otherSeries) {
                             /**
                              * we only take basis where 'otherSeries' has data, there is no lookback
