@@ -47,6 +47,9 @@
                     scope.id = _.uniqueId();
                     scope.states = {
                         /**
+                         * (this is obviously not a map ... using array so they can be in order and can be more intuitively
+                         * used in ng-repeat. but the structure of crappily named variable is as following:
+                         * securityAttrMap has form [[{id: <securityId>, ... },[{tag: <tag>, label: <label>}, ... ]],...]
                          * a map of which security has which attribute enabled
                          */
                         securityAttrMap: [],
@@ -127,9 +130,9 @@
                          *
                          * @returns true if there was an error
                          */
-                        changeDateRange: function(start, end){
+                        changeDateRange: function (start, end) {
                             // Validate date
-                            if( !start || !end || start >= end){
+                            if (!start || !end || start >= end) {
                                 return true;
                             }
                             scope.states.chart.xAxis[0].setExtremes(new Date(start).getTime(), new Date(end).getTime());
@@ -152,6 +155,19 @@
                             spline: {
                                 marker: {enabled: false}
                             }
+                        },
+                        tooltip: {
+                            formatter: function () {
+                                const tooltips = _.map(this.points, function (point) {
+                                    return "<div style='display: flex; justify-content: space-between'><span><b>" + point.series.name + ":</b></span><span>&nbsp;" + point.y.toFixed(3) + "</span></div>"
+                                }).join("");
+                                return "<div>" +
+                                    "<div>" + moment(this.x).format("ddd, MMM DD YYYY") + "</div>" +
+                                    tooltips +
+                                    "</div>";
+                            },
+                            useHTML: true,
+                            shared: true
                         },
                         xAxis: {
                             type: "datetime"
@@ -205,7 +221,7 @@
                                 return [datum.x, datum.y - otherData[moment(datum.x).format("YYYYMMDD")]];
                             }).value();
                             return {
-                                id: series.options.id + ".basisVs." +otherSeries.options.id,
+                                id: series.options.id + ".basisVs." + otherSeries.options.id,
                                 name: "Basis of " + series.name + " - " + otherSeries.name,
                                 securityId: series.options.securityId || null,
                                 data: data
@@ -280,6 +296,18 @@
                         const chart = scope.states.chart;
                         if (chart.get(seriesOption.id))
                             return;
+
+                        // add series click event listener .. this is different from legendItem click event listener
+                        seriesOption.events = {
+                            click: function (event) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                return dsc.triggerSeriesContextMenu(event, {
+                                    series: this,
+                                    scope: scope
+                                });
+                            }
+                        };
                         chart.addSeries(seriesOption);
                         dsc.attachLegendEventHandlers(chart.get(seriesOption.id), scope);
                     };
@@ -307,8 +335,8 @@
                             $ctrl.slideUp(500);
                     };
 
-                    scope.changeDate = function(){
-                        if( !scope.states.startDate || !scope.states.endDate || scope.states.startDate >= scope.states.endDate){
+                    scope.changeDate = function () {
+                        if (!scope.states.startDate || !scope.states.endDate || scope.states.startDate >= scope.states.endDate) {
                             return true;
                         }
                         scope.states.chart.xAxis[0].update(setDefinedDateRange(scope.states.startDate, scope.states.endDate).xAxis);

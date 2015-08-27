@@ -29,13 +29,26 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     };
 });
 
+// small fix for when cue tip would popup with the title of the chart for no reason ... really distracting
+$(document).ready(function() {
+    $('[title]').mouseover(function () {
+        $this = $(this);
+        $this.data('title', $this.attr('title'));
+        // Using null here wouldn't work in IE, but empty string will work just fine.
+        $this.attr('title', '');
+    }).mouseout(function () {
+        $this = $(this);
+        $this.attr('title', $this.data('title'));
+    });
+});
+
 /**
  * this returns the last 1 business year in Unix epoch
  * @returns {Array}
  */
 const domain = function () {
     const x = [];
-    const now = moment();
+    const now = moment().startOf('day')
     for (var i = 0; i < 255; i++)
         x.push(now.clone().subtract(i, 'd').valueOf());
     x.reverse();
