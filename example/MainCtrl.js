@@ -9,10 +9,10 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         tag: "price",
         label: "Price"
     }, {tag: "volume", label: "Volume"}];
-    $scope.onAttributeSelect = function (attr, security) {
+    $scope.onAttributeSelect = function (attr, security, options) {
         return {
             name: security.label + " " + attr.label,
-            data: simulate(domain(), attr, security)
+            data: simulate(domain(options), attr, security)
         };
     };
     $scope.onSecurityRemove = function (id) {
@@ -46,10 +46,11 @@ $(document).ready(function() {
  * this returns the last 1 business year in Unix epoch
  * @returns {Array}
  */
-const domain = function () {
+const domain = function (options) {
     const x = [];
-    const now = moment().startOf('day')
-    for (var i = 0; i < 255; i++)
+    const now = options ? moment(options.dateRange.end) : moment();
+    const numDays = options ? now.diff(moment(options.dateRange.start), 'days') + 1 : 255;
+    for (var i = 0; i < numDays; i++)
         x.push(now.clone().subtract(i, 'd').valueOf());
     x.reverse();
     return x;
