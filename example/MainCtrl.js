@@ -1,16 +1,19 @@
 angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", function ($scope, $q, $timeout) {
 
+    /**
+     * security related behavior
+     */
     $scope.securities = [
         {id: 1, label: "T", mean: 0.08, stddev: 0.17, initPrice: 32},
         {id: 2, label: "VZ", mean: 0.05, stddev: 0.15, initPrice: 45},
         {id: 3, label: "GS", mean: 0.03, stddev: 0.23, initPrice: 184}];
+    $scope.addSecurity = function (security) {
+        $scope.apiHandle.api.addSecurity(security);
+    };
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
-    $scope.marketIndexTypeahead = function (userInput) {
-        const d = $q.defer();
-        $timeout(function () {
-            d.resolve([{tag: "snp_500", label: "S&P 500"}, {tag: "fin_cds", label: "Financial CDS"}]);
-        }, 100);
-        return d.promise;
+    $scope.onSecurityRemove = function (id) {
+        $scope.message = "Callback Fired: Security with ID = " + id + " was Removed!";
+        $("#alert").slideDown(500);
     };
     $scope.availableSecurityAttributes = [{tag: "return", label: "Return"}, {
         tag: "price",
@@ -22,24 +25,46 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
             data: simulate(domain(options), attr, security)
         };
     };
+
+    /**
+     * market index simulated behavior
+     */
+    $scope.marketIndexTypeahead = function (userInput) {
+        const d = $q.defer();
+        $timeout(function () {
+            d.resolve([{tag: "snp_500", label: "S&P 500"}, {tag: "fin_cds", label: "Financial CDS"}]);
+        }, 100);
+        return d.promise;
+    };
     $scope.onMarketIndexSelect = function (attr, options) {
         return {
             name: attr.label,
             data: simulate(domain(options), attr, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
         };
     };
-    $scope.onSecurityRemove = function (id) {
-        $scope.message = "Callback Fired: Security with ID = " + id + " was Removed!";
-        $("#alert").slideDown(500);
+
+    /**
+     * custom benchmark simulated behavior
+     */
+    $scope.customBenchmarkOptions = {
+        sectors: ['Sector A', 'Sector B'],
+        wal: [1,3,5,7,10,30],
+        ratings:['A','B','C'],
+        analytics: [{tag: "price", label: "Price"}, {tag: "volume", label: "Volume"}, {tag: "return", label: "Return"}]
     };
+    $scope.onCustomBenchmarkSelect = function (customBenchmark, options) {
+        return {
+            name: [customBenchmark.sector, customBenchmark.wal, customBenchmark.rating, customBenchmark.analytic.tag].join(" "),
+            data: simulate(domain(options), customBenchmark.analytic, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
+        };
+    };
+
+    $scope.apiHandle = {};
+
     $scope.closeAlert = function () {
         $("#alert").slideUp(500);
     };
-    $scope.apiHandle = {};
-    // demo functions
-    $scope.addSecurity = function (security) {
-        $scope.apiHandle.api.addSecurity(security);
-    };
+
 });
 
 // small fix for when cue tip would popup with the title of the chart for no reason ... really distracting

@@ -38,10 +38,10 @@
                                             style="display: inline; width: 12em;" ng-model="start"/></label>
                     <label>To&nbsp;<input type="date" class="form-control"
                                           style="display: inline; width: 12em;" ng-model="end"/></label>
-                    <button class="btn btn-success" ng-click="dateChangeError = apiHandle.api.changeDateRange(start, end)">
+                    <button class="btn btn-success"
+                            ng-click="dateChangeError = apiHandle.api.changeDateRange(start, end)">
                         <i class="fa fa-play"></i>
                     </button>
-                    <p ng-show="dateChangeError">Invalid date range.  Please check and try again.</p>
                 </div>
             </span>
         </span>
@@ -55,11 +55,11 @@
                     <div class="indicator-control floating-form" style="display: none;">
                         <label>
                             Search&nbsp;
-                            <input  type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
+                            <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
                                    style="width: 26em;"
-                                    ng-model="selected"
-                                    typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | limitTo:8"
-                                    typeahead-on-select="addMarketIndicator($item); selected = ''"/>
+                                   ng-model="selected"
+                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | limitTo:8"
+                                   typeahead-on-select="addMarketIndicator($item); selected = ''"/>
                         </label>
                     </div>
                 </span>
@@ -69,25 +69,39 @@
                        ng-click="toggleSlide(!showBenchmarkControl, 'benchmark-control'); showBenchmarkControl = !showBenchmarkControl">
                         <i class="fa fa-plus"></i>&nbsp;Custom Benchmark
                     </a>
-                    <div class="benchmark-control floating-form" style="display: none;">
-                        <!-- TODO implement constructing custom benchmark time series -->
+                    <div class="benchmark-control floating-form" style="display: none;"
+                         ng-init="customBenchmark = {sector: 'Corporates', wal: 'All', rating: 'All', analytic: {tag: 'oas', label:'OAS' }}">
+                        <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger">{{alerts.customBenchmark.message}}</alert>
                         <label>
                             Sector&nbsp;
-                            <input type="text" class="form-control" style="width: initial;"/>
+                            <input type="text" class="form-control" style="width: initial;"
+                                   ng-model="customBenchmark.sector"
+                                   typeahead-editable="false"
+                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue | limitTo:8"/>
                         </label>
                         <label>
                             Rating&nbsp;
-                            <input type="text" class="form-control" style="width: initial;"/>
+                            <input type="text" class="form-control" style="width: initial;"
+                                   ng-model="customBenchmark.rating"
+                                   typeahead-editable="false"
+                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue | limitTo:8"/>
                         </label>
                         <label>
                             WAL&nbsp;
-                            <input type="text" class="form-control" style="width: initial;"/>
+                            <input type="text" class="form-control" style="width: initial;"
+                                   ng-model="customBenchmark.wal"
+                                   typeahead-editable="false"
+                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue | limitTo:8"/>
                         </label>
                         <label>
                             Analytic&nbsp;
-                            <input type="text" class="form-control" style="width: initial;"/>
+                            <input type="text" class="form-control" style="width: initial;"
+                                   ng-model="customBenchmark.analytic"
+                                   typeahead-editable="false"
+                                   typeahead="attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue | limitTo:8"/>
                         </label>
-                        <button class="btn btn-success"><i class="fa fa-play"></i></button>
+                        <button class="btn btn-success" ng-click="addCustomBenchmark(customBenchmark)"><i
+                                class="fa fa-play"></i></button>
                     </div>
                 </span>
             </span>

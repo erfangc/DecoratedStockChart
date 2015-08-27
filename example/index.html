@@ -19,19 +19,26 @@
     <hr/>
     <div class="panel panel-default">
         <div class="panel-body">
-            <decorated-stock-chart securities="securities"
-                                   default-security-attribute="defaultSecurityAttribute"
-                                   available-security-attributes="availableSecurityAttributes"
-                                   on-attribute-select="onAttributeSelect(attr, security, options)"
-                                   highstock-options="highstockOptions"
-                                   on-security-remove="onSecurityRemove(id)"
-                                   title="Example Chart of Stock Prices"
-                                   api-handle="apiHandle"
-                                   market-index-typeahead="marketIndexTypeahead(userInput)"
-                                   on-market-index-select="onMarketIndexSelect(attr, options)"
-                                   start-date="2014-01-01"
-                                   end-date="2015-09-01">
+            <decorated-stock-chart
+                    securities="securities"
+                    available-security-attributes="availableSecurityAttributes"
+                    default-security-attribute="defaultSecurityAttribute"
+                    on-attribute-select="onAttributeSelect(attr, security, options)"
+                    on-security-remove="onSecurityRemove(id)"
 
+                    highstock-options="highstockOptions"
+                    title="Example Chart of Stock Prices"
+
+                    api-handle="apiHandle"
+
+                    market-index-typeahead="marketIndexTypeahead(userInput)"
+                    on-market-index-select="onMarketIndexSelect(attr, options)"
+
+                    custom-benchmark-options="customBenchmarkOptions"
+                    on-custom-benchmark-select="onCustomBenchmarkSelect(customBenchmark, options)"
+
+                    start-date="2014-01-01"
+                    end-date="2015-09-01">
             </decorated-stock-chart>
         </div>
     </div>
