@@ -4,7 +4,7 @@
     <div class="control flex-container"
          ng-init="showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;">
         <!-- security & attributes selection -->
-            <span class="wrappable-flex-item">
+        <span>
                 <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                        style="width: 8em; display: inline;"
                        typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
@@ -13,7 +13,7 @@
                   ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i></a>
         </span>
         <!-- TODO implement these date functionalities -->
-        <span class="wrappable-flex-item">
+        <span>
             <a class="clickable">1M</a>
             &nbsp;
             <a class="clickable">3M</a>
@@ -33,12 +33,14 @@
                                             style="display: inline; width: 12em;" ng-model="dateObjs.start"/></label>
                     <label>To&nbsp;<input type="date" class="form-control"
                                           style="display: inline; width: 12em;" ng-model="dateObjs.end"/></label>
-                    <button class="btn btn-success" ng-click="dateChangeError = apiHandle.api.changeDateRange(dateObjs.start, dateObjs.end)"><i class="fa fa-play"></i></button>
-                    <p ng-show="dateChangeError">Invalid date range.  Please check and try again.</p>
+                    <button class="btn btn-success"
+                            ng-click="dateChangeError = apiHandle.api.changeDateRange(dateObjs.start, dateObjs.end)"><i
+                            class="fa fa-play"></i></button>
+                    <p ng-show="dateChangeError">Invalid date range. Please check and try again.</p>
                 </div>
             </span>
         </span>
-        <span class="wrappable-flex-item">
+        <span>
             <span class="flex-container">
                 <span class="menu-container">
                     <a class="clickable"
@@ -83,6 +85,7 @@
                 </span>
             </span>
         </span>
+        <span><a class="clickable" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></a></span>
     </div>
     <div class="security-control floating-form" style="display: none;">
         <div ng-show="states.securityAttrMap.length === 0">

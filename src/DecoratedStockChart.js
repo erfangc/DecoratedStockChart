@@ -343,6 +343,14 @@
                         return false;
                     };
 
+                    /**
+                     * turn each series's data into a HTML table
+                     * and then export this table to Excel
+                     */
+                    scope.exportXLS = function () {
+                        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(dsc.seriesToHTML(scope.states.chart.series)));
+                    };
+
                     $timeout(function () {
                         /**
                          * initialization & initial rendering

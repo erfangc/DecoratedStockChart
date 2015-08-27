@@ -81,3 +81,9 @@ div.floating-form {
 .clickable {
     cursor: pointer;
 }
+
+.spinner {
+    position: absolute;
+    left: 50%;
+    z-index: 5;
+}
