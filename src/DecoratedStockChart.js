@@ -1,6 +1,6 @@
 (function () {
     angular.module("decorated-stock-chart", ['ui.bootstrap'])
-        .directive("decoratedStockChart", function ($q, $timeout) {
+        .directive("decoratedStockChart", function ($timeout) {
             return {
                 scope: {
                     securities: "=",
@@ -165,7 +165,7 @@
                          * @param start
                          * @param end
                          *
-                         * @returns true if there was an error
+                         * @returns boolean if there was an error
                          */
                         changeDateRange: function (start, end) {
                             // Validate date
