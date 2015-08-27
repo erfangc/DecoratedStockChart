@@ -53,24 +53,23 @@
                         /**
                          * to hold the Highstock object
                          */
-                        chart: null
+                        chart: null,
+                        /**
+                         * Object of passed in user date representaitons (string or number) transformed to Date objects
+                         * @type {{start: Date, end: Date}}
+                         */
+                        dateRange: {
+                            start: scope.startDate && scope.endDate ?
+                                new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
+                            end: scope.startDate && scope.endDate ?
+                                new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
+                        }
                     };
 
                     // disable default right-click triggered context menu
                     elem.bind('contextmenu', function () {
                         return false;
                     });
-
-                    /**
-                     * Object of passed in user date representaitons (string or number) transformed to Date objects
-                     * @type {{start: Date, end: Date}}
-                     */
-                    scope.dateObjs = {
-                        start: scope.startDate && scope.endDate ?
-                            new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
-                        end: scope.startDate && scope.endDate ?
-                            new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
-                    };
 
                     /**
                      * define the API exposed to the parent component
@@ -98,7 +97,7 @@
                          * remove a security by ID
                          * @param id
                          */
-                        removeSecurity: function (id) {
+                        removeSecurity: function (id, supressCallback) {
                             // remove the security with this ID from state
                             const idx = _.findIndex(scope.states.securityAttrMap, function (securityAttrPair) {
                                 return securityAttrPair[0].id == id;
@@ -117,7 +116,7 @@
                             });
 
                             // fire callback if provided
-                            if (_.isFunction(scope.onSecurityRemove))
+                            if (_.isFunction(scope.onSecurityRemove) && !supressCallback)
                                 scope.onSecurityRemove({id: id});
                         },
                         /**
@@ -132,7 +131,15 @@
                             if( !start || !end || start >= end){
                                 return true;
                             }
-                            scope.states.chart.xAxis[0].setExtremes(new Date(start).getTime(), new Date(end).getTime());
+                            const handle = this;
+                            scope.states.dateRange.start = start;
+                            scope.states.dateRange.end = end;
+                            // We need to copy the security attr map as it will be malformed as we iterate over it
+                            const securityAttrMapCopy = angular.copy(scope.states.securityAttrMap);
+                            _.each(securityAttrMapCopy, function(pair){
+                                handle.removeSecurity(pair[0].id, true);
+                                handle.addSecurity(pair[0]);
+                            });
                         }
                     };
 
@@ -237,7 +244,11 @@
                     scope.addAttr = function ($item, securityAttrPair) {
                         securityAttrPair[1].push($item);
                         scope.isProcessing = true;
-                        const result = scope.onAttributeSelect({attr: $item, security: securityAttrPair[0]});
+                        const result = scope.onAttributeSelect({
+                            attr: $item,
+                            security: securityAttrPair[0],
+                            options: {dateRange: scope.states.dateRange}
+                        });
 
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
@@ -334,7 +345,6 @@
                         _.each(scope.securities, function (security) {
                             scope.apiHandle.api.addSecurity(security);
                         });
-                        scope.apiHandle.api.changeDateRange(scope.dateObjs.start, scope.dateObjs.end);
                     });
                 },
                 templateUrl: "DecoratedStockChart.html"

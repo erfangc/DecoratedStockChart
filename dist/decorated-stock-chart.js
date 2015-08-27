@@ -53,7 +53,17 @@
                         /**
                          * to hold the Highstock object
                          */
-                        chart: null
+                        chart: null,
+                        /**
+                         * Object of passed in user date representaitons (string or number) transformed to Date objects
+                         * @type {{start: Date, end: Date}}
+                         */
+                        dateRange: {
+                            start: scope.startDate && scope.endDate ?
+                                new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
+                            end: scope.startDate && scope.endDate ?
+                                new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
+                        }
                     };
 
                     // disable default right-click triggered context menu
@@ -62,22 +72,9 @@
                     });
 
                     /**
-                     * Object of passed in user date representaitons (string or number) transformed to Date objects
-                     * @type {{start: Date, end: Date}}
-                     */
-                    scope.dateObjs = {
-                        start: scope.startDate && scope.endDate ?
-                            new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
-                        end: scope.startDate && scope.endDate ?
-                            new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
-                    };
-
-                    /**
                      * define the API exposed to the parent component
                      */
                     scope.apiHandle.api = {
-                        startDate: scope.startDate && scope.endDate ? scope.startDate : null,
-                        endDate: scope.startDate && scope.endDate ? scope.endDate : null,
                         /**
                          * add a security
                          * @param security
@@ -100,7 +97,7 @@
                          * remove a security by ID
                          * @param id
                          */
-                        removeSecurity: function (id) {
+                        removeSecurity: function (id, supressCallback) {
                             // remove the security with this ID from state
                             const idx = _.findIndex(scope.states.securityAttrMap, function (securityAttrPair) {
                                 return securityAttrPair[0].id == id;
@@ -119,7 +116,7 @@
                             });
 
                             // fire callback if provided
-                            if (_.isFunction(scope.onSecurityRemove))
+                            if (_.isFunction(scope.onSecurityRemove) && !supressCallback)
                                 scope.onSecurityRemove({id: id});
                         },
                         /**
@@ -134,7 +131,15 @@
                             if( !start || !end || start >= end){
                                 return true;
                             }
-                            scope.states.chart.xAxis[0].setExtremes(new Date(start).getTime(), new Date(end).getTime());
+                            const handle = this;
+                            scope.states.dateRange.start = start;
+                            scope.states.dateRange.end = end;
+                            // We need to copy the security attr map as it will be malformed as we iterate over it
+                            const securityAttrMapCopy = angular.copy(scope.states.securityAttrMap);
+                            _.each(securityAttrMapCopy, function(pair){
+                                handle.removeSecurity(pair[0].id, true);
+                                handle.addSecurity(pair[0]);
+                            });
                         }
                     };
 
@@ -239,7 +244,11 @@
                     scope.addAttr = function ($item, securityAttrPair) {
                         securityAttrPair[1].push($item);
                         scope.isProcessing = true;
-                        const result = scope.onAttributeSelect({attr: $item, security: securityAttrPair[0]});
+                        const result = scope.onAttributeSelect({
+                            attr: $item,
+                            security: securityAttrPair[0],
+                            options: {dateRange: scope.states.dateRange}
+                        });
 
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
@@ -336,7 +345,6 @@
                         _.each(scope.securities, function (security) {
                             scope.apiHandle.api.addSecurity(security);
                         });
-                        scope.apiHandle.api.changeDateRange(scope.dateObjs.start, scope.dateObjs.end);
                     });
                 },
                 templateUrl: "DecoratedStockChart.html"
@@ -724,4 +732,4 @@
         return $dropdown;
     };
 }());
-angular.module("decorated-stock-chart").run(["$templateCache", function($templateCache) {$templateCache.put("DecoratedStockChart.html","<div class=\"root\" style=\"position: relative\">\r\n    <i ng-show=\"isProcessing\" style=\"position: absolute; left: 50%; z-index: 5\" class=\"fa fa-spinner fa-spin fa-3x\"></i>\r\n\r\n    <div class=\"control flex-container\"\r\n         ng-init=\"showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;\">\r\n        <!-- security & attributes selection -->\r\n            <span class=\"wrappable-flex-item\">\r\n                <input type=\"text\" ng-model=\"defaultSecurityAttribute\" class=\"form-control\"\r\n                       style=\"width: 8em; display: inline;\"\r\n                       typeahead=\"attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8\"/>\r\n            <a><i ng-click=\"toggleSlide(!showSecurityControl, \'security-control\'); showSecurityControl = !showSecurityControl\"\r\n                  class=\"fa clickable\"\r\n                  ng-class=\"{\'fa-chevron-up\': showSecurityControl, \'fa-chevron-down\': !showSecurityControl}\"></i></a>\r\n        </span>\r\n        <!-- TODO implement these date functionalities -->\r\n        <span class=\"wrappable-flex-item\">\r\n            <a class=\"clickable\">1M</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">3M</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">6M</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">1Y</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">2Y</a>\r\n            &nbsp;\r\n            <span ng-init=\"showDateControl = false\">\r\n                <a class=\"clickable\"\r\n                   ng-click=\"toggleSlide(!showDateControl, \'date-control\'); showDateControl = !showDateControl; dateChangeError = false\"><i\r\n                        class=\"fa fa-calendar\"></i></a>\r\n                <div class=\"date-control floating-form\" style=\"display: none;\">\r\n                    <label>From&nbsp;<input type=\"date\" class=\"form-control\"\r\n                                            style=\"display: inline; width: 12em;\" ng-model=\"dateObjs.start\"/></label>\r\n                    <label>To&nbsp;<input type=\"date\" class=\"form-control\"\r\n                                          style=\"display: inline; width: 12em;\" ng-model=\"dateObjs.end\"/></label>\r\n                    <button class=\"btn btn-success\" ng-click=\"dateChangeError = apiHandle.api.changeDateRange(dateObjs.start, dateObjs.end)\"><i class=\"fa fa-play\"></i></button>\r\n                    <p ng-show=\"dateChangeError\">Invalid date range.  Please check and try again.</p>\r\n                </div>\r\n            </span>\r\n        </span>\r\n        <span class=\"wrappable-flex-item\">\r\n            <span class=\"flex-container\">\r\n                <span class=\"menu-container\">\r\n                    <a class=\"clickable\"\r\n                       ng-click=\"toggleSlide(!showIndicatorControl,\'indicator-control\'); showIndicatorControl = !showIndicatorControl\">\r\n                        <i class=\"fa fa-plus\"></i>&nbsp;Macro Indicator &amp; Market Index\r\n                    </a>\r\n                    <div class=\"indicator-control floating-form\" style=\"display: none; left: -100%\">\r\n                        <label>\r\n                            Search&nbsp;\r\n                            <input type=\"text\" placeholder=\"ex: S&P 500, Financial CDS ...\" class=\"form-control\"\r\n                                   style=\"width: 26em;\"/>\r\n                            <!-- TODO implement searching for macro indicators etc through callback -->\r\n                        </label>\r\n                    </div>\r\n                </span>\r\n                <span> &nbsp; </span>\r\n                <span class=\"menu-container\">\r\n                    <a class=\"clickable\"\r\n                       ng-click=\"toggleSlide(!showBenchmarkControl, \'benchmark-control\'); showBenchmarkControl = !showBenchmarkControl\">\r\n                        <i class=\"fa fa-plus\"></i>&nbsp;Custom Benchmark\r\n                    </a>\r\n                    <div class=\"benchmark-control floating-form\" style=\"display: none; left: -100%;\">\r\n                        <!-- TODO implement constructing custom benchmark time series -->\r\n                        <label>\r\n                            Sector&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <label>\r\n                            Rating&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <label>\r\n                            WAL&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <label>\r\n                            Analytic&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <button class=\"btn btn-success\"><i class=\"fa fa-play\"></i></button>\r\n                    </div>\r\n                </span>\r\n            </span>\r\n        </span>\r\n    </div>\r\n    <div class=\"security-control floating-form\" style=\"display: none;\">\r\n        <div ng-show=\"states.securityAttrMap.length === 0\">\r\n            <h5>No Security Selected</h5>\r\n        </div>\r\n        <div class=\"flex-container\">\r\n            <div class=\"wrappable-flex-item\" ng-repeat=\"securityAttrPair in states.securityAttrMap\">\r\n                <!-- selected attributes display -->\r\n                    <span class=\"label label-success\">{{securityAttrPair[0].label}} | <i class=\"fa fa-remove clickable\"\r\n                                                                                         ng-click=\"apiHandle.api.removeSecurity(securityAttrPair[0].id)\"></i></span>\r\n                    <span class=\"label label-primary\" ng-repeat=\"attr in securityAttrPair[1]\">\r\n                            {{attr.label}} | <i class=\"fa fa-remove clickable\"\r\n                                                ng-click=\"removeAttr(attr, securityAttrPair)\"></i>\r\n                    </span>\r\n                <!-- input to select more attributes-->\r\n                &nbsp;\r\n                <input type=\"text\"\r\n                       placeholder=\"+ Attribute\"\r\n                       ng-disabled=\"securityAttrPair[1].length >= 2\"\r\n                       ng-model=\"selected\"\r\n                       typeahead=\"attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8\"\r\n                       class=\"form-control\"\r\n                       style=\"width: 8em; display: inline;\"\r\n                       typeahead-on-select=\"addAttr($item, securityAttrPair); selected = \'\'\">\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <hr/>\r\n    <div ng-attr-id=\"{{\'enriched-highstock-\'+id}}\" class=\"row\">\r\n        <!-- this is where the stock chart goes -->\r\n    </div>\r\n</div>\r\n");}]);
+angular.module("decorated-stock-chart").run(["$templateCache", function($templateCache) {$templateCache.put("DecoratedStockChart.html","<div class=\"root\" style=\"position: relative\">\r\n    <i ng-show=\"isProcessing\" style=\"position: absolute; left: 50%; z-index: 5\" class=\"fa fa-spinner fa-spin fa-3x\"></i>\r\n\r\n    <div class=\"control flex-container\"\r\n         ng-init=\"showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;\">\r\n        <!-- security & attributes selection -->\r\n            <span class=\"wrappable-flex-item\">\r\n                <input type=\"text\" ng-model=\"defaultSecurityAttribute\" class=\"form-control\"\r\n                       style=\"width: 8em; display: inline;\"\r\n                       typeahead=\"attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8\"/>\r\n            <a><i ng-click=\"toggleSlide(!showSecurityControl, \'security-control\'); showSecurityControl = !showSecurityControl\"\r\n                  class=\"fa clickable\"\r\n                  ng-class=\"{\'fa-chevron-up\': showSecurityControl, \'fa-chevron-down\': !showSecurityControl}\"></i></a>\r\n        </span>\r\n        <!-- TODO implement these date functionalities -->\r\n        <span class=\"wrappable-flex-item\">\r\n            <a class=\"clickable\">1M</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">3M</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">6M</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">1Y</a>\r\n            &nbsp;\r\n            <a class=\"clickable\">2Y</a>\r\n            &nbsp;\r\n            <span ng-init=\"showDateControl = false\">\r\n                <a class=\"clickable\"\r\n                   ng-click=\"toggleSlide(!showDateControl, \'date-control\');\r\n                             showDateControl = !showDateControl;\r\n                             dateChangeError = false;\r\n                             startDate = states.dateRange.start;\r\n                             endDate = states.dateRange.end\">\r\n                    <i class=\"fa fa-calendar\"></i>\r\n                </a>\r\n                <div class=\"date-control floating-form\" style=\"display: none;\">\r\n                    <label>From&nbsp;<input type=\"date\" class=\"form-control\"\r\n                                            style=\"display: inline; width: 12em;\" ng-model=\"startDate\"/></label>\r\n                    <label>To&nbsp;<input type=\"date\" class=\"form-control\"\r\n                                          style=\"display: inline; width: 12em;\" ng-model=\"endDate\"/></label>\r\n                    <button class=\"btn btn-success\" ng-click=\"dateChangeError = apiHandle.api.changeDateRange(startDate, endDate)\">\r\n                        <i class=\"fa fa-play\"></i>\r\n                    </button>\r\n                    <p ng-show=\"dateChangeError\">Invalid date range.  Please check and try again.</p>\r\n                </div>\r\n            </span>\r\n        </span>\r\n        <span class=\"wrappable-flex-item\">\r\n            <span class=\"flex-container\">\r\n                <span class=\"menu-container\">\r\n                    <a class=\"clickable\"\r\n                       ng-click=\"toggleSlide(!showIndicatorControl,\'indicator-control\'); showIndicatorControl = !showIndicatorControl\">\r\n                        <i class=\"fa fa-plus\"></i>&nbsp;Macro Indicator &amp; Market Index\r\n                    </a>\r\n                    <div class=\"indicator-control floating-form\" style=\"display: none; left: -100%\">\r\n                        <label>\r\n                            Search&nbsp;\r\n                            <input type=\"text\" placeholder=\"ex: S&P 500, Financial CDS ...\" class=\"form-control\"\r\n                                   style=\"width: 26em;\"/>\r\n                            <!-- TODO implement searching for macro indicators etc through callback -->\r\n                        </label>\r\n                    </div>\r\n                </span>\r\n                <span> &nbsp; </span>\r\n                <span class=\"menu-container\">\r\n                    <a class=\"clickable\"\r\n                       ng-click=\"toggleSlide(!showBenchmarkControl, \'benchmark-control\'); showBenchmarkControl = !showBenchmarkControl\">\r\n                        <i class=\"fa fa-plus\"></i>&nbsp;Custom Benchmark\r\n                    </a>\r\n                    <div class=\"benchmark-control floating-form\" style=\"display: none; left: -100%;\">\r\n                        <!-- TODO implement constructing custom benchmark time series -->\r\n                        <label>\r\n                            Sector&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <label>\r\n                            Rating&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <label>\r\n                            WAL&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <label>\r\n                            Analytic&nbsp;\r\n                            <input type=\"text\" class=\"form-control\"/>\r\n                        </label>\r\n                        <button class=\"btn btn-success\"><i class=\"fa fa-play\"></i></button>\r\n                    </div>\r\n                </span>\r\n            </span>\r\n        </span>\r\n    </div>\r\n    <div class=\"security-control floating-form\" style=\"display: none;\">\r\n        <div ng-show=\"states.securityAttrMap.length === 0\">\r\n            <h5>No Security Selected</h5>\r\n        </div>\r\n        <div class=\"flex-container\">\r\n            <div class=\"wrappable-flex-item\" ng-repeat=\"securityAttrPair in states.securityAttrMap\">\r\n                <!-- selected attributes display -->\r\n                    <span class=\"label label-success\">{{securityAttrPair[0].label}} | <i class=\"fa fa-remove clickable\"\r\n                                                                                         ng-click=\"apiHandle.api.removeSecurity(securityAttrPair[0].id)\"></i></span>\r\n                    <span class=\"label label-primary\" ng-repeat=\"attr in securityAttrPair[1]\">\r\n                            {{attr.label}} | <i class=\"fa fa-remove clickable\"\r\n                                                ng-click=\"removeAttr(attr, securityAttrPair)\"></i>\r\n                    </span>\r\n                <!-- input to select more attributes-->\r\n                &nbsp;\r\n                <input type=\"text\"\r\n                       placeholder=\"+ Attribute\"\r\n                       ng-disabled=\"securityAttrPair[1].length >= 2\"\r\n                       ng-model=\"selected\"\r\n                       typeahead=\"attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8\"\r\n                       class=\"form-control\"\r\n                       style=\"width: 8em; display: inline;\"\r\n                       typeahead-on-select=\"addAttr($item, securityAttrPair); selected = \'\'\">\r\n\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <hr/>\r\n    <div ng-attr-id=\"{{\'enriched-highstock-\'+id}}\" class=\"row\">\r\n        <!-- this is where the stock chart goes -->\r\n    </div>\r\n</div>\r\n");}]);
