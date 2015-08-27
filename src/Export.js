@@ -15,7 +15,7 @@
                 return "<th style='background-color: #0069d6; color: #ffffff;'>" + s.name + "</th>";
             }).join("") + "</tr>";
         // construct a union of all X values
-        const categories = _.chain(series).map(function (s) {
+        const domain = _.chain(series).map(function (s) {
             return _.map(s.data, function (datum) {
                 return datum.x;
             });
@@ -27,11 +27,11 @@
             }).object().value();
         });
         // turn the lookup map into HTML
-        const body = _.map(categories, function (cat) {
+        const body = _.map(domain, function (x) {
             return "<tr>" +
-                "<td style='background-color: #999999'>" + moment(cat).format("YYYY-MM-DD") + "</td>" +
+                "<td style='background-color: #999999'>" + moment(x).format("YYYY-MM-DD") + "</td>" +
                 _.map(matrix, function (col) {
-                    return "<td>" + col[cat] || 0 + "</td>";
+                    return "<td>" + col[x] || 0 + "</td>";
                 }).join("")
                 + "</tr>";
         }).join("\n");
