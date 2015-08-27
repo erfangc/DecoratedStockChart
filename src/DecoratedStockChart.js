@@ -63,9 +63,9 @@
                          */
                         dateRange: {
                             start: scope.startDate && scope.endDate ?
-                                new Date(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate) : null,
+                                moment(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate).toDate() : null,
                             end: scope.startDate && scope.endDate ?
-                                new Date(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate) : null
+                                moment(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate).toDate() : null
                         }
                     };
 
@@ -100,7 +100,7 @@
                          * remove a security by ID
                          * @param id
                          */
-                        removeSecurity: function (id, supressCallback) {
+                        removeSecurity: function (id) {
                             // remove the security with this ID from state
                             const idx = _.findIndex(scope.states.securityAttrMap, function (securityAttrPair) {
                                 return securityAttrPair[0].id == id;
@@ -119,7 +119,7 @@
                             });
 
                             // fire callback if provided
-                            if (_.isFunction(scope.onSecurityRemove) && !supressCallback)
+                            if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
                         },
                         /**
@@ -134,14 +134,12 @@
                             if (!start || !end || start >= end) {
                                 return true;
                             }
-                            const handle = this;
                             scope.states.dateRange.start = start;
                             scope.states.dateRange.end = end;
-                            // We need to copy the security attr map as it will be malformed as we iterate over it
-                            const securityAttrMapCopy = angular.copy(scope.states.securityAttrMap);
-                            _.each(securityAttrMapCopy, function(pair){
-                                handle.removeSecurity(pair[0].id, true);
-                                handle.addSecurity(pair[0]);
+                            _.each(scope.states.securityAttrMap, function(pair){
+                                _.each(pair[1], function(attribute){
+                                    scope.addAttr(attribute,[pair[0], []]);
+                                });
                             });
                         }
                     };
@@ -261,7 +259,12 @@
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
-                            scope.addSeries(series);
+                            // Update the data it if it already exists
+                            if( scope.states.chart.get(series.id) )
+                                scope.states.chart.get(series.id).setData(series.data);
+                            else
+                                scope.addSeries(series);
+
                             scope.isProcessing = false;
                         }
 

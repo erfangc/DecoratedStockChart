@@ -29,16 +29,16 @@
                    ng-click="toggleSlide(!showDateControl, 'date-control');
                              showDateControl = !showDateControl;
                              dateChangeError = false;
-                             startDate = states.dateRange.start;
-                             endDate = states.dateRange.end">
+                             start = states.dateRange.start;
+                             end = states.dateRange.end">
                     <i class="fa fa-calendar"></i>
                 </a>
                 <div class="date-control floating-form" style="display: none;">
                     <label>From&nbsp;<input type="date" class="form-control"
-                                            style="display: inline; width: 12em;" ng-model="startDate"/></label>
+                                            style="display: inline; width: 12em;" ng-model="start"/></label>
                     <label>To&nbsp;<input type="date" class="form-control"
-                                          style="display: inline; width: 12em;" ng-model="endDate"/></label>
-                    <button class="btn btn-success" ng-click="dateChangeError = apiHandle.api.changeDateRange(startDate, endDate)">
+                                          style="display: inline; width: 12em;" ng-model="end"/></label>
+                    <button class="btn btn-success" ng-click="dateChangeError = apiHandle.api.changeDateRange(start, end)">
                         <i class="fa fa-play"></i>
                     </button>
                     <p ng-show="dateChangeError">Invalid date range.  Please check and try again.</p>
