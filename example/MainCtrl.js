@@ -1,10 +1,17 @@
-angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", function ($scope) {
+angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", function ($scope, $q, $timeout) {
 
     $scope.securities = [
         {id: 1, label: "T", mean: 0.08, stddev: 0.17, initPrice: 32},
         {id: 2, label: "VZ", mean: 0.05, stddev: 0.15, initPrice: 45},
         {id: 3, label: "GS", mean: 0.03, stddev: 0.23, initPrice: 184}];
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
+    $scope.marketIndexTypeahead = function (userInput) {
+        const d = $q.defer();
+        $timeout(function () {
+            d.resolve([{tag: "snp_500", label: "S&P 500"}, {tag: "fin_cds", label: "Financial CDS"}]);
+        }, 100);
+        return d.promise;
+    };
     $scope.availableSecurityAttributes = [{tag: "return", label: "Return"}, {
         tag: "price",
         label: "Price"
@@ -13,6 +20,12 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         return {
             name: security.label + " " + attr.label,
             data: simulate(domain(options), attr, security)
+        };
+    };
+    $scope.onMarketIndexSelect = function (attr, options) {
+        return {
+            name: attr.label,
+            data: simulate(domain(options), attr, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
         };
     };
     $scope.onSecurityRemove = function (id) {
@@ -30,7 +43,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
 });
 
 // small fix for when cue tip would popup with the title of the chart for no reason ... really distracting
-$(document).ready(function() {
+$(document).ready(function () {
     $('[title]').mouseover(function () {
         $this = $(this);
         $this.data('title', $this.attr('title'));
@@ -81,8 +94,9 @@ function nextRandomWalk(drift, vol) {
  * @param domain
  * @param attr
  * @param security
+ * @param isMktIdx
  */
-function simulate(domain, attr, security) {
+function simulate(domain, attr, security, isMktIdx) {
 
     /**
      * if the requested attribute is Volume, then return really large numbers
@@ -103,6 +117,6 @@ function simulate(domain, attr, security) {
         return range;
     }
 
-    return _.zip(domain, attr.tag === 'price' ? genReturnLikeSeries(false) : genReturnLikeSeries(true));
+    return _.zip(domain, attr.tag === 'price' || isMktIdx ? genReturnLikeSeries(false) : genReturnLikeSeries(true));
 }
 

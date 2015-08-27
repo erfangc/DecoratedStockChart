@@ -1,6 +1,6 @@
 (function () {
     angular.module("decorated-stock-chart", ['ui.bootstrap'])
-        .directive("decoratedStockChart", function ($timeout) {
+        .directive("decoratedStockChart", function ($q, $timeout) {
             return {
                 scope: {
                     securities: "=",
@@ -34,6 +34,16 @@
                      */
                     onDefaultAttributeChange: "&",
                     /**
+                     * a expression that returns a promise, resolves to an array
+                     * of market index metadata objects. for example { label: XXX, tag: xxx }
+                     */
+                    marketIndexTypeahead: "&",
+                    /**
+                     * a expression that must return a promise that resolves to a Highchart.Series object
+                     * or returns a Highchart.Series object directly
+                     */
+                    onMarketIndexSelect: "&",
+                    /**
                      * options object for the underlying Highstock object
                      */
                     highstockOptions: "=",
@@ -66,13 +76,41 @@
                                 moment(scope.startDate == parseInt(scope.startDate) ? parseInt(scope.startDate) : scope.startDate).toDate() : null,
                             end: scope.startDate && scope.endDate ?
                                 moment(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate).toDate() : null
-                        }
+                        },
+                        marketIndices: []
                     };
 
                     // disable default right-click triggered context menu
                     elem.bind('contextmenu', function () {
                         return false;
                     });
+
+                    scope.addMarketIndicator = function ($item) {
+                        const result = scope.onMarketIndexSelect({
+                            attr: $item,
+                            options: {dateRange: scope.states.dateRange}
+                        });
+
+                        function processSeries(series) {
+                            series.id = $item.tag;
+                            // Update the data it if it already exists
+                            if (scope.states.chart.get(series.id))
+                                scope.states.chart.get(series.id).setData(series.data);
+                            else
+                                scope.addSeries(series);
+                            scope.isProcessing = false;
+                            scope.states.marketIndices.push($item);
+                        }
+
+                        if (result && angular.isFunction(result.then))
+                            result.then(function (series) {
+                                processSeries(series);
+                            }, function () {
+                                scope.isProcessing = false;
+                            });
+                        else
+                            processSeries(result);
+                    };
 
                     /**
                      * define the API exposed to the parent component
@@ -131,16 +169,18 @@
                          */
                         changeDateRange: function (start, end) {
                             // Validate date
-                            if (!start || !end || start >= end) {
+                            if (!start || !end || start >= end)
                                 return true;
-                            }
                             scope.states.dateRange.start = start;
                             scope.states.dateRange.end = end;
-                            _.each(scope.states.securityAttrMap, function(pair){
-                                _.each(pair[1], function(attribute){
-                                    scope.addAttr(attribute,[pair[0], []]);
+                            // Update all security attributes
+                            _.each(scope.states.securityAttrMap, function (pair) {
+                                _.each(pair[1], function (attribute) {
+                                    scope.addAttr(attribute, [pair[0], []]);
                                 });
                             });
+                            // Update all market indicators
+                            _.each(scope.states.marketIndices, scope.addMarketIndicator);
                         }
                     };
 
@@ -260,7 +300,7 @@
                                 scope.removeAttr($item, securityAttrPair);
                             };
                             // Update the data it if it already exists
-                            if( scope.states.chart.get(series.id) )
+                            if (scope.states.chart.get(series.id))
                                 scope.states.chart.get(series.id).setData(series.data);
                             else
                                 scope.addSeries(series);
@@ -347,14 +387,6 @@
                         }
                         else
                             $ctrl.slideUp(500);
-                    };
-
-                    scope.changeDate = function () {
-                        if (!scope.states.startDate || !scope.states.endDate || scope.states.startDate >= scope.states.endDate) {
-                            return true;
-                        }
-                        scope.states.chart.xAxis[0].update(setDefinedDateRange(scope.states.startDate, scope.states.endDate).xAxis);
-                        return false;
                     };
 
                     /**

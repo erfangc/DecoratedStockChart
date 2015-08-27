@@ -55,9 +55,11 @@
                     <div class="indicator-control floating-form" style="display: none;">
                         <label>
                             Search&nbsp;
-                            <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
-                                   style="width: 26em;"/>
-                            <!-- TODO implement searching for macro indicators etc through callback -->
+                            <input  type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
+                                   style="width: 26em;"
+                                    ng-model="selected"
+                                    typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | limitTo:8"
+                                    typeahead-on-select="addMarketIndicator($item); selected = ''"/>
                         </label>
                     </div>
                 </span>
