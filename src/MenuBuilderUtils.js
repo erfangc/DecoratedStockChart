@@ -14,11 +14,11 @@
      */
     root.dsc.buildContextMenuContainer = function (elem) {
         const $ctxMenu = $(
-            "<div style='position: fixed; z-index: 10;'>" +
+            "<div style='z-index: 10; position: fixed;'>" +
             "<ul class='clickable dropdown-menu multi-level' style='display: block;'></ul>" +
             "</div>"
         ).hide();
-        $ctxMenu.prependTo(elem);
+        $ctxMenu.prependTo(elem.children(".root"));
         elem.click(function () {
             $ctxMenu.hide();
         });
@@ -41,11 +41,7 @@
         _.each(dsc.buildMenuItems(args), function (menuItem) {
             $ctxMenu.children(".dropdown-menu").append(menuItem);
         });
-        $ctxMenu.css({
-            top: event.clientY + "px",
-            left: event.clientX + "px"
-        });
-        $ctxMenu.show();
+        dsc.showCtxMenu($ctxMenu, event);
         return false;
     };
 

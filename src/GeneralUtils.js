@@ -71,13 +71,40 @@
         if (scope.states.chart.yAxis.length > 1
             && axis.userOptions.id != scope.states.chart.yAxis[0].userOptions.id)
             $ctxMenu.children(".dropdown-menu").append(removeAxis());
-        $ctxMenu.css({
-            top: event.clientY + "px",
-            left: event.clientX + "px"
-        });
+
+        dsc.showCtxMenu($ctxMenu, event);
         // focus on the edit axis title input
-        $ctxMenu.show();
         $ctxMenu.find("input.form-control").select();
+    };
+
+    /**
+     * show the given context menu by figuring out the proper position
+     * so that it does not appear off-screen
+     * @param $ctxMenu
+     * @param event
+     */
+    root.dsc.showCtxMenu = function ($ctxMenu, event) {
+        $ctxMenu.show();
+        const $rootDiv = $('div.root');
+
+        const ctnRight = $rootDiv.position().left + $rootDiv.width();
+        const menuRight = event.clientX + $ctxMenu.children().width();
+
+        const ctnBtm = $rootDiv.position().top + $rootDiv.height();
+        const menuBtm = event.clientY + $ctxMenu.children().height();
+
+        var left = event.clientX;
+        if (menuRight > ctnRight)
+            left = event.clientX - $ctxMenu.children().width();
+
+        var top = event.clientY;
+        if (menuBtm > ctnBtm)
+            top = event.clientY - $ctxMenu.children().height();
+
+        $ctxMenu.css({
+            top: top + "px",
+            left: left + "px"
+        });
     };
 
     /**

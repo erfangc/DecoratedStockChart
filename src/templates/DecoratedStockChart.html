@@ -52,7 +52,7 @@
                        ng-click="toggleSlide(!showIndicatorControl,'indicator-control'); showIndicatorControl = !showIndicatorControl">
                         <i class="fa fa-plus"></i>&nbsp;Macro Indicator &amp; Market Index
                     </a>
-                    <div class="indicator-control floating-form" style="display: none; left: -100%">
+                    <div class="indicator-control floating-form" style="display: none;">
                         <label>
                             Search&nbsp;
                             <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
@@ -67,23 +67,23 @@
                        ng-click="toggleSlide(!showBenchmarkControl, 'benchmark-control'); showBenchmarkControl = !showBenchmarkControl">
                         <i class="fa fa-plus"></i>&nbsp;Custom Benchmark
                     </a>
-                    <div class="benchmark-control floating-form" style="display: none; left: -100%;">
+                    <div class="benchmark-control floating-form" style="display: none;">
                         <!-- TODO implement constructing custom benchmark time series -->
                         <label>
                             Sector&nbsp;
-                            <input type="text" class="form-control"/>
+                            <input type="text" class="form-control" style="width: initial;"/>
                         </label>
                         <label>
                             Rating&nbsp;
-                            <input type="text" class="form-control"/>
+                            <input type="text" class="form-control" style="width: initial;"/>
                         </label>
                         <label>
                             WAL&nbsp;
-                            <input type="text" class="form-control"/>
+                            <input type="text" class="form-control" style="width: initial;"/>
                         </label>
                         <label>
                             Analytic&nbsp;
-                            <input type="text" class="form-control"/>
+                            <input type="text" class="form-control" style="width: initial;"/>
                         </label>
                         <button class="btn btn-success"><i class="fa fa-play"></i></button>
                     </div>
