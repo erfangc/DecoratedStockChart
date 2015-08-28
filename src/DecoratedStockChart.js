@@ -1,4 +1,15 @@
 (function () {
+
+    if (typeof String.prototype.endsWith !== 'function') {
+        String.prototype.endsWith = function(suffix) {
+            return this.indexOf(suffix, this.length - suffix.length) !== -1;
+        };
+    }
+
+    const $script = $("script[src]");
+    const src = $script[$script.length - 1].src;
+    const scriptFolder = src.substr(0, src.lastIndexOf("/") + 1);
+
     angular.module("decorated-stock-chart", ['ui.bootstrap'])
         .directive("decoratedStockChart", function ($timeout) {
             return {
@@ -469,7 +480,7 @@
                         });
                     });
                 },
-                templateUrl: "DecoratedStockChart.html"
+                templateUrl: scriptFolder.endsWith("src/") ? scriptFolder + "/templates/DecoratedStockChart.html" : "DecoratedStockChart.html"
             };
         });
 }());

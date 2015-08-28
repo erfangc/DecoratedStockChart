@@ -16,6 +16,7 @@
   "ignore": [
     "**/.*",
     "node_modules",
+    "src",
     "bower_components",
     "test",
     "tests"
@@ -27,9 +28,7 @@
     "Custom-Events": "https://github.com/blacklabel/custom_events.git#~1.1.1",
     "highstock-release": "~2.1.8",
     "underscore": "~1.8.3",
-    "font-awesome": "~4.4.0"
-  },
-  "devDependencies": {
+    "font-awesome": "~4.4.0",
     "moment": "~2.10.6"
   }
 }
