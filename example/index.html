@@ -18,7 +18,7 @@
     <h1>Demo</h1>
     <hr/>
     <div class="panel panel-default">
-        <div class="panel-body">
+        <div>
             <decorated-stock-chart
                     securities="securities"
                     available-security-attributes="availableSecurityAttributes"
@@ -49,7 +49,7 @@
             <button class="btn btn-success" ng-click="addSecurity(security)"><i class="fa fa-plus"></i>
                 {{security.label}}
             </button>&nbsp;
-        </span>
+        </span>`
         <span ng-repeat="security in securities">
             <button class="btn btn-danger" ng-click="apiHandle.api.removeSecurity(security.id)"><i
                     class="fa fa-minus"></i>
