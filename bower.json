@@ -29,6 +29,7 @@
     "highstock-release": "~2.1.8",
     "underscore": "~1.8.3",
     "font-awesome": "~4.4.0",
-    "moment": "~2.10.6"
+    "moment": "~2.10.6",
+    "typeahead-focus": "https://github.com/caguthrie/typeaheadFocus.git"
   }
 }

@@ -60,7 +60,8 @@
                                    style="width: 26em;"
                                    ng-model="selected"
                                    typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | limitTo:8"
-                                   typeahead-on-select="addMarketIndicator($item); selected = ''"/>
+                                   typeahead-on-select="addMarketIndicator($item); selected = ''"
+                                   typeahead-focus/>
                         </label>
                     </div>
                 </span>
@@ -77,29 +78,29 @@
                             Sector&nbsp;
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.sector"
-                                   typeahead-editable="false"
-                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue | limitTo:8"/>
+                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-focus/>
                         </label>
                         <label>
                             Rating&nbsp;
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.rating"
-                                   typeahead-editable="false"
-                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue | limitTo:8"/>
+                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-focus/>
                         </label>
                         <label>
                             WAL&nbsp;
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.wal"
-                                   typeahead-editable="false"
-                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue | limitTo:8"/>
+                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-focus/>
                         </label>
                         <label>
                             Analytic&nbsp;
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.analytic"
-                                   typeahead-editable="false"
-                                   typeahead="attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue | limitTo:8"/>
+                                   typeahead="attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-focus/>
                         </label>
                         <button class="btn btn-success" ng-click="addCustomBenchmark(customBenchmark)"><i
                                 class="fa fa-play"></i></button>

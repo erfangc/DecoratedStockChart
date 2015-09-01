@@ -10,7 +10,7 @@
     const src = $script[$script.length - 1].src;
     const scriptFolder = src.substr(0, src.lastIndexOf("/") + 1);
 
-    angular.module("decorated-stock-chart", ['ui.bootstrap'])
+    angular.module("decorated-stock-chart", ['ui.bootstrap', 'typeahead-focus'])
         .directive("decoratedStockChart", function ($timeout) {
             return {
                 scope: {

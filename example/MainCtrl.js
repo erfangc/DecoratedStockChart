@@ -49,7 +49,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     $scope.customBenchmarkOptions = {
         sectors: ['Sector A', 'Sector B'],
         wal: [1,3,5,7,10,30],
-        ratings:['A','B','C'],
+        ratings:['A','AA','B','C'],
         analytics: [{tag: "price", label: "Price"}, {tag: "volume", label: "Volume"}, {tag: "return", label: "Return"}]
     };
     $scope.onCustomBenchmarkSelect = function (customBenchmark, options) {
