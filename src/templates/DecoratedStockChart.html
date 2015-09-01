@@ -7,7 +7,9 @@
         <span>
                 <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                        style="width: 8em; display: inline;"
-                       typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"/>
+                       typeahead="attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                       typeahead-editable="false"
+                       typeahead-focus />
             <a><i ng-click="toggleSlide(!showSecurityControl, 'security-control'); showSecurityControl = !showSecurityControl"
                   class="fa clickable"
                   ng-class="{'fa-chevron-up': showSecurityControl, 'fa-chevron-down': !showSecurityControl}"></i></a>
@@ -51,8 +53,9 @@
                             <input type="text" placeholder="ex: S&P 500, Financial CDS ..." class="form-control"
                                    style="width: 26em;"
                                    ng-model="selected"
-                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | limitTo:8"
+                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8"
                                    typeahead-on-select="addMarketIndicator($item); selected = ''"
+                                   typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
                     </div>
@@ -71,6 +74,7 @@
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.sector"
                                    typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
                         <label>
@@ -78,6 +82,7 @@
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.rating"
                                    typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
                         <label>
@@ -85,6 +90,7 @@
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.wal"
                                    typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
                         <label>
@@ -92,6 +98,7 @@
                             <input type="text" class="form-control" style="width: initial;"
                                    ng-model="customBenchmark.analytic"
                                    typeahead="attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
                         <button class="btn btn-success" ng-click="addCustomBenchmark(customBenchmark)"><i

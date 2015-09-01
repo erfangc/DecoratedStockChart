@@ -161,7 +161,7 @@
 
                         function validate(customBenchmark) {
                             if (!customBenchmark.sector || !customBenchmark.wal || !customBenchmark.rating || !customBenchmark.analytic)
-                                return "Must Enter Every Field";
+                                return "Invalid field(s) found!";
                             return null;
                         }
 
