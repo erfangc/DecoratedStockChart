@@ -18,6 +18,11 @@
                     startDate: "@?",
                     endDate: "@?",
                     /**
+                     * User can optionally pass in in default time periods displayed in panel at top of chart.
+                     * This is an array of strings where the strings represent time periods e.g. 3M,2Y,10M
+                     */
+                    customDefaultTimePeriods: "=?",
+                    /**
                      * a list of available security attributes that the user can choose from
                      */
                     availableSecurityAttributes: "=",
@@ -81,6 +86,7 @@
                     scope.alerts = {
                         customBenchmark: {active: false, message: ""}
                     };
+                    scope.customDefaultTimePeriods = scope.customDefaultTimePeriods || ["1M", "3M", "6M", "1Y", "2Y"];
                     scope.states = {
                         /**
                          * (this is obviously not a map ... using array so they can be in order and can be more intuitively
@@ -468,6 +474,21 @@
                      */
                     scope.exportXLS = function () {
                         window.open('data:application/vnd.ms-excel,' + encodeURIComponent(dsc.seriesToHTML(scope.states.chart.series)));
+                    };
+
+                    /**
+                     * Function to call changeDateRange given a string representation of time period (e.g. 3M or 1Y)
+                     * @param period as a String
+                     */
+
+                    scope.selectTimePeriod = function(period){
+                        if ( period.length != 2 )
+                            return;
+
+                        const start = moment().subtract( parseInt(period),
+                                          period[period.length-1].toUpperCase() === "M" ? "month" : "year" ).toDate();
+                        const end = moment().toDate();
+                        scope.apiHandle.api.changeDateRange(start, end);
                     };
 
                     $timeout(function () {

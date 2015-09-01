@@ -14,37 +14,29 @@
         </span>
         <!-- TODO implement these date functionalities -->
         <span>
-            <a class="clickable">1M</a>
-            &nbsp;
-            <a class="clickable">3M</a>
-            &nbsp;
-            <a class="clickable">6M</a>
-            &nbsp;
-            <a class="clickable">1Y</a>
-            &nbsp;
-            <a class="clickable">2Y</a>
-            &nbsp;
-            <span ng-init="showDateControl = false">
-                <a class="clickable"
-                   ng-click="toggleSlide(!showDateControl, 'date-control');
-                             showDateControl = !showDateControl;
-                             dateChangeError = false;
-                             start = states.dateRange.start;
-                             end = states.dateRange.end">
-                    <i class="fa fa-calendar"></i>
-                </a>
-                <div class="date-control floating-form" style="display: none;">
-                    <label>From&nbsp;<input type="date" class="form-control"
-                                            style="display: inline; width: 12em;" ng-model="start"/></label>
-                    <label>To&nbsp;<input type="date" class="form-control"
-                                          style="display: inline; width: 12em;" ng-model="end"/></label>
-                    <button class="btn btn-success"
-                            ng-click="dateChangeError = apiHandle.api.changeDateRange(start, end);
-                                      dateChangeError ? null : showDateControl = !showDateControl;">
-                        <i class="fa fa-play"></i>
-                    </button>
-                </div>
-            </span>
+            <a class="clickable" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
+                                                                                style="padding-right:5px;">
+                {{period}}
+            </a>
+            <a class="clickable"
+               ng-click="toggleSlide(!showDateControl, 'date-control');
+                         showDateControl = !showDateControl;
+                         dateChangeError = false;
+                         start = states.dateRange.start;
+                         end = states.dateRange.end">
+                <i class="fa fa-calendar"></i>
+            </a>
+            <div class="date-control floating-form" style="display: none;">
+                <label>From&nbsp;<input type="date" class="form-control"
+                                        style="display: inline; width: 12em;" ng-model="start"/></label>
+                <label>To&nbsp;<input type="date" class="form-control"
+                                      style="display: inline; width: 12em;" ng-model="end"/></label>
+                <button class="btn btn-success"
+                        ng-click="dateChangeError = apiHandle.api.changeDateRange(start, end);
+                                  dateChangeError ? null : showDateControl = !showDateControl;">
+                    <i class="fa fa-play"></i>
+                </button>
+            </div>
         </span>
         <span>
             <span class="flex-container">
