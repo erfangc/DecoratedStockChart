@@ -18,6 +18,11 @@
                     startDate: "@?",
                     endDate: "@?",
                     /**
+                     * This is an optional array of objects which can be passed in to define custom button icons and
+                     * callbacks which will appear at the top right of the panel
+                     */
+                    customButtons: "=?",
+                    /**
                      * User can optionally pass in in default time periods displayed in panel at top of chart.
                      * This is an array of strings where the strings represent time periods e.g. 3M,2Y,10M
                      */
@@ -84,7 +89,8 @@
                 link: function (scope, elem) {
                     scope.id = _.uniqueId();
                     scope.alerts = {
-                        customBenchmark: {active: false, message: ""}
+                        customBenchmark: {active: false, message: ""},
+                        generalWarning: {active: false, message: ""}
                     };
                     scope.customDefaultTimePeriods = scope.customDefaultTimePeriods || ["1M", "3M", "6M", "1Y", "2Y"];
                     scope.states = {
@@ -119,6 +125,8 @@
                     });
 
                     scope.addMarketIndicator = function ($item) {
+                        scope.toggleSlide(false, 'indicator-control');
+
                         const result = scope.onMarketIndexSelect({
                             attr: $item,
                             options: {dateRange: scope.states.dateRange}
@@ -137,7 +145,7 @@
 
                         if (result && angular.isFunction(result.then))
                             result.then(function (series) {
-                                processSeries(series.data);
+                                processSeries(series.data ? series.data : series);
                             }, function () {
                                 scope.isProcessing = false;
                             });
@@ -146,12 +154,15 @@
                     };
 
                     scope.addCustomBenchmark = function (customBenchmark) {
-
                         const error = validate(customBenchmark);
                         if (error) {
                             scope.alerts.customBenchmark.active = true;
                             scope.alerts.customBenchmark.message = error;
-                            return;
+                            return false;
+                        }
+                        else {
+                            scope.alerts.customBenchmark.active = false;
+                            scope.toggleSlide(false, 'benchmark-control')
                         }
 
                         const result = scope.onCustomBenchmarkSelect({
@@ -183,12 +194,14 @@
 
                         if (result && angular.isFunction(result.then))
                             result.then(function (series) {
-                                processSeries(series.data);
+                                processSeries(series.data ? series.data : series);
                             }, function () {
                                 scope.isProcessing = false;
                             });
                         else
                             processSeries(result);
+
+                        return true;
                     };
 
                     /**
@@ -267,7 +280,8 @@
                     const highstockOptions = _.extend({
                         chart: {
                             renderTo: "enriched-highstock-" + scope.id,
-                            type: "spline"
+                            type: "spline",
+                            marginTop: 30
                         },
                         title: {
                             text: scope.title || "Untitled",
@@ -389,7 +403,7 @@
 
                         if (result && angular.isFunction(result.then))
                             result.then(function (series) {
-                                processSeries(series.data);
+                                 processSeries(series.data ? series.data : series);
                             }, function () {
                                 scope.isProcessing = false;
                             });
@@ -429,6 +443,14 @@
                         const chart = scope.states.chart;
                         if (chart.get(seriesOption.id))
                             return;
+
+                        if( !seriesOption.data || seriesOption.data.length == 0 ){
+                            scope.alerts.generalWarning.active = true;
+                            scope.alerts.generalWarning.message = "Added series contains no data!";
+                            return;
+                        }
+                        else
+                            scope.alerts.generalWarning.active = false;
 
                         // add series click event listener .. this is different from legendItem click event listener
                         seriesOption.events = {

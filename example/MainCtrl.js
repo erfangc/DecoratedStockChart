@@ -7,6 +7,12 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         {id: 1, label: "T", mean: 0.08, stddev: 0.17, initPrice: 32},
         {id: 2, label: "VZ", mean: 0.05, stddev: 0.15, initPrice: 45},
         {id: 3, label: "GS", mean: 0.03, stddev: 0.23, initPrice: 184}];
+    $scope.customButtons = [{
+        callback: function(){
+            console.log("custom callback fired!");
+        },
+        faClass: "fa-remove"
+    }];
     $scope.addSecurity = function (security) {
         $scope.apiHandle.api.addSecurity(security);
     };

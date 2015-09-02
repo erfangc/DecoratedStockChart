@@ -6,7 +6,7 @@
         <!-- security & attributes selection -->
         <span>
                 <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
-                       style="width: 8em; display: inline;"
+                       style="width: 12em; display: inline;"
                        typeahead="attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | limitTo:8"
                        typeahead-editable="false"
                        typeahead-focus />
@@ -16,7 +16,7 @@
         </span>
         <!-- TODO implement these date functionalities -->
         <span>
-            <a class="clickable" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
+            <a class="clickable dsc-padding-right" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
                                                                                 style="padding-right:5px;">
                 {{period}}
             </a>
@@ -54,7 +54,7 @@
                                    style="width: 26em;"
                                    ng-model="selected"
                                    typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8"
-                                   typeahead-on-select="addMarketIndicator($item); selected = ''"
+                                   typeahead-on-select="addMarketIndicator($item); selected = '';showIndicatorControl = false;"
                                    typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
@@ -62,7 +62,7 @@
                 </span>
                 <span> &nbsp; </span>
                 <span class="menu-container">
-                    <a class="clickable"
+                    <a class="clickable" style="padding-left:5px;"
                        ng-click="toggleSlide(!showBenchmarkControl, 'benchmark-control'); showBenchmarkControl = !showBenchmarkControl">
                         <i class="fa fa-plus"></i>&nbsp;Custom Benchmark
                     </a>
@@ -101,13 +101,18 @@
                                    typeahead-editable="false"
                                    typeahead-focus/>
                         </label>
-                        <button class="btn btn-success" ng-click="addCustomBenchmark(customBenchmark)"><i
+                        <button class="btn btn-success" ng-click="showBenchmarkControl = !addCustomBenchmark(customBenchmark)"><i
                                 class="fa fa-play"></i></button>
                     </div>
                 </span>
             </span>
         </span>
-        <span><a class="clickable" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></a></span>
+        <span>
+            <a class="clickable" style="padding-right:5px;" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></a>
+            <a class="clickable" style="padding-right:5px;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
+                <i class="fa" ng-class="customButton.faClass"></i>
+            </a>
+        </span>
     </div>
     <div class="security-control floating-form" style="display: none;">
         <div ng-show="states.securityAttrMap.length === 0">
@@ -140,4 +145,8 @@
     <div ng-attr-id="{{'enriched-highstock-'+id}}" style="width:100%;height:100%;">
         <!-- this is where the stock chart goes -->
     </div>
+    <alert ng-show="alerts.generalWarning.active" style="position:absolute;bottom:0;right:0;"
+           close="alerts.generalWarning.active = false" type="danger">
+        {{alerts.generalWarning.message}}
+    </alert>
 </div>
