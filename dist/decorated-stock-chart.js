@@ -790,7 +790,7 @@
             "</div>"
         ).hide();
         $ctxMenu.prependTo(elem.children(".root"));
-        elem.click(function () {
+        $(window).click(function () {
             $ctxMenu.hide();
         });
         return $ctxMenu;
