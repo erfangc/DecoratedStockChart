@@ -16,18 +16,18 @@
         </span>
         <!-- TODO implement these date functionalities -->
         <span>
-            <a class="clickable dsc-padding-right" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
-                                                                                style="padding-right:5px;">
+            <span class="clickable dsc-padding-right" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
+                                                                                style="padding-right:5px;color:#005da0;">
                 {{period}}
-            </a>
-            <a class="clickable"
+            </span>
+            <span class="clickable" style="color:#005da0;"
                ng-click="toggleSlide(!showDateControl, 'date-control');
                          showDateControl = !showDateControl;
                          dateChangeError = false;
                          start = states.dateRange.start;
                          end = states.dateRange.end">
                 <i class="fa fa-calendar"></i>
-            </a>
+            </span>
             <div class="date-control floating-form" style="display: none;">
                 <label>From&nbsp;<input type="date" class="form-control"
                                         style="display: inline; width: 12em;" ng-model="start"/></label>
@@ -108,10 +108,10 @@
             </span>
         </span>
         <span>
-            <a class="clickable" style="padding-right:5px;" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></a>
-            <a class="clickable" style="padding-right:5px;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
+            <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></span>
+            <span class="clickable" style="padding-right:5px;color:#005da0;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
                 <i class="fa" ng-class="customButton.faClass"></i>
-            </a>
+            </span>
         </span>
     </div>
     <div class="security-control floating-form" style="display: none;">
