@@ -7,7 +7,7 @@
             <!-- security & attributes selection -->
             <span>
                     <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
-                           style="width: 12em; display: inline;"
+                           style="width: 12em; display: inline; height:25px;"
                            typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | limitTo:8"
                            typeahead-editable="false"
                            typeahead-focus />
@@ -30,10 +30,12 @@
                                        style="width: 26em;"
                                        ng-model="selected"
                                        typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8"
-                                       typeahead-on-select="addMarketIndicator($item); selected = '';showIndicatorControl = false;"
+                                       typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
                                        typeahead-editable="false"
                                        typeahead-focus/>
                             </label>
+                            <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()"
+                                style="right: 10px;position: absolute;">Show All</a>
                         </div>
                     </span>
                     <span class="menu-container" style="padding-left:15px;">
@@ -76,7 +78,7 @@
                                        typeahead-editable="false"
                                        typeahead-focus/>
                             </label>
-                            <button class="btn btn-success" ng-click="showBenchmarkControl = !addCustomBenchmark(customBenchmark)"><i
+                            <button class="btn btn-success" ng-click="showBenchmarkControl = !apiHandle.api.addCustomBenchmark(customBenchmark)"><i
                                     class="fa fa-play"></i></button>
                         </div>
                     </span>
@@ -117,7 +119,7 @@
             </span>
         </span>
     </div>
-    <div class="security-control floating-form" style="display: none;top:40px;">
+    <div class="security-control floating-form" style="display: none;top:35px;">
         <div ng-show="states.securityAttrMap.length === 0">
             <h5>No Security Selected</h5>
         </div>

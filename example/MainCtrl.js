@@ -32,6 +32,11 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         };
     };
 
+    $scope.moreMarketInfoCallback = function(){
+        $scope.message = "Callback Fired: more market info!";
+        $("#alert").slideDown(500);
+    };
+
     /**
      * market index simulated behavior
      */

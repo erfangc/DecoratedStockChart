@@ -64,6 +64,11 @@
                      * or returns a Highchart.Series object directly
                      */
                     onMarketIndexSelect: "&",
+                    showMoreMarketInfo: "=?",
+                    /**
+                     * A callback to bring up additional market options if passed in
+                     */
+                    moreMarketInfoCallback: '&',
                     /**
                      * a object that contains a array typed property for each of the dimension that
                      * a custom benchmark can be constructed on i.e. [sector, wal, rating, analytic]
@@ -124,86 +129,6 @@
                         return false;
                     });
 
-                    scope.addMarketIndicator = function ($item) {
-                        scope.toggleSlide(false, 'indicator-control');
-
-                        const result = scope.onMarketIndexSelect({
-                            attr: $item,
-                            options: {dateRange: scope.states.dateRange}
-                        });
-
-                        function processSeries(series) {
-                            series.id = $item.tag;
-                            // Update the data it if it already exists
-                            if (scope.states.chart.get(series.id))
-                                scope.states.chart.get(series.id).setData(series.data);
-                            else
-                                scope.addSeries(series);
-                            scope.isProcessing = false;
-                            scope.states.marketIndices.push($item);
-                        }
-
-                        if (result && angular.isFunction(result.then))
-                            result.then(function (series) {
-                                processSeries(series.data ? series.data : series);
-                            }, function () {
-                                scope.isProcessing = false;
-                            });
-                        else
-                            processSeries(result);
-                    };
-
-                    scope.addCustomBenchmark = function (customBenchmark) {
-                        const error = validate(customBenchmark);
-                        if (error) {
-                            scope.alerts.customBenchmark.active = true;
-                            scope.alerts.customBenchmark.message = error;
-                            return false;
-                        }
-                        else {
-                            scope.alerts.customBenchmark.active = false;
-                            scope.toggleSlide(false, 'benchmark-control')
-                        }
-
-                        const result = scope.onCustomBenchmarkSelect({
-                            customBenchmark: customBenchmark,
-                            options: {dateRange: scope.states.dateRange}
-                        });
-
-                        function validate(customBenchmark) {
-                            if (!customBenchmark.sector || !customBenchmark.wal || !customBenchmark.rating || !customBenchmark.analytic)
-                                return "Invalid field(s) found!";
-                            return null;
-                        }
-
-                        function processSeries(series) {
-                            series.id = ['CustomBenchmark',
-                                customBenchmark.sector,
-                                customBenchmark.rating,
-                                customBenchmark.wal,
-                                customBenchmark.analytic.tag].join(".");
-
-                            // Update the data it if it already exists
-                            if (scope.states.chart.get(series.id))
-                                scope.states.chart.get(series.id).setData(series.data);
-                            else
-                                scope.addSeries(series);
-                            scope.isProcessing = false;
-                            scope.states.customBenchmarks.push(customBenchmark);
-                        }
-
-                        if (result && angular.isFunction(result.then))
-                            result.then(function (series) {
-                                processSeries(series.data ? series.data : series);
-                            }, function () {
-                                scope.isProcessing = false;
-                            });
-                        else
-                            processSeries(result);
-
-                        return true;
-                    };
-
                     /**
                      * define the API exposed to the parent component
                      */
@@ -252,6 +177,84 @@
                             if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
                         },
+                        addMarketIndicator: function ($item) {
+                            scope.toggleSlide(false, 'indicator-control');
+
+                            const result = scope.onMarketIndexSelect({
+                                attr: $item,
+                                options: {dateRange: scope.states.dateRange}
+                            });
+
+                            function processSeries(series) {
+                                series.id = $item.tag;
+                                // Update the data it if it already exists
+                                if (scope.states.chart.get(series.id))
+                                    scope.states.chart.get(series.id).setData(series.data);
+                                else
+                                    scope.addSeries(series);
+                                scope.isProcessing = false;
+                                scope.states.marketIndices.push($item);
+                            }
+
+                            if (result && angular.isFunction(result.then))
+                                result.then(function (series) {
+                                    processSeries(series.data ? series.data : series);
+                                }, function () {
+                                    scope.isProcessing = false;
+                                });
+                            else
+                                processSeries(result);
+                        },
+                        addCustomBenchmark: function (customBenchmark) {
+                            const error = validate(customBenchmark);
+                            if (error) {
+                                scope.alerts.customBenchmark.active = true;
+                                scope.alerts.customBenchmark.message = error;
+                                return false;
+                            }
+                            else {
+                                scope.alerts.customBenchmark.active = false;
+                                scope.toggleSlide(false, 'benchmark-control')
+                            }
+
+                            const result = scope.onCustomBenchmarkSelect({
+                                customBenchmark: customBenchmark,
+                                options: {dateRange: scope.states.dateRange}
+                            });
+
+                            function validate(customBenchmark) {
+                                if (!customBenchmark.sector || !customBenchmark.wal || !customBenchmark.rating || !customBenchmark.analytic)
+                                    return "Invalid field(s) found!";
+                                return null;
+                            }
+
+                            function processSeries(series) {
+                                series.id = ['CustomBenchmark',
+                                    customBenchmark.sector,
+                                    customBenchmark.rating,
+                                    customBenchmark.wal,
+                                    customBenchmark.analytic.tag].join(".");
+
+                                // Update the data it if it already exists
+                                if (scope.states.chart.get(series.id))
+                                    scope.states.chart.get(series.id).setData(series.data);
+                                else
+                                    scope.addSeries(series);
+                                scope.isProcessing = false;
+                                scope.states.customBenchmarks.push(customBenchmark);
+                            }
+
+                            if (result && angular.isFunction(result.then))
+                                result.then(function (series) {
+                                    processSeries(series.data ? series.data : series);
+                                }, function () {
+                                    scope.isProcessing = false;
+                                });
+                            else
+                                processSeries(result);
+
+                            return true;
+                        },
                         /**
                          * Change the x axis range of the chart given string representations of start and end
                          * @param start
@@ -272,7 +275,7 @@
                                 });
                             });
                             // Update all market indicators
-                            _.each(scope.states.marketIndices, scope.addMarketIndicator);
+                            _.each(scope.states.marketIndices, scope.apiHandle.api.addMarketIndicator);
                         }
                     };
 
