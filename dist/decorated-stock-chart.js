@@ -1,7 +1,7 @@
 (function () {
 
     if (typeof String.prototype.endsWith !== 'function') {
-        String.prototype.endsWith = function(suffix) {
+        String.prototype.endsWith = function (suffix) {
             return this.indexOf(suffix, this.length - suffix.length) !== -1;
         };
     }
@@ -406,7 +406,7 @@
 
                         if (result && angular.isFunction(result.then))
                             result.then(function (series) {
-                                 processSeries(series.data ? series.data : series);
+                                processSeries(series.data ? series.data : series);
                             }, function () {
                                 scope.isProcessing = false;
                             });
@@ -447,7 +447,7 @@
                         if (chart.get(seriesOption.id))
                             return;
 
-                        if( !seriesOption.data || seriesOption.data.length == 0 ){
+                        if (!seriesOption.data || seriesOption.data.length == 0) {
                             scope.alerts.generalWarning.active = true;
                             scope.alerts.generalWarning.message = "Added series contains no data!";
                             return;
@@ -506,12 +506,12 @@
                      * @param period as a String
                      */
 
-                    scope.selectTimePeriod = function(period){
-                        if ( period.length != 2 )
+                    scope.selectTimePeriod = function (period) {
+                        if (period.length != 2)
                             return;
 
-                        const start = moment().subtract( parseInt(period),
-                                          period[period.length-1].toUpperCase() === "M" ? "month" : "year" ).toDate();
+                        const start = moment().subtract(parseInt(period),
+                            period[period.length - 1].toUpperCase() === "M" ? "month" : "year").toDate();
                         const end = moment().toDate();
                         scope.apiHandle.api.changeDateRange(start, end);
                     };
