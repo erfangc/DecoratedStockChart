@@ -7,12 +7,19 @@
     justify-content: space-between;
 }
 
+.min-flex-container {
+    display: flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+}
+
 .wrappable-flex-item {
     padding-bottom: .5em;
     padding-right: .5em;
 }
 
-div.floating-form {
+.floating-form {
     position: absolute;
     z-index: 1;
     border: 1px solid rgb(219, 219, 219);
@@ -29,6 +36,10 @@ div.floating-form {
     width: initial;
     display: inline;
     position: absolute;
+}
+
+.dsc-other-searches{
+    position: relative;
 }
 
 .dropdown-submenu {
