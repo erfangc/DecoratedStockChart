@@ -64,10 +64,35 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         analytics: [{tag: "price", label: "Price"}, {tag: "volume", label: "Volume"}, {tag: "return", label: "Return"}]
     };
     $scope.onCustomBenchmarkSelect = function (customBenchmark, options) {
-        return {
-            name: [customBenchmark.sector, customBenchmark.wal, customBenchmark.rating, customBenchmark.analytic.tag].join(" "),
-            data: simulate(domain(options), customBenchmark.analytic, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
-        };
+        var errorMessages = [];
+        _.each(customBenchmark, function(value, key){
+            if( value === "All" )
+                return;
+            switch(key){
+                case "sector":
+                    if( $scope.customBenchmarkOptions.sectors.indexOf(value) == -1 )
+                        errorMessages.push(value + " is not a valid value for 'Sector'.");
+                    break;
+                case "wal":
+                    if( $scope.customBenchmarkOptions.wal.indexOf(value) == -1 )
+                        errorMessages.push(value + " is not a valid value for 'WAL'.");
+                    break;
+                case "rating":
+                    if( $scope.customBenchmarkOptions.ratings.indexOf(value) == -1 )
+                        errorMessages.push(value + " is not a valid value for 'Rating'.");
+                    break;
+                case "analytic":
+                    if( !_.findWhere($scope.customBenchmarkOptions.analytics, {label: value.label}) )
+                        errorMessages.push(value.label + " is not a valid value for 'Analytic'.");
+            };
+        });
+        if( errorMessages.length > 0 )
+            return {errors: errorMessages};
+        else
+            return {
+                name: [customBenchmark.sector, customBenchmark.wal, customBenchmark.rating, customBenchmark.analytic.label].join(" "),
+                data: simulate(domain(options), customBenchmark.analytic, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
+            };
     };
 
     $scope.apiHandle = {};

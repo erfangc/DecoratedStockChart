@@ -94,7 +94,7 @@
                 link: function (scope, elem) {
                     scope.id = _.uniqueId();
                     scope.alerts = {
-                        customBenchmark: {active: false, message: ""},
+                        customBenchmark: {active: false, messages: []},
                         generalWarning: {active: false, message: ""}
                     };
                     scope.customDefaultTimePeriods = scope.customDefaultTimePeriods || ["1M", "3M", "6M", "1Y", "2Y"];
@@ -206,26 +206,18 @@
                                 processSeries(result);
                         },
                         addCustomBenchmark: function (customBenchmark) {
-                            const error = validate(customBenchmark);
-                            if (error) {
-                                scope.alerts.customBenchmark.active = true;
-                                scope.alerts.customBenchmark.message = error;
-                                return false;
-                            }
-                            else {
-                                scope.alerts.customBenchmark.active = false;
-                                scope.toggleSlide(false, 'benchmark-control')
-                            }
+                            scope.alerts.customBenchmark.messages = [];
 
                             const result = scope.onCustomBenchmarkSelect({
                                 customBenchmark: customBenchmark,
                                 options: {dateRange: scope.states.dateRange}
                             });
 
-                            function validate(customBenchmark) {
+                            function validate(customBenchmark, result) {
                                 if (!customBenchmark.sector || !customBenchmark.wal || !customBenchmark.rating || !customBenchmark.analytic)
-                                    return "Invalid field(s) found!";
-                                return null;
+                                    scope.alerts.customBenchmark.messages = ["Some fields are missing!"];
+                                else if( result.errors )
+                                    scope.alerts.customBenchmark.messages = result.errors;
                             }
 
                             function processSeries(series) {
@@ -242,6 +234,17 @@
                                     scope.addSeries(series);
                                 scope.isProcessing = false;
                                 scope.states.customBenchmarks.push(customBenchmark);
+                            }
+
+                            validate(customBenchmark, result);
+
+                            if (scope.alerts.customBenchmark.messages.length > 0) {
+                                scope.alerts.customBenchmark.active = true;
+                                return false;
+                            }
+                            else {
+                                scope.alerts.customBenchmark.active = false;
+                                scope.toggleSlide(false, 'benchmark-control')
                             }
 
                             if (result && angular.isFunction(result.then))
