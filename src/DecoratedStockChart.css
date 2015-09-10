@@ -98,3 +98,7 @@
     left: 50%;
     z-index: 5;
 }
+
+.length-md {
+    width: 15em;
+}

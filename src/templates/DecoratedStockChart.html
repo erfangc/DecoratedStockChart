@@ -21,7 +21,7 @@
                     <span class="menu-container">
                         <a class="clickable"
                            ng-click="toggleSlide(!showIndicatorControl,'indicator-control'); showIndicatorControl = !showIndicatorControl">
-                            <i class="fa fa-plus"></i>&nbsp;Macro/Market Indicators
+                            <i class="fa" ng-class="{'fa-chevron-up': showIndicatorControl, 'fa-chevron-down': !showIndicatorControl}"></i>&nbsp;Macro/Market Indicators
                         </a>
                         <div class="indicator-control floating-form" style="display: none;">
                             <label>
@@ -34,21 +34,20 @@
                                        typeahead-editable="false"
                                        typeahead-focus/>
                             </label>
-                            <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()"
-                                style="right: 10px;position: absolute;">Show All</a>
+                            <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
                         </div>
                     </span>
                     <span class="menu-container" style="padding-left:15px;">
                         <a class="clickable" style="padding-left:5px;"
                            ng-click="toggleSlide(!showBenchmarkControl, 'benchmark-control'); showBenchmarkControl = !showBenchmarkControl">
-                            <i class="fa fa-plus"></i>&nbsp;Custom Benchmark
+                            <i class="fa" ng-class="{'fa-chevron-up': showBenchmarkControl, 'fa-chevron-down': !showBenchmarkControl}"></i>&nbsp;Custom Benchmark
                         </a>
                         <div class="benchmark-control floating-form" style="display: none;"
                              ng-init="customBenchmark = {sector: 'Corporates', wal: 'All', rating: 'All', analytic: {tag: 'oas', label:'OAS' }}">
                             <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger">{{alerts.customBenchmark.message}}</alert>
                             <label>
                                 Sector&nbsp;
-                                <input type="text" class="form-control" style="width: initial;"
+                                <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.sector"
                                        typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8"
                                        typeahead-editable="false"
@@ -56,7 +55,7 @@
                             </label>
                             <label>
                                 Rating&nbsp;
-                                <input type="text" class="form-control" style="width: initial;"
+                                <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.rating"
                                        typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8"
                                        typeahead-editable="false"
@@ -64,7 +63,7 @@
                             </label>
                             <label>
                                 WAL&nbsp;
-                                <input type="text" class="form-control" style="width: initial;"
+                                <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.wal"
                                        typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8"
                                        typeahead-editable="false"
@@ -72,7 +71,7 @@
                             </label>
                             <label>
                                 Analytic&nbsp;
-                                <input type="text" class="form-control" style="width: initial;"
+                                <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.analytic"
                                        typeahead="attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8"
                                        typeahead-editable="false"
@@ -100,10 +99,13 @@
                     <i class="fa fa-calendar"></i>
                 </span>
                 <div class="date-control floating-form" style="display: none;">
-                    <label>From&nbsp;<input type="date" class="form-control"
-                                            style="display: inline; width: 12em;" ng-model="start"/></label>
-                    <label>To&nbsp;<input type="date" class="form-control"
-                                          style="display: inline; width: 12em;" ng-model="end"/></label>
+                    <label>From&nbsp;</label>
+                    <input type="date" class="form-control"
+                           style="display: inline; width: 12em;" ng-model="start"/>
+                    <label>To&nbsp;</label>
+                    <input type="date" class="form-control"
+                           style="display: inline; width: 12em;" ng-model="end"/>
+                    <hr/>
                     <button class="btn btn-success"
                             ng-click="dateChangeError = apiHandle.api.changeDateRange(start, end);
                                       dateChangeError ? null : showDateControl = !showDateControl;">

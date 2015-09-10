@@ -156,6 +156,7 @@
         if ($container.find("input.form-control").length != 0)
             return;
         const $input = $("<input class='form-control floating-input' placeholder='Type a New Title, Hit Enter to Confirm, ESC to Cancel'/>");
+        const top = $(clickEvent.target).offset().top - $container.offset().top;
         $input
             .on('keydown', function (keyEvent) {
                 if (keyEvent.keyCode == 13 && $input.val() != "") { // ENTER
@@ -165,7 +166,7 @@
                     $input.remove();
             })
             .css({
-                top: $(clickEvent.target).position().top,
+                top: top + "px",
                 left: "1%",
                 width: "98%"
             }).appendTo($container);
