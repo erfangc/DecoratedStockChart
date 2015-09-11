@@ -1,10 +1,28 @@
-.flex-container {
+.flex-main-container {
     display: flex;
     display: -webkit-box;
     display: -ms-flexbox;
     display: -webkit-flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     justify-content: space-between;
+}
+
+.flex-sub-container-left {
+    display: flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+}
+
+.flex-sub-container-right {
+    display: flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
 }
 
 .min-flex-container {
@@ -101,4 +119,12 @@
 
 .form-control.length-md {
     width: 15em;
+}
+
+.fake-anchor-tag:hover{
+    text-decoration: underline;
+}
+
+.limited-input{
+    width:200px;
 }
