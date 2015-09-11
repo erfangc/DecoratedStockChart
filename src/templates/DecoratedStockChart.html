@@ -134,11 +134,25 @@
                             {{alerts.dateChangeError.message}}
                         </alert>
                         <label>From&nbsp;</label>
-                        <input type="date" class="form-control"
-                               style="display: inline; width: 12em;" ng-model="start"/>
+                        <p class="input-group">
+                            <input type="text" class="form-control"
+                                   datepicker-popup
+                                   is-open="startDatePickerOpen"
+                                   ng-model="start"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="startDatePickerOpen = !startDatePickerOpen"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </p>
                         <label>To&nbsp;</label>
-                        <input type="date" class="form-control"
-                               style="display: inline; width: 12em;" ng-model="end"/>
+                        <p class="input-group">
+                            <input type="text" class="form-control"
+                                   datepicker-popup
+                                   is-open="endDatePickerOpen"
+                                   ng-model="end"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="endDatePickerOpen = !endDatePickerOpen"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </p>
                         <hr/>
                         <button class="btn btn-success"
                                 ng-click="alerts.dateChangeError.message = apiHandle.api.changeDateRange(start, end);

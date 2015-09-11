@@ -276,13 +276,13 @@
                         changeDateRange: function (start, end) {
                             // Validate date
                             scope.alerts.dateChangeError = {active: false, message: ""};
-                            if( !start || !end || start >= end ){
+                            if (!start || !end || start >= end) {
                                 scope.alerts.dateChangeError.active = true;
-                                if ( !start )
+                                if (!start)
                                     return "Invalid start date";
-                                else if( !end )
+                                else if (!end)
                                     return "Invalid end date";
-                                else if( start >= end )
+                                else if (start >= end)
                                     return "Start date later than end date";
                             }
                             scope.states.dateRange.start = start;
@@ -295,8 +295,8 @@
                             });
                             // Update all market indicators
                             _.each(scope.states.marketIndices, scope.apiHandle.api.addMarketIndicator);
-                            if( states.menuDisplays.dateControl )
-                                toggleSlide(!states.menuDisplays.dateControl, 'date-control')
+                            if (states.menuDisplays.dateControl)
+                                toggleSlide(!states.menuDisplays.dateControl, 'date-control');
                             scope.states.menuDisplays.dateControl = false;
                         }
                     };
@@ -499,7 +499,7 @@
                         /**
                          * select the best axis to add the new series into
                          */
-                        const preferredYAxis = dsc.resolvePreferredYAxis(chart, seriesOption);
+                        const preferredYAxis = seriesOption.yAxis || dsc.resolvePreferredYAxis(chart, seriesOption);
                         if (preferredYAxis === -1) {
                             /**
                              * add a new axis if we cannot find a preferred series
@@ -538,7 +538,8 @@
                         else
                             $ctrl.slideUp(500);
                         // Since we are using some jQuery, after the end of $timeout a $apply is fired implicitly
-                        $timeout(function(){});
+                        $timeout(function () {
+                        });
                     };
 
                     /**
@@ -577,22 +578,22 @@
                 templateUrl: scriptFolder.endsWith("src/") ? scriptFolder + "/templates/DecoratedStockChart.html" : "DecoratedStockChart.html"
             };
         })
-    .directive("dscClickOutside", function () {
-        return {
-            restrict: "A",
-            scope: {
-                openState: '=dscOpenState',
-                closeCallback: '&dscCloseCallback'
-            },
-            link: function(scope, element){
-                $(document).click(function(){
-                    if( scope.openState )
-                        scope.closeCallback();
-                });
-                element.click(function(e){
-                    e.stopPropagation();
-                });
+        .directive("dscClickOutside", function () {
+            return {
+                restrict: "A",
+                scope: {
+                    openState: '=dscOpenState',
+                    closeCallback: '&dscCloseCallback'
+                },
+                link: function (scope, element) {
+                    $(document).click(function () {
+                        if (scope.openState)
+                            scope.closeCallback();
+                    });
+                    element.click(function (e) {
+                        e.stopPropagation();
+                    });
+                }
             }
-        }
-    });
+        });
 }());
