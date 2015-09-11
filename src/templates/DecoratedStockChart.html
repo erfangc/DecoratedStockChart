@@ -97,12 +97,12 @@
                         <span class="fake-anchor-tag">Market Indicators</span>
                         <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
                     </a>
-                    <div class="indicator-control floating-form" style="display: none;">
+                    <div class="indicator-control floating-form" style="display: none;width:280px;">
                         <label>
                             Search&nbsp;
                         </label>
 
-                        <input type="text" placeholder="ex: S&P 500, Energy CDS..." class="form-control limited-input"
+                        <input type="text" placeholder="ex: S&P 500, Financial CDS..." class="form-control"
                                    ng-model="selected"
                                    typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8"
                                    typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
