@@ -9,10 +9,11 @@
     const $script = $("script[src]");
     const src = $script[$script.length - 1].src;
     const scriptFolder = src.substr(0, src.lastIndexOf("/") + 1);
-
-    angular.module("decorated-stock-chart", ['ui.bootstrap', 'typeahead-focus'])
+    angular.module("decorated-stock-chart", ['ui.bootstrap', 'typeahead-focus']);
+    angular.module("decorated-stock-chart")
         .directive("decoratedStockChart", function ($timeout) {
             return {
+                restrict: "E",
                 scope: {
                     securities: "=",
                     startDate: "@?",
@@ -91,11 +92,12 @@
                      */
                     apiHandle: "="
                 },
-                link: function (scope, elem) {
+                link: function (scope, elem, attrs) {
                     scope.id = _.uniqueId();
                     scope.alerts = {
                         customBenchmark: {active: false, messages: []},
-                        generalWarning: {active: false, message: ""}
+                        generalWarning: {active: false, message: ""},
+                        dateChangeError: {active: false, message: ""}
                     };
                     scope.customDefaultTimePeriods = scope.customDefaultTimePeriods || ["1M", "3M", "6M", "1Y", "2Y"];
                     scope.states = {
@@ -121,7 +123,13 @@
                                 moment(scope.endDate == parseInt(scope.endDate) ? parseInt(scope.endDate) : scope.endDate).toDate() : null
                         },
                         marketIndices: [],
-                        customBenchmarks: []
+                        customBenchmarks: [],
+                        menuDisplays: {
+                            securityControl: false,
+                            benchmarkControl: false,
+                            indicatorControl: false,
+                            dateControl: false
+                        }
                     };
 
                     // disable default right-click triggered context menu
@@ -263,12 +271,20 @@
                          * @param start
                          * @param end
                          *
-                         * @returns boolean if there was an error
+                         * @returns Error message if there is one
                          */
                         changeDateRange: function (start, end) {
                             // Validate date
-                            if (!start || !end || start >= end)
-                                return true;
+                            scope.alerts.dateChangeError = {active: false, message: ""};
+                            if( !start || !end || start >= end ){
+                                scope.alerts.dateChangeError.active = true;
+                                if ( !start )
+                                    return "Invalid start date";
+                                else if( !end )
+                                    return "Invalid end date";
+                                else if( start >= end )
+                                    return "Start date later than end date";
+                            }
                             scope.states.dateRange.start = start;
                             scope.states.dateRange.end = end;
                             // Update all security attributes
@@ -415,8 +431,6 @@
                             });
                         else
                             processSeries(result);
-
-
                     };
 
                     /**
@@ -487,6 +501,8 @@
                     };
 
                     scope.toggleSlide = function (show, className) {
+                        const camelCaseName = attrs.$normalize(className);
+                        scope.states.menuDisplays[camelCaseName] = show;
                         var $ctrl = elem.find("." + className);
                         if (show) {
                             $ctrl.slideDown(500);
@@ -494,6 +510,8 @@
                         }
                         else
                             $ctrl.slideUp(500);
+                        // Since we are using some jQuery, after the end of $timeout a $apply is fired implicitly
+                        $timeout(function(){});
                     };
 
                     /**
@@ -531,5 +549,24 @@
                 },
                 templateUrl: scriptFolder.endsWith("src/") ? scriptFolder + "/templates/DecoratedStockChart.html" : "DecoratedStockChart.html"
             };
-        });
+        })
+    .directive("dscClickOutside", function () {
+        return {
+            restrict: "A",
+            scope: {
+                openState: '=dscOpenState',
+                closeCallback: '&dscCloseCallback'
+            },
+            link: function(scope, element){
+                $(document).click(function(){
+                    if( scope.openState ) {
+                        scope.closeCallback();
+                    }
+                });
+                element.click(function(e){
+                    e.stopPropagation();
+                });
+            }
+        }
+    });
 }());
