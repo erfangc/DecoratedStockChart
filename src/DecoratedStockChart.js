@@ -547,7 +547,11 @@
                      * and then export this table to Excel
                      */
                     scope.exportXLS = function () {
-                        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(dsc.seriesToHTML(scope.states.chart.series)));
+                        var html = dsc.seriesToHTML(scope.states.chart.series);
+                        if (window.navigator.msSaveBlob)
+                            window.navigator.msSaveBlob(new Blob([html]), "time-series-export.xls");
+                        else
+                            window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
                     };
 
                     /**

@@ -31,7 +31,7 @@
             return "<tr>" +
                 "<td style='background-color: #999999'>" + moment(x).format("YYYY-MM-DD") + "</td>" +
                 _.map(matrix, function (col) {
-                    return "<td>" + col[x] || 0 + "</td>";
+                    return "<td>" + (col[x] && col[x] !== undefined && col[x] !== 'undefined' ? col[x] : 0) + "</td>";
                 }).join("")
                 + "</tr>";
         }).join("\n");

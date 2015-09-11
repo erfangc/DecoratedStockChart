@@ -547,7 +547,11 @@
                      * and then export this table to Excel
                      */
                     scope.exportXLS = function () {
-                        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(dsc.seriesToHTML(scope.states.chart.series)));
+                        var html = dsc.seriesToHTML(scope.states.chart.series);
+                        if (window.navigator.msSaveBlob)
+                            window.navigator.msSaveBlob(new Blob([html]), "time-series-export.xls");
+                        else
+                            window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
                     };
 
                     /**
@@ -631,7 +635,7 @@
             return "<tr>" +
                 "<td style='background-color: #999999'>" + moment(x).format("YYYY-MM-DD") + "</td>" +
                 _.map(matrix, function (col) {
-                    return "<td>" + col[x] || 0 + "</td>";
+                    return "<td>" + (col[x] && col[x] !== undefined && col[x] !== 'undefined' ? col[x] : 0) + "</td>";
                 }).join("")
                 + "</tr>";
         }).join("\n");
