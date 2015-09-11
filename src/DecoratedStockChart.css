@@ -128,3 +128,8 @@
 .limited-input{
     width:200px;
 }
+
+.restrict-dropdown-menu .dropdown-menu{
+    max-height : 350px;
+    overflow-y: auto;
+}

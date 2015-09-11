@@ -5,11 +5,12 @@
             <!-- security & attributes selection -->
             <span dsc-click-outside dsc-open-state="states.menuDisplays.securityControl"
                   dsc-close-callback="toggleSlide(!states.menuDisplays.securityControl, 'security-control')">
+                <span class="restrict-dropdown-menu">
                     <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                            style="width: 12em; display: inline; height:25px;"
-                           typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | limitTo:8"
-                           typeahead-editable="false"
+                           typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
                            typeahead-focus />
+                </span>
                 <a><i ng-click="toggleSlide(!states.menuDisplays.securityControl, 'security-control')"
                       class="fa clickable"
                       ng-class="{'fa-chevron-up': states.menuDisplays.securityControl, 'fa-chevron-down': !states.menuDisplays.securityControl}"></i></a>
@@ -30,12 +31,12 @@
                             &nbsp;
                             <input type="text"
                                    placeholder="+ Attribute"
-                                   ng-disabled="securityAttrPair[1].length >= 2"
                                    ng-model="selected"
-                                   typeahead="attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8"
+                                   typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
                                    class="form-control"
                                    style="width: 8em; display: inline;"
-                                   typeahead-on-select="addAttr($item, securityAttrPair); selected = ''">
+                                   typeahead-on-select="addAttr($item, securityAttrPair); selected = ''"
+                                   typeahead-focus>
 
                         </span>
                     </div>
@@ -104,9 +105,8 @@
 
                         <input type="text" placeholder="ex: S&P 500, Financial CDS..." class="form-control"
                                    ng-model="selected"
-                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
                                    typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
-                                   typeahead-editable="false"
                                    typeahead-focus/>
                         <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
                     </div>
@@ -132,28 +132,28 @@
                             Sector&nbsp;
                             <input type="text" class="form-control length-md"
                                    ng-model="customBenchmark.sector"
-                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
                                    typeahead-focus/>
                         </label>
                         <label>
                             Rating&nbsp;
                             <input type="text" class="form-control length-md"
                                    ng-model="customBenchmark.rating"
-                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
                                    typeahead-focus/>
                         </label>
                         <label>
                             WAL&nbsp;
                             <input type="text" class="form-control length-md"
                                    ng-model="customBenchmark.wal"
-                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
                                    typeahead-focus/>
                         </label>
                         <label>
                             Analytic&nbsp;
                             <input type="text" class="form-control length-md"
                                    ng-model="customBenchmark.analytic"
-                                   typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8"
+                                   typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
                                    typeahead-focus/>
                         </label>
                         <button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i

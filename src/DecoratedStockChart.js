@@ -406,6 +406,13 @@
                      * @param securityAttrPair
                      */
                     scope.addAttr = function ($item, securityAttrPair) {
+                        // Check to see if this already exists
+                        const duplicateFound = _.filter(securityAttrPair[1], function(item){
+                            return angular.equals(item,$item);
+                        }).length > 0;
+                        if( duplicateFound )
+                            return;
+
                         securityAttrPair[1].push($item);
                         scope.isProcessing = true;
                         const result = scope.onAttributeSelect({

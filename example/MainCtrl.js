@@ -24,7 +24,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     $scope.availableSecurityAttributes = [{tag: "return", label: "Return"}, {
         tag: "price",
         label: "Price"
-    }, {tag: "volume", label: "Volume"}];
+    }, {tag: "volume", label: "Volume"}, {tag: "cum_return", label: "Cum Return"}];
     $scope.onAttributeSelect = function (attr, security, options) {
         return {
             name: security.label + " " + attr.label,
