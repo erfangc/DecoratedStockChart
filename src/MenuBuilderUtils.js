@@ -185,22 +185,11 @@
                     });
                 $dropdown.append($menuItem);
             });
-        const axisId = "yAxis." + (chart.yAxis.length + 1);
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
-            chart.addAxis({
-                title: {
-                    text: series.name,
-                    events: {
-                        click: function (event) {
-                            dsc.onAxisClick.call(this, event, scope);
-                        }
-                    }
-                },
-                opposite: chart.axes.length % 2 == 0,
-                id: axisId
-            });
+            var axisId = dsc.addAxisToChart(chart, series.name, scope, series.axisType);
             dsc.moveAxis(series, chart.get(axisId), scope);
         }));
         return $dropdown;
     };
+
 }());

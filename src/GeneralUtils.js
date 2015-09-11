@@ -7,6 +7,49 @@
     root.dsc = dsc;
 
     /**
+     * choose the correct yAxis to add a new series into
+     * if no preferred axis is found return -1
+     * @param chart
+     * @param seriesOption
+     */
+    root.dsc.resolvePreferredYAxis = function (chart, seriesOption) {
+        if (!seriesOption.axisType)
+            return 0;
+        return  _.findIndex(chart.yAxis, function (axis) {
+            return axis.userOptions.axisType === seriesOption.axisType;
+        });
+    };
+
+    /**
+     * Add a new axis to the given chart. wires up event handler and such.
+     * axis are also labeled with axisType, which enables intelligent axis
+     * selection when new series is being added
+     *
+     * @param chart a Highchart object
+     * @param name the name of the axis
+     * @param scope the scope object (we need this for the axis click event handler)
+     * @param axisType a member of the axisType enum
+     * @return {string}
+     */
+    root.dsc.addAxisToChart = function (chart, name, scope, axisType) {
+        const axisId = "yAxis." + (chart.yAxis.length + 1);
+        chart.addAxis({
+            title: {
+                text: name,
+                events: {
+                    click: function (event) {
+                        dsc.onAxisClick.call(this, event, scope);
+                    }
+                }
+            },
+            axisType: axisType,
+            opposite: chart.axes.length % 2 == 0,
+            id: axisId
+        });
+        return axisId;
+    };
+
+    /**
      * attaches event listener that triggers a context menu appearance when legend item is right-clicked
      * @param series
      * @param scope
@@ -43,8 +86,6 @@
         function removeAxis() {
             return $("<li><a><i class='fa fa-remove'></i>&nbsp;Remove Axis</a></li>")
                 .click(function () {
-                    while (axis.series.length > 0)
-                        dsc.moveAxis(axis.series[0], 0, scope);
                     axis.remove();
                 });
         }
