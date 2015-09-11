@@ -1,6 +1,4 @@
 <div class="root" style="position: relative">
-    <i ng-show="isProcessing" class="fa fa-spinner fa-spin fa-3x spinner"></i>
-
     <div class="control flex-main-container"
          ng-init="showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;">
         <span class="flex-sub-container-left">
@@ -172,11 +170,13 @@
         </span>
     </div>
     <hr/>
-    <div ng-attr-id="{{'enriched-highstock-'+id}}" style="width:100%;height:100%;">
+    <div style="position:relative">
+        <i ng-show="isProcessing" class="fa fa-spinner fa-spin fa-3x spinner" style="position:absolute;top:0;left:0"></i>
         <!-- this is where the stock chart goes -->
+        <div ng-attr-id="{{'enriched-highstock-'+id}}" style="width:100%;height:100%;"></div>
+        <alert ng-show="alerts.generalWarning.active" style="position:absolute;bottom:0;right:0;"
+               close="alerts.generalWarning.active = false" type="danger">
+            {{alerts.generalWarning.message}}
+        </alert>
     </div>
-    <alert ng-show="alerts.generalWarning.active" style="position:absolute;bottom:0;right:0;"
-           close="alerts.generalWarning.active = false" type="danger">
-        {{alerts.generalWarning.message}}
-    </alert>
 </div>
