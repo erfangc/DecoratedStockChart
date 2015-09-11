@@ -224,7 +224,7 @@
                             function validate(customBenchmark, result) {
                                 if (!customBenchmark.sector || !customBenchmark.wal || !customBenchmark.rating || !customBenchmark.analytic)
                                     scope.alerts.customBenchmark.messages = ["Some fields are missing!"];
-                                else if( result.errors )
+                                else if (result.errors)
                                     scope.alerts.customBenchmark.messages = result.errors;
                             }
 
@@ -341,6 +341,7 @@
                                     }
                                 }
                             },
+                            axisType: scope.defaultSecurityAttribute.label,
                             id: "yAxis.1"
                         },
                         legend: {
@@ -364,26 +365,28 @@
                             return {
                                 id: origSeries.options.id + "." + numDays + "DaySMA",
                                 name: origSeries.name + " " + numDays + " Day SMA",
+                                axisType: origSeries.options.axisType,
                                 data: xy,
                                 securityId: origSeries.options.securityId || null
                             };
                         },
-                        toBasis: function (series, otherSeries) {
+                        toBasis: function (origSeries, otherSeries) {
                             /**
                              * we only take basis where 'otherSeries' has data, there is no lookback
                              */
                             const otherData = _.chain(otherSeries.data).map(function (datum) {
                                 return [moment(datum.x).format("YYYYMMDD"), datum.y];
                             }).object().value();
-                            const data = _.chain(series.data).filter(function (datum) {
+                            const data = _.chain(origSeries.data).filter(function (datum) {
                                 return otherData[moment(datum.x).format("YYYYMMDD")];
                             }).map(function (datum) {
                                 return [datum.x, datum.y - otherData[moment(datum.x).format("YYYYMMDD")]];
                             }).value();
                             return {
-                                id: series.options.id + ".basisVs." + otherSeries.options.id,
-                                name: "Basis of " + series.name + " - " + otherSeries.name,
-                                securityId: series.options.securityId || null,
+                                id: origSeries.options.id + ".basisVs." + otherSeries.options.id,
+                                name: "Basis of " + origSeries.name + " - " + otherSeries.name,
+                                axisType: origSeries.options.axisType,
+                                securityId: origSeries.options.securityId || null,
                                 data: data
                             }
                         }
@@ -411,6 +414,7 @@
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
                             series.id = dsc.generateSeriesID(securityAttrPair[0], $item);
+                            series.axisType = $item.label;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
@@ -464,6 +468,9 @@
                         if (chart.get(seriesOption.id))
                             return;
 
+                        /**
+                         * determine if the series has no data, if so put out a warning
+                         */
                         if (!seriesOption.data || seriesOption.data.length == 0) {
                             scope.alerts.generalWarning.active = true;
                             scope.alerts.generalWarning.message = "Added series contains no data!";
@@ -472,7 +479,9 @@
                         else
                             scope.alerts.generalWarning.active = false;
 
-                        // add series click event listener .. this is different from legendItem click event listener
+                        /**
+                         * add series click event listener .. this is different from legendItem click event listener
+                         */
                         seriesOption.events = {
                             click: function (event) {
                                 event.preventDefault();
@@ -483,6 +492,21 @@
                                 });
                             }
                         };
+
+                        /**
+                         * select the best axis to add the new series into
+                         */
+                        const preferredYAxis = dsc.resolvePreferredYAxis(chart, seriesOption);
+                        if (preferredYAxis === -1) {
+                            /**
+                             * add a new axis if we cannot find a preferred series
+                             */
+                            dsc.addAxisToChart(chart, seriesOption.axisType, scope, seriesOption.axisType, seriesOption.subType);
+                            seriesOption.yAxis = chart.yAxis.length - 1;
+                        }
+                        else
+                            seriesOption.yAxis = preferredYAxis;
+
                         chart.addSeries(seriesOption);
                         dsc.attachLegendEventHandlers(chart.get(seriesOption.id), scope);
                     };

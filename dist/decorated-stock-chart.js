@@ -224,7 +224,7 @@
                             function validate(customBenchmark, result) {
                                 if (!customBenchmark.sector || !customBenchmark.wal || !customBenchmark.rating || !customBenchmark.analytic)
                                     scope.alerts.customBenchmark.messages = ["Some fields are missing!"];
-                                else if( result.errors )
+                                else if (result.errors)
                                     scope.alerts.customBenchmark.messages = result.errors;
                             }
 
@@ -341,6 +341,7 @@
                                     }
                                 }
                             },
+                            axisType: scope.defaultSecurityAttribute.label,
                             id: "yAxis.1"
                         },
                         legend: {
@@ -364,26 +365,28 @@
                             return {
                                 id: origSeries.options.id + "." + numDays + "DaySMA",
                                 name: origSeries.name + " " + numDays + " Day SMA",
+                                axisType: origSeries.options.axisType,
                                 data: xy,
                                 securityId: origSeries.options.securityId || null
                             };
                         },
-                        toBasis: function (series, otherSeries) {
+                        toBasis: function (origSeries, otherSeries) {
                             /**
                              * we only take basis where 'otherSeries' has data, there is no lookback
                              */
                             const otherData = _.chain(otherSeries.data).map(function (datum) {
                                 return [moment(datum.x).format("YYYYMMDD"), datum.y];
                             }).object().value();
-                            const data = _.chain(series.data).filter(function (datum) {
+                            const data = _.chain(origSeries.data).filter(function (datum) {
                                 return otherData[moment(datum.x).format("YYYYMMDD")];
                             }).map(function (datum) {
                                 return [datum.x, datum.y - otherData[moment(datum.x).format("YYYYMMDD")]];
                             }).value();
                             return {
-                                id: series.options.id + ".basisVs." + otherSeries.options.id,
-                                name: "Basis of " + series.name + " - " + otherSeries.name,
-                                securityId: series.options.securityId || null,
+                                id: origSeries.options.id + ".basisVs." + otherSeries.options.id,
+                                name: "Basis of " + origSeries.name + " - " + otherSeries.name,
+                                axisType: origSeries.options.axisType,
+                                securityId: origSeries.options.securityId || null,
                                 data: data
                             }
                         }
@@ -411,6 +414,7 @@
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
                             series.id = dsc.generateSeriesID(securityAttrPair[0], $item);
+                            series.axisType = $item.label;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
@@ -464,6 +468,9 @@
                         if (chart.get(seriesOption.id))
                             return;
 
+                        /**
+                         * determine if the series has no data, if so put out a warning
+                         */
                         if (!seriesOption.data || seriesOption.data.length == 0) {
                             scope.alerts.generalWarning.active = true;
                             scope.alerts.generalWarning.message = "Added series contains no data!";
@@ -472,7 +479,9 @@
                         else
                             scope.alerts.generalWarning.active = false;
 
-                        // add series click event listener .. this is different from legendItem click event listener
+                        /**
+                         * add series click event listener .. this is different from legendItem click event listener
+                         */
                         seriesOption.events = {
                             click: function (event) {
                                 event.preventDefault();
@@ -483,6 +492,21 @@
                                 });
                             }
                         };
+
+                        /**
+                         * select the best axis to add the new series into
+                         */
+                        const preferredYAxis = dsc.resolvePreferredYAxis(chart, seriesOption);
+                        if (preferredYAxis === -1) {
+                            /**
+                             * add a new axis if we cannot find a preferred series
+                             */
+                            dsc.addAxisToChart(chart, seriesOption.axisType, scope, seriesOption.axisType, seriesOption.subType);
+                            seriesOption.yAxis = chart.yAxis.length - 1;
+                        }
+                        else
+                            seriesOption.yAxis = preferredYAxis;
+
                         chart.addSeries(seriesOption);
                         dsc.attachLegendEventHandlers(chart.get(seriesOption.id), scope);
                     };
@@ -625,6 +649,49 @@
     root.dsc = dsc;
 
     /**
+     * choose the correct yAxis to add a new series into
+     * if no preferred axis is found return -1
+     * @param chart
+     * @param seriesOption
+     */
+    root.dsc.resolvePreferredYAxis = function (chart, seriesOption) {
+        if (!seriesOption.axisType)
+            return 0;
+        return  _.findIndex(chart.yAxis, function (axis) {
+            return axis.userOptions.axisType === seriesOption.axisType;
+        });
+    };
+
+    /**
+     * Add a new axis to the given chart. wires up event handler and such.
+     * axis are also labeled with axisType, which enables intelligent axis
+     * selection when new series is being added
+     *
+     * @param chart a Highchart object
+     * @param name the name of the axis
+     * @param scope the scope object (we need this for the axis click event handler)
+     * @param axisType a member of the axisType enum
+     * @return {string}
+     */
+    root.dsc.addAxisToChart = function (chart, name, scope, axisType) {
+        const axisId = "yAxis." + (chart.yAxis.length + 1);
+        chart.addAxis({
+            title: {
+                text: name,
+                events: {
+                    click: function (event) {
+                        dsc.onAxisClick.call(this, event, scope);
+                    }
+                }
+            },
+            axisType: axisType,
+            opposite: chart.axes.length % 2 == 0,
+            id: axisId
+        });
+        return axisId;
+    };
+
+    /**
      * attaches event listener that triggers a context menu appearance when legend item is right-clicked
      * @param series
      * @param scope
@@ -661,8 +728,6 @@
         function removeAxis() {
             return $("<li><a><i class='fa fa-remove'></i>&nbsp;Remove Axis</a></li>")
                 .click(function () {
-                    while (axis.series.length > 0)
-                        dsc.moveAxis(axis.series[0], 0, scope);
                     axis.remove();
                 });
         }
@@ -1000,23 +1065,12 @@
                     });
                 $dropdown.append($menuItem);
             });
-        const axisId = "yAxis." + (chart.yAxis.length + 1);
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
-            chart.addAxis({
-                title: {
-                    text: series.name,
-                    events: {
-                        click: function (event) {
-                            dsc.onAxisClick.call(this, event, scope);
-                        }
-                    }
-                },
-                opposite: chart.axes.length % 2 == 0,
-                id: axisId
-            });
+            var axisId = dsc.addAxisToChart(chart, series.name, scope, series.axisType);
             dsc.moveAxis(series, chart.get(axisId), scope);
         }));
         return $dropdown;
     };
+
 }());
 angular.module("decorated-stock-chart").run(["$templateCache", function($templateCache) {$templateCache.put("DecoratedStockChart.html","<div class=\"root\" style=\"position: relative\">\r\n    <i ng-show=\"isProcessing\" class=\"fa fa-spinner fa-spin fa-3x spinner\"></i>\r\n\r\n    <div class=\"control flex-container\"\r\n         ng-init=\"showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;\">\r\n        <span style=\"left:0;\">\r\n            <!-- security & attributes selection -->\r\n            <span dsc-click-outside dsc-open-state=\"states.menuDisplays.securityControl\"\r\n                  dsc-close-callback=\"toggleSlide(!states.menuDisplays.securityControl, \'security-control\')\">\r\n                    <input type=\"text\" ng-model=\"defaultSecurityAttribute\" class=\"form-control\"\r\n                           style=\"width: 12em; display: inline; height:25px;\"\r\n                           typeahead=\"attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | limitTo:8\"\r\n                           typeahead-editable=\"false\"\r\n                           typeahead-focus />\r\n                <a><i ng-click=\"toggleSlide(!states.menuDisplays.securityControl, \'security-control\')\"\r\n                      class=\"fa clickable\"\r\n                      ng-class=\"{\'fa-chevron-up\': states.menuDisplays.securityControl, \'fa-chevron-down\': !states.menuDisplays.securityControl}\"></i></a>\r\n                <span class=\"security-control floating-form\" style=\"display: none;top:35px;left:0;\">\r\n                    <div ng-show=\"states.securityAttrMap.length === 0\">\r\n                        <h5>No Security Selected</h5>\r\n                    </div>\r\n                    <div class=\"flex-container\">\r\n                        <div class=\"wrappable-flex-item\" ng-repeat=\"securityAttrPair in states.securityAttrMap\">\r\n                            <!-- selected attributes display -->\r\n                <span class=\"label label-success\">{{securityAttrPair[0].label}} | <i class=\"fa fa-remove clickable\"\r\n                                                                                     ng-click=\"apiHandle.api.removeSecurity(securityAttrPair[0].id)\"></i></span>\r\n                <span class=\"label label-primary\" ng-repeat=\"attr in securityAttrPair[1]\">\r\n                        {{attr.label}} | <i class=\"fa fa-remove clickable\"\r\n                                            ng-click=\"removeAttr(attr, securityAttrPair)\"></i>\r\n                </span>\r\n                            <!-- input to select more attributes-->\r\n                            &nbsp;\r\n                            <input type=\"text\"\r\n                                   placeholder=\"+ Attribute\"\r\n                                   ng-disabled=\"securityAttrPair[1].length >= 2\"\r\n                                   ng-model=\"selected\"\r\n                                   typeahead=\"attr.label for attr in availableSecurityAttributes | filter:$viewValue | limitTo:8\"\r\n                                   class=\"form-control\"\r\n                                   style=\"width: 8em; display: inline;\"\r\n                                   typeahead-on-select=\"addAttr($item, securityAttrPair); selected = \'\'\">\r\n\r\n                        </div>\r\n                    </div>\r\n                </span>\r\n            </span>\r\n            <!-- TODO implement these date functionalities -->\r\n            <span>\r\n                <span class=\"flex-container\" style=\"margin-top:10px;margin-bottom:-10px;\">\r\n                    <span class=\"menu-container\" dsc-click-outside dsc-open-state=\"states.menuDisplays.indicatorControl\"\r\n                          dsc-close-callback=\"toggleSlide(!states.menuDisplays.indicatorControl,\'indicator-control\')\">\r\n                        <a class=\"clickable\"\r\n                           ng-click=\"toggleSlide(!states.menuDisplays.indicatorControl,\'indicator-control\')\">\r\n                            <i class=\"fa\" ng-class=\"{\'fa-chevron-up\': states.menuDisplays.indicatorControl, \'fa-chevron-down\': !states.menuDisplays.indicatorControl}\"></i>&nbsp;Macro/Market Indicators\r\n                        </a>\r\n                        <div class=\"indicator-control floating-form\" style=\"display: none;\">\r\n                            <label>\r\n                                Search&nbsp;\r\n                                <input type=\"text\" placeholder=\"ex: S&P 500, Financial CDS ...\" class=\"form-control\"\r\n                                       style=\"width: 26em;\"\r\n                                       ng-model=\"selected\"\r\n                                       typeahead=\"attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8\"\r\n                                       typeahead-on-select=\"apiHandle.api.addMarketIndicator($item); selected = \'\';showIndicatorControl = false;\"\r\n                                       typeahead-editable=\"false\"\r\n                                       typeahead-focus/>\r\n                            </label>\r\n                            <a class=\"clickable\" ng-if=\"showMoreMarketInfo\" ng-click=\"moreMarketInfoCallback()\">Show All</a>\r\n                        </div>\r\n                    </span>\r\n                    <span class=\"menu-container\" style=\"padding-left:15px;\" dsc-click-outside dsc-open-state=\"states.menuDisplays.benchmarkControl\"\r\n                          dsc-close-callback=\"toggleSlide(!states.menuDisplays.benchmarkControl, \'benchmark-control\')\">\r\n                        <a class=\"clickable\" style=\"padding-left:5px;\"\r\n                           ng-click=\"toggleSlide(!states.menuDisplays.benchmarkControl, \'benchmark-control\')\">\r\n                            <i class=\"fa\" ng-class=\"{\'fa-chevron-up\': states.menuDisplays.benchmarkControl, \'fa-chevron-down\': !states.menuDisplays.benchmarkControl}\"></i>&nbsp;Custom Benchmark\r\n                        </a>\r\n                        <div class=\"benchmark-control floating-form\" style=\"display: none;\"\r\n                             ng-init=\"customBenchmark = {sector: \'Corporates\', wal: \'All\', rating: \'All\', analytic: {tag: \'oas\', label:\'OAS\' }}\">\r\n                            <alert ng-show=\"alerts.customBenchmark.active\" close=\"alerts.customBenchmark.active = false\" type=\"danger\" style=\"font-size: 12px;\">\r\n                                There were problems with your input\r\n                                <br/><br/>\r\n                                <ul style=\"list-style:inside;padding-left:0;\">\r\n                                    <li ng-repeat=\"message in alerts.customBenchmark.messages\">{{message}}</li>\r\n                                </ul>\r\n                            </alert>\r\n                            <label>\r\n                                Sector&nbsp;\r\n                                <input type=\"text\" class=\"form-control length-md\"\r\n                                       ng-model=\"customBenchmark.sector\"\r\n                                       typeahead=\"sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8\"\r\n                                       typeahead-focus/>\r\n                            </label>\r\n                            <label>\r\n                                Rating&nbsp;\r\n                                <input type=\"text\" class=\"form-control length-md\"\r\n                                       ng-model=\"customBenchmark.rating\"\r\n                                       typeahead=\"rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8\"\r\n                                       typeahead-focus/>\r\n                            </label>\r\n                            <label>\r\n                                WAL&nbsp;\r\n                                <input type=\"text\" class=\"form-control length-md\"\r\n                                       ng-model=\"customBenchmark.wal\"\r\n                                       typeahead=\"wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8\"\r\n                                       typeahead-focus/>\r\n                            </label>\r\n                            <label>\r\n                                Analytic&nbsp;\r\n                                <input type=\"text\" class=\"form-control length-md\"\r\n                                       ng-model=\"customBenchmark.analytic\"\r\n                                       typeahead=\"attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8\"\r\n                                       typeahead-focus/>\r\n                            </label>\r\n                            <button class=\"btn btn-success\" ng-click=\"apiHandle.api.addCustomBenchmark(customBenchmark)\"><i\r\n                                    class=\"fa fa-play\"></i></button>\r\n                        </div>\r\n                    </span>\r\n                </span>\r\n            </span>\r\n        </span>\r\n        <span style=\"right:0;\">\r\n            <span style=\"padding-right:25px;\">\r\n                <span class=\"clickable dsc-padding-right\" ng-repeat=\"period in customDefaultTimePeriods\" ng-click=\"selectTimePeriod(period)\"\r\n                      style=\"padding-right:5px;color:#005da0;\">\r\n                    {{period}}\r\n                </span>\r\n                <span style=\"color:#005da0;\"\r\n                             dsc-click-outside\r\n                             dsc-open-state=\"states.menuDisplays.dateControl\"\r\n                             dsc-close-callback=\"toggleSlide(!states.menuDisplays.dateControl, \'date-control\')\">\r\n                    <i class=\"fa fa-calendar clickable\" ng-click=\"toggleSlide(!states.menuDisplays.dateControl, \'date-control\');\r\n                             start = states.dateRange.start;\r\n                             end = states.dateRange.end\"></i>\r\n                    <div class=\"date-control floating-form\" style=\"display: none;\" >\r\n                        <alert ng-show=\"alerts.dateChangeError.active\" close=\"alerts.dateChangeError.active = false\" type=\"danger\" style=\"font-size: 12px;\">\r\n                            {{alerts.dateChangeError.message}}\r\n                        </alert>\r\n                        <label>From&nbsp;</label>\r\n                        <input type=\"date\" class=\"form-control\"\r\n                               style=\"display: inline; width: 12em;\" ng-model=\"start\"/>\r\n                        <label>To&nbsp;</label>\r\n                        <input type=\"date\" class=\"form-control\"\r\n                               style=\"display: inline; width: 12em;\" ng-model=\"end\"/>\r\n                        <hr/>\r\n                        <button class=\"btn btn-success\"\r\n                                ng-click=\"alerts.dateChangeError.message = apiHandle.api.changeDateRange(start, end);\r\n                                          alerts.dateChangeError.message ? null : showDateControl = !showDateControl;\">\r\n                            <i class=\"fa fa-play\"></i>\r\n                        </button>\r\n                    </div>\r\n                </span>\r\n            </span>\r\n            <span>\r\n                <span class=\"clickable\" style=\"padding-right:5px;color:#005da0;\" ng-click=\"exportXLS()\"><i class=\"fa fa-share-square-o\"></i></span>\r\n                <span class=\"clickable\" style=\"padding-right:5px;color:#005da0;\" ng-repeat=\"customButton in customButtons\" ng-click=\"customButton.callback()\">\r\n                    <i class=\"fa\" ng-class=\"customButton.faClass\"></i>\r\n                </span>\r\n            </span>\r\n        </span>\r\n    </div>\r\n    <hr/>\r\n    <div ng-attr-id=\"{{\'enriched-highstock-\'+id}}\" style=\"width:100%;height:100%;\">\r\n        <!-- this is where the stock chart goes -->\r\n    </div>\r\n    <alert ng-show=\"alerts.generalWarning.active\" style=\"position:absolute;bottom:0;right:0;\"\r\n           close=\"alerts.generalWarning.active = false\" type=\"danger\">\r\n        {{alerts.generalWarning.message}}\r\n    </alert>\r\n</div>\r\n");}]);
