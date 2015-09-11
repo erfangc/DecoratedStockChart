@@ -295,6 +295,9 @@
                             });
                             // Update all market indicators
                             _.each(scope.states.marketIndices, scope.apiHandle.api.addMarketIndicator);
+                            if( states.menuDisplays.dateControl )
+                                toggleSlide(!states.menuDisplays.dateControl, 'date-control')
+                            scope.states.menuDisplays.dateControl = false;
                         }
                     };
 
@@ -583,9 +586,8 @@
             },
             link: function(scope, element){
                 $(document).click(function(){
-                    if( scope.openState ) {
+                    if( scope.openState )
                         scope.closeCallback();
-                    }
                 });
                 element.click(function(e){
                     e.stopPropagation();
