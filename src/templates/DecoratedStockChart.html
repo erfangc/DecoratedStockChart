@@ -51,9 +51,7 @@
                 </span>
                 <span style="position: relative">
                     <i class="fa fa-calendar clickable-link"
-                       ng-click="states.menuDisplays.dateControl = !states.menuDisplays.dateControl"
-                       start=states.dateRange.start;
-                       end=states.dateRange.end"></i>
+                       ng-click="states.menuDisplays.dateControl = !states.menuDisplays.dateControl"></i>
                     <!-- somehow specifying left: 0 is necessary to recognize parent as position: relative -->
                     <div class="date-control floating-form" style="left: 0;" ng-show="states.menuDisplays.dateControl">
                         <alert ng-show="alerts.dateChangeError.active" close="alerts.dateChangeError.active = false"
@@ -66,7 +64,7 @@
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="startDatePickerOpen"
-                                   ng-model="start"/>
+                                   ng-model="states.dateRange.start"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-default" ng-click="startDatePickerOpen = !startDatePickerOpen">
                                     <i class="fa fa-calendar"></i></button>
@@ -78,7 +76,7 @@
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="endDatePickerOpen"
-                                   ng-model="end"/>
+                                   ng-model="states.dateRange.end"/>
                             <span class="input-group-btn">
                                 <button class="btn btn-default" ng-click="endDatePickerOpen = !endDatePickerOpen"><i
                                         class="fa fa-calendar"></i></button>
@@ -86,7 +84,7 @@
                         </p>
                         <hr/>
                         <button class="btn btn-success"
-                                ng-click="alerts.dateChangeError.message = apiHandle.api.changeDateRange(start, end);
+                                ng-click="alerts.dateChangeError.message = apiHandle.api.changeDateRange(states.dateRange.start, states.dateRange.end);
                                           alerts.dateChangeError.message ? null : showDateControl = !showDateControl;">
                             <i class="fa fa-play"></i>
                         </button>
