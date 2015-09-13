@@ -1,15 +1,15 @@
 <div class="root" style="position: relative">
-    <div class="control flex-main-container"
+    <div class="control flex-sb"
          ng-init="showSecurityControl = false; showIndicatorControl = false; showBenchmarkControl = false;">
-        <span class="flex-sub-container-left">
+        <span>
             <!-- security & attributes selection -->
             <span dsc-click-outside dsc-open-state="states.menuDisplays.securityControl"
                   dsc-close-callback="toggleSlide(!states.menuDisplays.securityControl, 'security-control')">
-                <span class="restrict-dropdown-menu">
+                <span>
                     <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                            style="width: 12em; display: inline; height:25px;"
                            typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                           typeahead-focus />
+                           typeahead-focus/>
                 </span>
                 <a><i ng-click="toggleSlide(!states.menuDisplays.securityControl, 'security-control')"
                       class="fa clickable"
@@ -18,11 +18,12 @@
                     <div ng-show="states.securityAttrMap.length === 0">
                         <h5>No Security Selected</h5>
                     </div>
-                    <div class="flex-container">
+                    <div class="flex-sa">
                         <span class="wrappable-flex-item" ng-repeat="securityAttrPair in states.securityAttrMap">
                             <!-- selected attributes display -->
-                            <span class="label label-success">{{securityAttrPair[0].label}} | <i class="fa fa-remove clickable"
-                                                                                                 ng-click="apiHandle.api.removeSecurity(securityAttrPair[0].id)"></i></span>
+                            <span class="label label-success">{{securityAttrPair[0].label}} | <i
+                                    class="fa fa-remove clickable"
+                                    ng-click="apiHandle.api.removeSecurity(securityAttrPair[0].id)"></i></span>
                             <span class="label label-primary" ng-repeat="attr in securityAttrPair[1]">
                                     {{attr.label}} | <i class="fa fa-remove clickable"
                                                         ng-click="removeAttr(attr, securityAttrPair)"></i>
@@ -42,41 +43,45 @@
                     </div>
                 </span>
             </span>
-            <!-- TODO implement these date functionalities -->
-            <span style="padding-left:25px;">
-                <span class="clickable dsc-padding-right" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
-                      style="padding-right:5px;color:#005da0;">
+            <span>
+                <span class="clickable-link" ng-repeat="period in customDefaultTimePeriods"
+                      ng-click="selectTimePeriod(period)"
+                      style="padding-right:5px;">
                     {{period}}
                 </span>
-                <span style="color:#005da0;"
-                      dsc-click-outside
-                      dsc-open-state="states.menuDisplays.dateControl"
-                      dsc-close-callback="toggleSlide(!states.menuDisplays.dateControl, 'date-control')">
-                    <i class="fa fa-calendar clickable" ng-click="toggleSlide(!states.menuDisplays.dateControl, 'date-control');
-                             start = states.dateRange.start;
-                             end = states.dateRange.end"></i>
-                    <div class="date-control floating-form" style="display: none;" >
-                        <alert ng-show="alerts.dateChangeError.active" close="alerts.dateChangeError.active = false" type="danger" style="font-size: 12px;">
+                <span style="position: relative">
+                    <i class="fa fa-calendar clickable-link"
+                       ng-click="states.menuDisplays.dateControl = !states.menuDisplays.dateControl"
+                       start=states.dateRange.start;
+                       end=states.dateRange.end"></i>
+                    <!-- somehow specifying left: 0 is necessary to recognize parent as position: relative -->
+                    <div class="date-control floating-form" style="left: 0;" ng-show="states.menuDisplays.dateControl">
+                        <alert ng-show="alerts.dateChangeError.active" close="alerts.dateChangeError.active = false"
+                               type="danger" style="font-size: 12px;">
                             {{alerts.dateChangeError.message}}
                         </alert>
-                        <label>From&nbsp;</label>
-                        <p class="input-group limited-input">
+                        <label>From</label>
+
+                        <p class="input-group input-group-md">
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="startDatePickerOpen"
                                    ng-model="start"/>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" ng-click="startDatePickerOpen = !startDatePickerOpen"><i class="fa fa-calendar"></i></button>
+                                <button class="btn btn-default" ng-click="startDatePickerOpen = !startDatePickerOpen">
+                                    <i class="fa fa-calendar"></i></button>
                             </span>
                         </p>
-                        <label>To&nbsp;</label>
-                        <p class="input-group limited-input">
+                        <label>To</label>
+
+                        <p class="input-group input-group-md">
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="endDatePickerOpen"
                                    ng-model="end"/>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" ng-click="endDatePickerOpen = !endDatePickerOpen"><i class="fa fa-calendar"></i></button>
+                                <button class="btn btn-default" ng-click="endDatePickerOpen = !endDatePickerOpen"><i
+                                        class="fa fa-calendar"></i></button>
                             </span>
                         </p>
                         <hr/>
@@ -89,39 +94,42 @@
                 </span>
             </span>
         </span>
-        <span class="flex-sub-container-right">
-            <span class="flex-container">
+        <span>
+            <span>
                 <span dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
                       dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
                     <a class="clickable" style="text-decoration:none"
                        ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
                         <span class="fake-anchor-tag">Market Indicators</span>
-                        <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
+                        <i class="fa"
+                           ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
                     </a>
                     <div class="indicator-control floating-form" style="display: none;width:280px;">
                         <label>
-                            Search&nbsp;
+                            Search
                         </label>
 
                         <input type="text" placeholder="ex: S&P 500, Financial CDS..." class="form-control"
-                                   ng-model="selected"
-                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
-                                   typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
-                                   typeahead-focus/>
+                               ng-model="selected"
+                               typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
+                               typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
+                               typeahead-focus/>
                         <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
                     </div>
                 </span>
                 <span dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
                       dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
-                        style="padding-right:10px">
+                      style="padding-right:10px">
                     <a class="clickable" style="padding-left:5px;text-decoration:none;"
                        ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')">
                         <span class="fake-anchor-tag">Benchmark</span>
-                        <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
+                        <i class="fa"
+                           ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
                     </a>
                     <div class="benchmark-control floating-form" style="display: none;"
                          ng-init="customBenchmark = {sector: 'Corporates', wal: 'All', rating: 'All', analytic: {tag: 'oas', label:'OAS' }}">
-                        <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger" style="font-size: 12px;">
+                        <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false"
+                               type="danger" style="font-size: 12px;">
                             There were problems with your input
                             <br/><br/>
                             <ul style="list-style:inside;padding-left:0;">
@@ -130,28 +138,28 @@
                         </alert>
                         <label>
                             Sector&nbsp;
-                            <input type="text" class="form-control length-md"
+                            <input type="text" class="form-control form-control-md"
                                    ng-model="customBenchmark.sector"
                                    typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
                                    typeahead-focus/>
                         </label>
                         <label>
                             Rating&nbsp;
-                            <input type="text" class="form-control length-md"
+                            <input type="text" class="form-control form-control-md"
                                    ng-model="customBenchmark.rating"
                                    typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
                                    typeahead-focus/>
                         </label>
                         <label>
                             WAL&nbsp;
-                            <input type="text" class="form-control length-md"
+                            <input type="text" class="form-control form-control-md"
                                    ng-model="customBenchmark.wal"
                                    typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
                                    typeahead-focus/>
                         </label>
                         <label>
                             Analytic&nbsp;
-                            <input type="text" class="form-control length-md"
+                            <input type="text" class="form-control form-control-md"
                                    ng-model="customBenchmark.analytic"
                                    typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
                                    typeahead-focus/>
@@ -161,8 +169,10 @@
                     </div>
                 </span>
                 <span>
-                    <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></span>
-                    <span class="clickable" style="padding-right:5px;color:#005da0;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
+                    <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i
+                            class="fa fa-share-square-o"></i></span>
+                    <span class="clickable" style="padding-right:5px;color:#005da0;"
+                          ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
                         <i class="fa" ng-class="customButton.faClass"></i>
                     </span>
                 </span>
@@ -171,7 +181,8 @@
     </div>
     <hr/>
     <div style="position:relative">
-        <i ng-show="isProcessing" class="fa fa-spinner fa-spin fa-3x spinner" style="position:absolute;top:0;left:0"></i>
+        <i ng-show="isProcessing" class="fa fa-spinner fa-spin fa-3x spinner"
+           style="position:absolute;top:0;left:0"></i>
         <!-- this is where the stock chart goes -->
         <div ng-attr-id="{{'enriched-highstock-'+id}}" style="width:100%;height:100%;"></div>
         <alert ng-show="alerts.generalWarning.active" style="position:absolute;bottom:0;right:0;"

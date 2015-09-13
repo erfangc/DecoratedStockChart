@@ -133,9 +133,9 @@
                     };
 
                     // disable default right-click triggered context menu
-                    elem.bind('contextmenu', function () {
-                        return false;
-                    });
+                    //elem.bind('contextmenu', function () {
+                    //    return false;
+                    //});
 
                     /**
                      * define the API exposed to the parent component

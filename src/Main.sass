@@ -1,0 +1,100 @@
+$border-color: #ccc
+$default-bg-color: #fff
+$link-color: #005da0
+
+// ----------------------------
+// submenu for the context menu
+// ----------------------------
+
+.dropdown-submenu
+  position: relative
+  > .dropdown-menu
+    top: 0
+    left: 100%
+    margin-top: -6px
+    margin-left: -1px
+    -webkit-border-radius: 0 6px 6px 6px
+    -moz-border-radius: 0 6px 6px
+    border-radius: 0 6px 6px 6px
+  &:hover > .dropdown-menu
+    display: block
+  > a:after
+    display: block
+    content: " "
+    float: right
+    width: 0
+    height: 0
+    border: 5px solid transparent
+    border-right-width: 0
+    border-left-color: $border-color
+    margin-top: 5px
+    margin-right: -10px
+  &:hover > a:after
+    border-left-color: $default-bg-color
+  .pull-left
+    float: none
+    > .dropdown-menu
+      left: -100%
+      margin-left: 10px
+      -webkit-border-radius: 6px 0 6px 6px
+      -moz-border-radius: 6px 0 6px 6px
+      border-radius: 6px 0 6px 6px
+
+// ------------------------------------
+// input size and position control
+// ------------------------------------
+.form-control.form-control-md, .input-group.input-group-md
+  width: 15em
+
+// TODO rename to retractable-form
+.floating-form
+  position: absolute
+  z-index: 1
+  border: 1px solid $border-color
+  padding: 25px
+  margin-top: 2px
+  background-color: $default-bg-color
+
+.floating-input
+  width: initial
+  display: inline
+  position: absolute
+
+
+// TODO rename
+.wrappable-flex-item
+  padding-bottom: .5em
+  padding-right: .5em
+
+// ------------
+// misc
+// ------------
+
+.clickable
+  cursor: pointer
+  \:hover
+    text-decoration: underline
+.clickable-link
+  @extend .clickable
+  color: $link-color
+
+.spinner
+  position: absolute
+  left: 50%
+  z-index: 5
+
+// --------
+// flex box
+// --------
+.flex
+  display: -webkit-box
+  display: -ms-flexbox
+  display: -webkit-flex
+  flex-flow: row nowrap
+  display: flex
+.flex-sa
+  @extend .flex
+  justify-content: space-around
+.flex-sb
+  @extend .flex
+  justify-content: space-between
