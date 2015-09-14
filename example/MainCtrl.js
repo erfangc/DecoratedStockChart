@@ -43,7 +43,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     $scope.marketIndexTypeahead = function (userInput) {
         const d = $q.defer();
         $timeout(function () {
-            d.resolve([{tag: "snp_500", label: "S&P 500"}, {tag: "fin_cds", label: "Financial CDS"}]);
+            d.resolve([{tag: "snp_500", label: "S&P 500"}, {tag: "fin_cds", label: "Financial CDS"}, {tag: "energy_cds", label: "Energy CDS"}]);
         }, 100);
         return d.promise;
     };

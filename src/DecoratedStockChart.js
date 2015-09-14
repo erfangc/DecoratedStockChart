@@ -597,12 +597,21 @@
                     closeCallback: '&dscCloseCallback'
                 },
                 link: function (scope, element) {
-                    $(document).click(function () {
+                    const documentClickHandler = function () {
                         if (scope.openState)
                             scope.closeCallback();
-                    });
-                    element.click(function (e) {
+                    };
+                    $(document).click(documentClickHandler);
+
+                    const elementClickHandler = function (e) {
                         e.stopPropagation();
+                    };
+                    element.click(elementClickHandler);
+
+                    // Unbind click listeners when element is removed
+                    scope.$on('$destroy', function(){
+                        $(document).unbind("click", documentClickHandler);
+                        element.unbind("click", elementClickHandler);
                     });
                 }
             }
