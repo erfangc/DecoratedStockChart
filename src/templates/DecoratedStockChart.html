@@ -94,7 +94,7 @@
                 <span class="menu-container" dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
                       dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
                     <a class="clickable" style="text-decoration:none"
-                       ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
+                       ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control');selected='';">
                         <span class="fake-anchor-tag">Market Indicators</span>
                         <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
                     </a>
@@ -114,14 +114,13 @@
                 </span>
                 <span class="menu-container" dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
                       dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
-                        style="padding-right:10px">
+                        style="padding-right:10px" ng-init="customBenchmark = {}">
                     <a class="clickable" style="padding-left:5px;text-decoration:none;"
-                       ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')">
+                       ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');customBenchmark = {};">
                         <span class="fake-anchor-tag">Benchmark</span>
                         <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
                     </a>
-                    <div class="benchmark-control floating-form" style="display: none;"
-                         ng-init="customBenchmark = {}">
+                    <div class="benchmark-control floating-form" style="display: none;">
                         <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger" style="font-size: 12px;">
                             There were problems with your input
                             <br/><br/>
