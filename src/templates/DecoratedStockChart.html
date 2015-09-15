@@ -102,12 +102,13 @@
                         <label>
                             Search&nbsp;
                         </label>
-
-                        <input type="text" placeholder="ex: S&P 500, Energy CDS..." class="form-control"
-                                   ng-model="selected"
-                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
-                                   typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
-                                   typeahead-focus/>
+                        <span class="restrict-dropdown-menu">
+                            <input type="text" placeholder="ex: S&P 500, Energy CDS..." class="form-control"
+                                       ng-model="selected"
+                                       typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
+                                       typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
+                                       typeahead-focus/>
+                        </span>
                         <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
                     </div>
                 </span>
@@ -120,7 +121,7 @@
                         <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
                     </a>
                     <div class="benchmark-control floating-form" style="display: none;"
-                         ng-init="customBenchmark = {sector: 'Corporates', wal: 'All', rating: 'All', analytic: {tag: 'oas', label:'OAS' }}">
+                         ng-init="customBenchmark = {}">
                         <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger" style="font-size: 12px;">
                             There were problems with your input
                             <br/><br/>
@@ -130,31 +131,39 @@
                         </alert>
                         <label>
                             Sector&nbsp;
-                            <input type="text" class="form-control length-md"
-                                   ng-model="customBenchmark.sector"
-                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
-                                   typeahead-focus/>
+                            <span class="restrict-dropdown-menu-small">
+                                <input type="text" class="form-control length-md"
+                                       ng-model="customBenchmark.sector"
+                                       typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
+                                       typeahead-focus/>
+                            </span>
                         </label>
                         <label>
                             Rating&nbsp;
-                            <input type="text" class="form-control length-md"
-                                   ng-model="customBenchmark.rating"
-                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
-                                   typeahead-focus/>
+                            <span class="restrict-dropdown-menu-small">
+                                <input type="text" class="form-control length-md"
+                                       ng-model="customBenchmark.rating"
+                                       typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
+                                       typeahead-focus/>
+                            </span>
                         </label>
                         <label>
                             WAL&nbsp;
-                            <input type="text" class="form-control length-md"
-                                   ng-model="customBenchmark.wal"
-                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'toString()'"
-                                   typeahead-focus/>
+                            <span class="restrict-dropdown-menu-small">
+                                <input type="text" class="form-control length-md"
+                                       ng-model="customBenchmark.wal"
+                                       typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'parseInt()'"
+                                       typeahead-focus/>
+                            </span>
                         </label>
                         <label>
                             Analytic&nbsp;
-                            <input type="text" class="form-control length-md"
-                                   ng-model="customBenchmark.analytic"
-                                   typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
-                                   typeahead-focus/>
+                            <span class="restrict-dropdown-menu-small">
+                                <input type="text" class="form-control length-md"
+                                       ng-model="customBenchmark.analytic"
+                                       typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | limitTo:8 | orderBy:'label.toString()'"
+                                       typeahead-focus/>
+                            </span>
                         </label>
                         <button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i
                                 class="fa fa-play"></i></button>

@@ -356,6 +356,7 @@
                         credits: {enabled: false}
                     }, scope.highstockOptions);
 
+
                     /**
                      * the seriesTransformer object exposes
                      * methods to transform the series that is passed in
@@ -638,14 +639,21 @@
                     closeCallback: '&dscCloseCallback'
                 },
                 link: function (scope, element) {
+                    /*
+                     * We use a state variable for clicking outside the element because if we use stopPropagation()
+                     * we possibly stop other legitimate events from triggering.
+                     */
+                    var clickedOutside = true;
+
                     const documentClickHandler = function () {
-                        if (scope.openState)
+                        if (clickedOutside && scope.openState)
                             scope.closeCallback();
+                        clickedOutside = true;
                     };
                     $(document).click(documentClickHandler);
 
-                    const elementClickHandler = function (e) {
-                        e.stopPropagation();
+                    const elementClickHandler = function () {
+                        clickedOutside = false;
                     };
                     element.click(elementClickHandler);
 

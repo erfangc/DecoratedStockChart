@@ -133,3 +133,8 @@
     max-height : 350px;
     overflow-y: auto;
 }
+
+.restrict-dropdown-menu-small .dropdown-menu{
+    max-height : 200px;
+    overflow-y: auto;
+}
