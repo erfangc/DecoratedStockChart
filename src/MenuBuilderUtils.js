@@ -173,18 +173,17 @@
      */
     root.dsc.buildAxesSubMenu = function (series, chart, scope) {
         const $dropdown = $("<ul class='dropdown-menu'></ul>");
-        _.chain(chart.yAxis)
-            .filter(function (axis) {
-                // do not show the axis that the series currently belongs to already
-                return axis.userOptions.id !== series.yAxis.userOptions.id;
-            })
-            .each(function (axis) {
-                const $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "</a></li>")
+        _.each(chart.yAxis, function (axis) {
+            var $menuItem;
+            if (axis.userOptions.id === series.yAxis.userOptions.id)
+                $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "&nbsp;<i class='fa fa-check'></i></a></li>");
+            else
+                $menuItem = $("<li><a>Y-Axis: " + axis.options.title.text + "</a></li>")
                     .click(function () {
                         dsc.moveAxis(series, axis, scope);
                     });
-                $dropdown.append($menuItem);
-            });
+            $dropdown.append($menuItem);
+        });
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
             var axisId = dsc.addAxisToChart(chart, series.name, scope, series.axisType);
             dsc.moveAxis(series, chart.get(axisId), scope);

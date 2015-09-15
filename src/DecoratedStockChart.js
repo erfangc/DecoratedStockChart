@@ -178,7 +178,9 @@
                             _.chain(scope.states.chart.series).filter(function (series) {
                                 return series && series.options.securityId == id;
                             }).each(function (series) {
+                                const yAxis = series.yAxis;
                                 series.remove();
+                                afterSeriesRemove(yAxis, id);
                             });
 
                             // fire callback if provided
@@ -407,10 +409,10 @@
                      */
                     scope.addAttr = function ($item, securityAttrPair) {
                         // Check to see if this already exists
-                        const duplicateFound = _.filter(securityAttrPair[1], function(item){
-                            return angular.equals(item,$item);
-                        }).length > 0;
-                        if( duplicateFound )
+                        const duplicateFound = _.filter(securityAttrPair[1], function (item) {
+                                return angular.equals(item, $item);
+                            }).length > 0;
+                        if (duplicateFound)
                             return;
 
                         securityAttrPair[1].push($item);
@@ -511,7 +513,7 @@
                             /**
                              * add a new axis if we cannot find a preferred series
                              */
-                            dsc.addAxisToChart(chart, seriesOption.axisType, scope, seriesOption.axisType, seriesOption.subType);
+                            dsc.addAxisToChart(chart, seriesOption.axisType || seriesOption.name, scope, seriesOption.axisType, seriesOption.subType);
                             seriesOption.yAxis = chart.yAxis.length - 1;
                         }
                         else
@@ -522,16 +524,55 @@
                     };
 
                     /**
+                     * test if the given securityId has any series left in the chart aside from the one given
+                     * @param securityId
+                     */
+                    function hasNoSeries(securityId) {
+                        const chart = scope.states.chart;
+                        return _.filter(chart.series, function (series) {
+                                return series.userOptions.securityId
+                                    && series.userOptions.securityId === securityId;
+                            }).length === 0;
+                    }
+
+                    /**
+                     * test if the given series is the only one left on the given yAxis
+                     * @param yAxis
+                     */
+                    function isAxisEmpty(yAxis) {
+                        return yAxis && yAxis.series.length === 0;
+                    }
+
+                    /**
+                     * clean up action after a series is removed
+                     * @param yAxis
+                     * @param securityId
+                     */
+                    function afterSeriesRemove(yAxis, securityId) {
+                        // figure out if this is the last series on its given axis, if so remove the axis
+                        if (isAxisEmpty(yAxis))
+                            yAxis.remove();
+                        // figure out if this is the last series for the given security, if so remove the security
+                        if (securityId && hasNoSeries(securityId))
+                            scope.apiHandle.api.removeSecurity(securityId);
+                    }
+
+                    /**
                      * handles removing a given series from the chart
                      * but also performs state syncs
                      *
-                     * @param s a Highcharts.Series object (not a series option object literal)
+                     * @param series a Highcharts.Series object (not a series option object literal)
                      */
-                    scope.removeSeries = function (s) {
-                        if (s.options.onRemove)
-                            s.options.onRemove();
+                    scope.removeSeries = function (series) {
+
+                        const yAxis = series.yAxis;
+                        const securityId = series.userOptions.securityId;
+
+                        if (angular.isFunction(series.options.onRemove))
+                            series.options.onRemove();
                         else
-                            s.remove();
+                            series.remove();
+                        afterSeriesRemove(yAxis, securityId);
                     };
 
                     scope.toggleSlide = function (show, className) {
@@ -609,7 +650,7 @@
                     element.click(elementClickHandler);
 
                     // Unbind click listeners when element is removed
-                    scope.$on('$destroy', function(){
+                    scope.$on('$destroy', function () {
                         $(document).unbind("click", documentClickHandler);
                         element.unbind("click", elementClickHandler);
                     });

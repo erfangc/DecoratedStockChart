@@ -14,8 +14,8 @@
      */
     root.dsc.resolvePreferredYAxis = function (chart, seriesOption) {
         if (!seriesOption.axisType)
-            return 0;
-        return  _.findIndex(chart.yAxis, function (axis) {
+            return chart.yAxis.length === 0 ? -1 : 0;
+        return _.findIndex(chart.yAxis, function (axis) {
             return axis.userOptions.axisType === seriesOption.axisType;
         });
     };
