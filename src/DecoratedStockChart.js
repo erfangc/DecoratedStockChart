@@ -357,8 +357,10 @@
                             events: {
                                 // If we zoom in on the chart, change the date range to those dates
                                 afterSetExtremes: function(event) {
-                                    if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max)
+                                    if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max) {
                                         scope.apiHandle.api.changeDateRange(event.min, event.max);
+                                        this.chart.zoomOut();
+                                    }
                                 }
                             }
                         },

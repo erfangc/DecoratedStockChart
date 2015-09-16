@@ -9,7 +9,8 @@
                     <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                            style="width: 12em; display: inline; height:25px;"
                            typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                           typeahead-focus />
+                           typeahead-focus
+                           typeahead-select-on-blur="true"/>
                 </span>
                 <a><i ng-click="toggleSlide(!states.menuDisplays.securityControl, 'security-control')"
                       class="fa clickable"
@@ -132,7 +133,8 @@
                                 <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.sector"
                                        typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
-                                       typeahead-focus/>
+                                       typeahead-focus
+                                       typeahead-select-on-blur="true"/>
                             </span>
                         </label>
                         <label>
@@ -141,7 +143,8 @@
                                 <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.rating"
                                        typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
-                                       typeahead-focus/>
+                                       typeahead-focus
+                                       typeahead-select-on-blur="true"/>
                             </span>
                         </label>
                         <label>
@@ -150,7 +153,8 @@
                                 <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.wal"
                                        typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | orderBy:'parseInt()'"
-                                       typeahead-focus/>
+                                       typeahead-focus
+                                       typeahead-select-on-blur="true"/>
                             </span>
                         </label>
                         <label>
@@ -159,7 +163,8 @@
                                 <input type="text" class="form-control length-md"
                                        ng-model="customBenchmark.analytic"
                                        typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                                       typeahead-focus/>
+                                       typeahead-focus
+                                       typeahead-select-on-blur="true"/>
                             </span>
                         </label>
                         <button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i
