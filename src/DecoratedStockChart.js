@@ -6,6 +6,14 @@
         };
     }
 
+    Date.prototype.getYYYYMMDD = function(){
+        var month = this.getMonth()+1;
+        month = month.toString().length == 1 ? "0" + month : month;
+        var day = this.getDate();
+        day = day.toString().length == 1 ? "0" + day : day;
+        return this.getFullYear() + "-" + month + "-" + day;
+    };
+
     const $script = $("script[src]");
     const src = $script[$script.length - 1].src;
     const scriptFolder = src.substr(0, src.lastIndexOf("/") + 1);
@@ -276,13 +284,15 @@
                          * @returns Error message if there is one
                          */
                         changeDateRange: function (start, end) {
+                            start = new Date(start);
+                            end = new Date(end);
                             // Validate date
                             scope.alerts.dateChangeError = {active: false, message: ""};
-                            if (!start || !end || start >= end) {
+                            if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
                                 scope.alerts.dateChangeError.active = true;
-                                if (!start)
+                                if (!start || isNaN(start.getTime()))
                                     return "Invalid start date";
-                                else if (!end)
+                                else if (!end || isNaN(end.getTime()))
                                     return "Invalid end date";
                                 else if (start >= end)
                                     return "Start date later than end date";
@@ -298,7 +308,7 @@
                             // Update all market indicators
                             _.each(scope.states.marketIndices, scope.apiHandle.api.addMarketIndicator);
                             if (scope.states.menuDisplays.dateControl)
-                                toggleSlide(!states.menuDisplays.dateControl, 'date-control');
+                                scope.toggleSlide(!scope.states.menuDisplays.dateControl, 'date-control');
                             scope.states.menuDisplays.dateControl = false;
                         }
                     };
@@ -308,7 +318,13 @@
                         chart: {
                             renderTo: "enriched-highstock-" + scope.id,
                             type: "spline",
-                            marginTop: 30
+                            marginTop: 30,
+                            zoomType: 'x',
+                            resetZoomButton: {
+                                theme: {
+                                    display: 'none'
+                                }
+                            }
                         },
                         title: {
                             text: scope.title || "Untitled",
@@ -335,7 +351,14 @@
                             shared: true
                         },
                         xAxis: {
-                            type: "datetime"
+                            type: "datetime",
+                            events: {
+                                // If we zoom in on the chart, change the date range to those dates
+                                afterSetExtremes: function(event) {
+                                    if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max)
+                                        scope.apiHandle.api.changeDateRange(event.min, event.max);
+                                }
+                            }
                         },
                         yAxis: {
                             title: {

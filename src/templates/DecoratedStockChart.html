@@ -53,31 +53,29 @@
                       dsc-open-state="states.menuDisplays.dateControl"
                       dsc-close-callback="toggleSlide(!states.menuDisplays.dateControl, 'date-control')">
                     <i class="fa fa-calendar clickable" ng-click="toggleSlide(!states.menuDisplays.dateControl, 'date-control');
-                             start = states.dateRange.start;
-                             end = states.dateRange.end"></i>
-                    <div class="date-control floating-form" style="display: none;" >
+                             start = states.dateRange.start.getYYYYMMDD();
+                             end = states.dateRange.end.getYYYYMMDD()"></i>
+                    <div class="date-control floating-form" style="display: none;">
                         <alert ng-show="alerts.dateChangeError.active" close="alerts.dateChangeError.active = false" type="danger" style="font-size: 12px;">
                             {{alerts.dateChangeError.message}}
+                            <br/>
+                            Format: YYYY-MM-DD
                         </alert>
                         <label>From&nbsp;</label>
-                        <p class="input-group limited-input">
+                        <p class="input-group limited-input" ng-click="startDatePickerOpen = true">
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="startDatePickerOpen"
-                                   ng-model="start"/>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" ng-click="startDatePickerOpen = !startDatePickerOpen"><i class="fa fa-calendar"></i></button>
-                            </span>
+                                   ng-model="start"
+                                   close-text="Close"/>
                         </p>
                         <label>To&nbsp;</label>
-                        <p class="input-group limited-input">
+                        <p class="input-group limited-input" ng-click="endDatePickerOpen = true">
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="endDatePickerOpen"
-                                   ng-model="end"/>
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" ng-click="endDatePickerOpen = !endDatePickerOpen"><i class="fa fa-calendar"></i></button>
-                            </span>
+                                   ng-model="end"
+                                   close-text="Close"/>
                         </p>
                         <hr/>
                         <button class="btn btn-success"
