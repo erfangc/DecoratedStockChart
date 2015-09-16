@@ -216,7 +216,7 @@
 
                             if (result && angular.isFunction(result.then))
                                 result.then(function (series) {
-                                    processSeries(series.data ? series.data : series);
+                                    processSeries(series.status ? series.data : series);
                                 }, function () {
                                     scope.isProcessing = false;
                                 });
@@ -267,7 +267,7 @@
 
                             if (result && angular.isFunction(result.then))
                                 result.then(function (series) {
-                                    processSeries(series.data ? series.data : series);
+                                    processSeries(series.status ? series.data : series);
                                 }, function () {
                                     scope.isProcessing = false;
                                 });
@@ -467,7 +467,7 @@
 
                         if (result && angular.isFunction(result.then))
                             result.then(function (series) {
-                                processSeries(series.data ? series.data : series);
+                                processSeries(series.status ? series.data : series);
                             }, function () {
                                 scope.isProcessing = false;
                             });
