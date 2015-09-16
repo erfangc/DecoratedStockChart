@@ -307,6 +307,8 @@
                             });
                             // Update all market indicators
                             _.each(scope.states.marketIndices, scope.apiHandle.api.addMarketIndicator);
+                            // Update all benchmarks
+                            _.each(scope.states.customBenchmarks, scope.apiHandle.api.addCustomBenchmark);
                             if (scope.states.menuDisplays.dateControl)
                                 scope.toggleSlide(!scope.states.menuDisplays.dateControl, 'date-control');
                             scope.states.menuDisplays.dateControl = false;
