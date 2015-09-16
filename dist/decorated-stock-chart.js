@@ -6,8 +6,8 @@
         };
     }
 
-    Date.prototype.getYYYYMMDD = function(){
-        var month = this.getMonth()+1;
+    Date.prototype.getYYYYMMDD = function () {
+        var month = this.getMonth() + 1;
         month = month.toString().length == 1 ? "0" + month : month;
         var day = this.getDate();
         day = day.toString().length == 1 ? "0" + day : day;
@@ -141,9 +141,9 @@
                     };
 
                     // disable default right-click triggered context menu
-                    elem.bind('contextmenu', function () {
-                        return false;
-                    });
+                    //elem.bind('contextmenu', function () {
+                    //    return false;
+                    //});
 
                     /**
                      * define the API exposed to the parent component
@@ -331,7 +331,11 @@
                         title: {
                             text: scope.title || "Untitled",
                             events: {
-                                click: dsc.onTitleClick
+                                click: function (e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    dsc.onTitleClick(e, scope, this);
+                                }
                             }
                         },
                         plotOptions: {
@@ -484,11 +488,25 @@
                      * @param attr
                      */
                     scope.removeAttr = function (attr, securityAttrPair) {
-                        // remove attr from chart
+
+                        /**
+                         * remove attr from chart
+                         */
                         const series = scope.states.chart.get(dsc.generateSeriesID(securityAttrPair[0], attr));
-                        if (series)
+
+                        /**
+                         * remove the series associated with the given attr if found
+                         */
+                        if (series) {
+                            const yAxis = series.yAxis;
+                            const securityId = series.options.securityId;
                             series.remove();
-                        // remove attr from state
+                            afterSeriesRemove(yAxis, securityId);
+                        }
+
+                        /**
+                         * remove attr from state
+                         */
                         securityAttrPair[1].splice(securityAttrPair[1].indexOf(attr), 1);
                     };
 
@@ -930,29 +948,34 @@
 
     /**
      * this is the event handler for the user clicking on the chart title
-     * @param clickEvent
      */
-    root.dsc.onTitleClick = function (clickEvent) {
-        const chart = this;
-        const $container = $(this.container);
-        if ($container.find("input.form-control").length != 0)
-            return;
-        const $input = $("<input class='form-control floating-input' placeholder='Type a New Title, Hit Enter to Confirm, ESC to Cancel'/>");
-        const top = $(clickEvent.target).offset().top - $container.offset().top;
+    root.dsc.onTitleClick = function (clickEvent, scope, chart) {
+
+        const $input = $("<input class='form-control' style='position:relative; left: 5%; width: 90%;'/>");
+        const $menuItem = $("<li><span></span></li>");
+        $menuItem.on('click',dsc.inertClickHandler).children("span").append($input);
+
+        const $ctxMenu = scope.$ctxMenu;
+        $ctxMenu.find(".dropdown-menu li").remove();
+        $ctxMenu.children(".dropdown-menu").append($menuItem);
+
         $input
             .on('keydown', function (keyEvent) {
                 if (keyEvent.keyCode == 13 && $input.val() != "") { // ENTER
+                    keyEvent.preventDefault();
+                    keyEvent.stopPropagation();
                     chart.setTitle({text: $input.val()});
-                    $input.remove();
+                    $ctxMenu.hide();
                 } else if (keyEvent.keyCode == 27) // ESCAPE
-                    $input.remove();
+                    $ctxMenu.hide();
             })
-            .css({
-                top: top + "px",
-                left: "1%",
-                width: "98%"
-            }).appendTo($container);
-        $input.focus();
+            .val(chart.options.title.text);
+
+        const titleLength = Math.min($input.val().length, 20);
+        $menuItem.css({width: titleLength + "em"});
+
+        dsc.showCtxMenu($ctxMenu, clickEvent);
+        $input.select();
     };
 
     /**

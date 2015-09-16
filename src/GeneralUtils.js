@@ -189,29 +189,34 @@
 
     /**
      * this is the event handler for the user clicking on the chart title
-     * @param clickEvent
      */
-    root.dsc.onTitleClick = function (clickEvent) {
-        const chart = this;
-        const $container = $(this.container);
-        if ($container.find("input.form-control").length != 0)
-            return;
-        const $input = $("<input class='form-control floating-input' placeholder='Type a New Title, Hit Enter to Confirm, ESC to Cancel'/>");
-        const top = $(clickEvent.target).offset().top - $container.offset().top;
+    root.dsc.onTitleClick = function (clickEvent, scope, chart) {
+
+        const $input = $("<input class='form-control' style='position:relative; left: 5%; width: 90%;'/>");
+        const $menuItem = $("<li><span></span></li>");
+        $menuItem.on('click',dsc.inertClickHandler).children("span").append($input);
+
+        const $ctxMenu = scope.$ctxMenu;
+        $ctxMenu.find(".dropdown-menu li").remove();
+        $ctxMenu.children(".dropdown-menu").append($menuItem);
+
         $input
             .on('keydown', function (keyEvent) {
                 if (keyEvent.keyCode == 13 && $input.val() != "") { // ENTER
+                    keyEvent.preventDefault();
+                    keyEvent.stopPropagation();
                     chart.setTitle({text: $input.val()});
-                    $input.remove();
+                    $ctxMenu.hide();
                 } else if (keyEvent.keyCode == 27) // ESCAPE
-                    $input.remove();
+                    $ctxMenu.hide();
             })
-            .css({
-                top: top + "px",
-                left: "1%",
-                width: "98%"
-            }).appendTo($container);
-        $input.focus();
+            .val(chart.options.title.text);
+
+        const titleLength = Math.min($input.val().length, 20);
+        $menuItem.css({width: titleLength + "em"});
+
+        dsc.showCtxMenu($ctxMenu, clickEvent);
+        $input.select();
     };
 
     /**

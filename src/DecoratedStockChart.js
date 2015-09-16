@@ -6,8 +6,8 @@
         };
     }
 
-    Date.prototype.getYYYYMMDD = function(){
-        var month = this.getMonth()+1;
+    Date.prototype.getYYYYMMDD = function () {
+        var month = this.getMonth() + 1;
         month = month.toString().length == 1 ? "0" + month : month;
         var day = this.getDate();
         day = day.toString().length == 1 ? "0" + day : day;
@@ -141,9 +141,9 @@
                     };
 
                     // disable default right-click triggered context menu
-                    elem.bind('contextmenu', function () {
-                        return false;
-                    });
+                    //elem.bind('contextmenu', function () {
+                    //    return false;
+                    //});
 
                     /**
                      * define the API exposed to the parent component
@@ -331,7 +331,11 @@
                         title: {
                             text: scope.title || "Untitled",
                             events: {
-                                click: dsc.onTitleClick
+                                click: function (e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    dsc.onTitleClick(e, scope, this);
+                                }
                             }
                         },
                         plotOptions: {
@@ -484,11 +488,25 @@
                      * @param attr
                      */
                     scope.removeAttr = function (attr, securityAttrPair) {
-                        // remove attr from chart
+
+                        /**
+                         * remove attr from chart
+                         */
                         const series = scope.states.chart.get(dsc.generateSeriesID(securityAttrPair[0], attr));
-                        if (series)
+
+                        /**
+                         * remove the series associated with the given attr if found
+                         */
+                        if (series) {
+                            const yAxis = series.yAxis;
+                            const securityId = series.options.securityId;
                             series.remove();
-                        // remove attr from state
+                            afterSeriesRemove(yAxis, securityId);
+                        }
+
+                        /**
+                         * remove attr from state
+                         */
                         securityAttrPair[1].splice(securityAttrPair[1].indexOf(attr), 1);
                     };
 
