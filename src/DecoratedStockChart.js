@@ -672,6 +672,11 @@
                             scope.apiHandle.api.addSecurity(security);
                         });
                     });
+
+                    // This is to remove any unexpected propagation from datepicker
+                    elem.find(".datepicker-area").click(function(e){
+                        e.stopPropagation();
+                    });
                 },
                 templateUrl: scriptFolder.endsWith("src/") ? scriptFolder + "/templates/DecoratedStockChart.html" : "DecoratedStockChart.html"
             };
