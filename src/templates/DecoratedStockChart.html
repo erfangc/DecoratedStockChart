@@ -15,7 +15,7 @@
                 <a><i ng-click="toggleSlide(!states.menuDisplays.securityControl, 'security-control')"
                       class="fa clickable"
                       ng-class="{'fa-chevron-up': states.menuDisplays.securityControl, 'fa-chevron-down': !states.menuDisplays.securityControl}"></i></a>
-                <span class="security-control floating-form" style="display: none;top:35px;left:0;">
+                <div class="security-control floating-form" style="display: none;top:35px;left:0;overflow: auto">
                     <div ng-show="states.securityAttrMap.length === 0">
                         <h5>No Security Selected</h5>
                     </div>
@@ -41,7 +41,7 @@
 
                         </span>
                     </div>
-                </span>
+                </div>
             </span>
             <!-- TODO implement these date functionalities -->
             <span style="padding-left:25px;">
@@ -49,7 +49,7 @@
                       style="padding-right:5px;color:#005da0;">
                     {{period}}
                 </span>
-                <span style="color:#005da0;"
+                <span style="color:#005da0;overflow: hidden"
                       dsc-click-outside
                       dsc-open-state="states.menuDisplays.dateControl"
                       dsc-close-callback="toggleSlide(!states.menuDisplays.dateControl, 'date-control')">
@@ -63,21 +63,27 @@
                             Format: YYYY-MM-DD
                         </alert>
                         <label>From&nbsp;</label>
-                        <p class="input-group limited-input" ng-click="startDatePickerOpen = true">
+                        <div class="input-group limited-input">
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="startDatePickerOpen"
                                    ng-model="start"
                                    close-text="Close"/>
-                        </p>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="startDatePickerOpen = !startDatePickerOpen"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
                         <label>To&nbsp;</label>
-                        <p class="input-group limited-input" ng-click="endDatePickerOpen = true">
+                        <div class="input-group limited-input">
                             <input type="text" class="form-control"
                                    datepicker-popup
                                    is-open="endDatePickerOpen"
                                    ng-model="end"
                                    close-text="Close"/>
-                        </p>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="endDatePickerOpen = !endDatePickerOpen"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
                         <hr/>
                         <button class="btn btn-success"
                                 ng-click="alerts.dateChangeError.message = apiHandle.api.changeDateRange(start, end);
@@ -89,93 +95,91 @@
             </span>
         </span>
         <span class="flex-sub-container-right">
-            <span class="flex-container">
-                <span class="menu-container" dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
-                      dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
-                    <a class="clickable" style="text-decoration:none"
-                       ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control');selected='';">
-                        <span class="fake-anchor-tag">Market Indicators</span>
-                        <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
-                    </a>
-                    <div class="indicator-control floating-form" style="display: none;width:250px;">
-                        <label>
-                            Search&nbsp;
-                        </label>
-                        <span class="restrict-dropdown-menu">
-                            <input type="text" placeholder="ex: S&P 500, Energy CDS..." class="form-control"
-                                       ng-model="selected"
-                                       typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                                       typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
-                                       typeahead-focus/>
-                        </span>
-                        <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
-                    </div>
-                </span>
-                <span class="menu-container" dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
-                      dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
-                        style="padding-right:10px" ng-init="customBenchmark = {}">
-                    <a class="clickable" style="padding-left:5px;text-decoration:none;"
-                       ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');customBenchmark = {};">
-                        <span class="fake-anchor-tag">Benchmark</span>
-                        <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
-                    </a>
-                    <div class="benchmark-control floating-form" style="display: none;">
-                        <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger" style="font-size: 12px;">
-                            There were problems with your input
-                            <br/><br/>
-                            <ul style="list-style:inside;padding-left:0;">
-                                <li ng-repeat="message in alerts.customBenchmark.messages">{{message}}</li>
-                            </ul>
-                        </alert>
-                        <label>
-                            Sector&nbsp;
-                            <span class="restrict-dropdown-menu-small">
-                                <input type="text" class="form-control length-md"
-                                       ng-model="customBenchmark.sector"
-                                       typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
-                                       typeahead-focus
-                                       typeahead-select-on-blur="true"/>
-                            </span>
-                        </label>
-                        <label>
-                            Rating&nbsp;
-                            <span class="restrict-dropdown-menu-small">
-                                <input type="text" class="form-control length-md"
-                                       ng-model="customBenchmark.rating"
-                                       typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
-                                       typeahead-focus
-                                       typeahead-select-on-blur="true"/>
-                            </span>
-                        </label>
-                        <label>
-                            WAL&nbsp;
-                            <span class="restrict-dropdown-menu-small">
-                                <input type="text" class="form-control length-md"
-                                       ng-model="customBenchmark.wal"
-                                       typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | orderBy:'parseInt()'"
-                                       typeahead-focus
-                                       typeahead-select-on-blur="true"/>
-                            </span>
-                        </label>
-                        <label>
-                            Analytic&nbsp;
-                            <span class="restrict-dropdown-menu-small">
-                                <input type="text" class="form-control length-md"
-                                       ng-model="customBenchmark.analytic"
-                                       typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                                       typeahead-focus
-                                       typeahead-select-on-blur="true"/>
-                            </span>
-                        </label>
-                        <button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i
-                                class="fa fa-play"></i></button>
-                    </div>
-                </span>
-                <span>
-                    <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></span>
-                    <span class="clickable" style="padding-right:5px;color:#005da0;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
-                        <i class="fa" ng-class="customButton.faClass"></i>
+            <span dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
+                  dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
+                <a class="clickable" style="text-decoration:none"
+                   ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control');selected='';">
+                    <span class="fake-anchor-tag">Market Indicators</span>
+                    <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
+                </a>
+                <div class="indicator-control floating-form" style="display: none;width:250px;">
+                    <label>
+                        Search&nbsp;
+                    </label>
+                    <span class="restrict-dropdown-menu">
+                        <input type="text" placeholder="ex: S&P 500, Energy CDS..." class="form-control"
+                                   ng-model="selected"
+                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
+                                   typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
+                                   typeahead-focus/>
                     </span>
+                    <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
+                </div>
+            </span>
+            <span dsc-click-outside dsc-opetrolate="states.menuDisplays.benchmarkControl"
+                  dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
+                    style="padding-right:10px" ng-init="customBenchmark = {}">
+                <a class="clickable" style="padding-left:5px;text-decoration:none;"
+                   ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');customBenchmark = {};">
+                    <span class="fake-anchor-tag">Benchmark</span>
+                    <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
+                </a>
+                <div class="benchmark-control floating-form" style="display: none;">
+                    <alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger" style="font-size: 12px;">
+                        There were problems with your input
+                        <br/><br/>
+                        <ul style="list-style:inside;padding-left:0;">
+                            <li ng-repeat="message in alerts.customBenchmark.messages">{{message}}</li>
+                        </ul>
+                    </alert>
+                    <label>
+                        Sector&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="customBenchmark.sector"
+                                   typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <label>
+                        Rating&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="customBenchmark.rating"
+                                   typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <label>
+                        WAL&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="customBenchmark.wal"
+                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | orderBy:'parseInt()'"
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <label>
+                        Analytic&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="customBenchmark.analytic"
+                                   typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i
+                            class="fa fa-play"></i></button>
+                </div>
+            </span>
+            <span>
+                <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i class="fa fa-share-square-o"></i></span>
+                <span class="clickable" style="padding-right:5px;color:#005da0;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
+                    <i class="fa" ng-class="customButton.faClass"></i>
                 </span>
             </span>
         </span>
