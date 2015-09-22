@@ -129,12 +129,12 @@
     width:200px;
 }
 
-.restrict-dropdown-menu .dropdown-menu{
+.restrict-dropdown-menu > .dropdown-menu{
     max-height : 350px;
     overflow-y: auto;
 }
 
-.restrict-dropdown-menu-small .dropdown-menu{
+.restrict-dropdown-menu-small > .dropdown-menu{
     max-height : 200px;
     overflow-y: auto;
 }
