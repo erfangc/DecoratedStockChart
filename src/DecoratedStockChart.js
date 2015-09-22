@@ -665,6 +665,13 @@
                         scope.apiHandle.api.changeDateRange(start, end);
                     };
 
+                    /**
+                     * Sort function to sort wal buckets in the benchmark dropdown
+                     */
+                    scope.sortWalBuckets = function(wal){
+                        return parseInt(wal) || 0;
+                    };
+
                     $timeout(function () {
                         /**
                          * initialization & initial rendering

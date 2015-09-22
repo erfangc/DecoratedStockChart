@@ -59,7 +59,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
      */
     $scope.customBenchmarkOptions = {
         sectors: ['Sector A', 'Sector B'],
-        wal: [1,3,5,7,10,30],
+        wal: ["1 Year","3 Year","5 Year","7 Year","10 Year","All","30 Year"],
         ratings:['CC','CCC','D','NR','A','AA','BB','BBB','AAA','B','C'],
         analytics: [{tag: "price", label: "Price"}, {tag: "volume", label: "Volume"}, {tag: "return", label: "Return"}]
     };

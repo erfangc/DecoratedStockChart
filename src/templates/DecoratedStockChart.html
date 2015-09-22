@@ -157,7 +157,7 @@
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
                                    ng-model="customBenchmark.wal"
-                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | orderBy:'parseInt()'"
+                                   typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | orderBy:sortWalBuckets"
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
