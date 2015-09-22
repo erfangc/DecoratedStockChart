@@ -675,8 +675,8 @@
                         });
                     });
 
-                    // This is to remove any unexpected propagation from datepicker
-                    elem.find(".datepicker-area").click(function(e){
+                    // This is to remove any unexpected propagation from dropdowns
+                    elem.find(".floating-form").click(function(e){
                         e.stopPropagation();
                     });
                 },
