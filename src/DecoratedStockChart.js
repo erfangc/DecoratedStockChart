@@ -196,6 +196,7 @@
                                 scope.onSecurityRemove({id: id});
                         },
                         addMarketIndicator: function ($item) {
+                            scope.isProcessing = true;
                             scope.toggleSlide(false, 'indicator-control');
 
                             const result = scope.onMarketIndexSelect({
@@ -265,6 +266,7 @@
                                 scope.toggleSlide(false, 'benchmark-control')
                             }
 
+                            scope.isProcessing = true;
                             if (result && angular.isFunction(result.then))
                                 result.then(function (series) {
                                     processSeries(series.status ? series.data : series);
