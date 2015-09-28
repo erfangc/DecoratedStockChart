@@ -194,7 +194,7 @@
 
         const $input = $("<input class='form-control' style='position:relative; left: 5%; width: 90%;'/>");
         const $menuItem = $("<li><span></span></li>");
-        $menuItem.on('click',dsc.inertClickHandler).children("span").append($input);
+        $menuItem.on('click', dsc.inertClickHandler).children("span").append($input);
 
         const $ctxMenu = scope.$ctxMenu;
         $ctxMenu.find(".dropdown-menu li").remove();
@@ -218,6 +218,46 @@
         dsc.showCtxMenu($ctxMenu, clickEvent);
         $input.select();
     };
+
+    root.dsc.afterSeriesRemove = function (yAxis, securityId, scope) {
+
+        /**
+         * test if the given series is the only one left on the given yAxis
+         * @param yAxis
+         */
+        function isAxisEmpty(yAxis) {
+            return yAxis && yAxis.series.length === 0;
+        }
+
+        function hasNoSeries(securityId) {
+            const chart = scope.states.chart;
+            return _.filter(chart.series, function (series) {
+                    return series.userOptions.securityId
+                        && series.userOptions.securityId === securityId;
+                }).length === 0;
+        }
+
+        // figure out if this is the last series on its given axis, if so remove the axis
+        if (isAxisEmpty(yAxis))
+            yAxis.remove();
+        // figure out if this is the last series for the given security, if so remove the security
+        if (securityId && hasNoSeries(securityId))
+            scope.apiHandle.api.removeSecurity(securityId);
+    };
+
+    root.dsc.removeSeriesById = function (id, scope) {
+
+        const chart = scope.states.chart;
+        const series = chart.get(id);
+        const yAxis = series.yAxis;
+        const securityId = series.options.securityId;
+
+        if (angular.isFunction(series.remove))
+            series.remove();
+
+        dsc.afterSeriesRemove(yAxis, securityId, scope);
+    };
+
 
     /**
      * generator function for SMA. Credit: Rosetta Code

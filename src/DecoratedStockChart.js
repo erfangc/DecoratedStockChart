@@ -188,7 +188,7 @@
                             }).each(function (series) {
                                 const yAxis = series.yAxis;
                                 series.remove();
-                                afterSeriesRemove(yAxis, id);
+                                dsc.afterSeriesRemove(yAxis, id, scope);
                             });
 
                             // fire callback if provided
@@ -206,11 +206,21 @@
 
                             function processSeries(series) {
                                 series.id = $item.tag;
+
+                                /**
+                                 * instruction on how to properly remove the series
+                                 */
+                                series.onRemove = function () {
+                                    scope.states.marketIndices.splice(scope.states.marketIndices.indexOf($item), 1);
+                                    dsc.removeSeriesById(series.id, scope);
+                                };
+
                                 // Update the data it if it already exists
                                 if (scope.states.chart.get(series.id))
                                     scope.states.chart.get(series.id).setData(series.data);
                                 else
                                     scope.addSeries(series);
+
                                 scope.isProcessing = false;
                                 scope.states.marketIndices.push($item);
                             }
@@ -245,6 +255,15 @@
                                     customBenchmark.rating,
                                     customBenchmark.wal,
                                     customBenchmark.analytic.tag].join(".");
+
+
+                                /**
+                                 * instruction on how to properly remove the series
+                                 */
+                                series.onRemove = function () {
+                                    scope.states.customBenchmarks.splice(scope.states.customBenchmarks.indexOf(customBenchmark), 1);
+                                    dsc.removeSeriesById(series.id, scope);
+                                };
 
                                 // Update the data it if it already exists
                                 if (scope.states.chart.get(series.id))
@@ -362,7 +381,7 @@
                             type: "datetime",
                             events: {
                                 // If we zoom in on the chart, change the date range to those dates
-                                afterSetExtremes: function(event) {
+                                afterSetExtremes: function (event) {
                                     if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max) {
                                         scope.apiHandle.api.changeDateRange(event.min, event.max);
                                         this.chart.zoomOut();
@@ -503,7 +522,7 @@
                             const yAxis = series.yAxis;
                             const securityId = series.options.securityId;
                             series.remove();
-                            afterSeriesRemove(yAxis, securityId);
+                            dsc.afterSeriesRemove(yAxis, securityId, scope);
                         }
 
                         /**
@@ -572,40 +591,6 @@
                     };
 
                     /**
-                     * test if the given securityId has any series left in the chart aside from the one given
-                     * @param securityId
-                     */
-                    function hasNoSeries(securityId) {
-                        const chart = scope.states.chart;
-                        return _.filter(chart.series, function (series) {
-                                return series.userOptions.securityId
-                                    && series.userOptions.securityId === securityId;
-                            }).length === 0;
-                    }
-
-                    /**
-                     * test if the given series is the only one left on the given yAxis
-                     * @param yAxis
-                     */
-                    function isAxisEmpty(yAxis) {
-                        return yAxis && yAxis.series.length === 0;
-                    }
-
-                    /**
-                     * clean up action after a series is removed
-                     * @param yAxis
-                     * @param securityId
-                     */
-                    function afterSeriesRemove(yAxis, securityId) {
-                        // figure out if this is the last series on its given axis, if so remove the axis
-                        if (isAxisEmpty(yAxis))
-                            yAxis.remove();
-                        // figure out if this is the last series for the given security, if so remove the security
-                        if (securityId && hasNoSeries(securityId))
-                            scope.apiHandle.api.removeSecurity(securityId);
-                    }
-
-                    /**
                      * handles removing a given series from the chart
                      * but also performs state syncs
                      *
@@ -620,7 +605,7 @@
                             series.options.onRemove();
                         else
                             series.remove();
-                        afterSeriesRemove(yAxis, securityId);
+                        dsc.afterSeriesRemove(yAxis, securityId, scope);
                     };
 
                     scope.toggleSlide = function (show, className) {
@@ -668,7 +653,7 @@
                     /**
                      * Sort function to sort wal buckets in the benchmark dropdown
                      */
-                    scope.sortWalBuckets = function(wal){
+                    scope.sortWalBuckets = function (wal) {
                         return parseInt(wal) || 0;
                     };
 
@@ -683,7 +668,7 @@
                     });
 
                     // This is to remove any unexpected propagation from dropdowns
-                    elem.find(".floating-form").click(function(e){
+                    elem.find(".floating-form").click(function (e) {
                         e.stopPropagation();
                     });
                 },
