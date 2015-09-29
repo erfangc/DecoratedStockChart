@@ -213,7 +213,7 @@
             .val(chart.options.title.text);
 
         const titleLength = Math.min($input.val().length, 20);
-        $menuItem.css({width: titleLength + "em"});
+        $menuItem.css({"min-width": titleLength + "em"});
 
         dsc.showCtxMenu($ctxMenu, clickEvent);
         $input.select();
