@@ -104,6 +104,7 @@
             const $menuItem = $("<li><span></span></li>")
                 .click(dsc.inertClickHandler);
             $menuItem.children("span").append($input);
+            //$menuItem.css({"min-width": $input.val().length + "em"});
             return $menuItem;
         }
 

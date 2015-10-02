@@ -222,7 +222,9 @@
                                     scope.addSeries(series);
 
                                 scope.isProcessing = false;
-                                scope.states.marketIndices.push($item);
+
+                                if (scope.states.marketIndices.indexOf($item) === -1)
+                                    scope.states.marketIndices.push($item);
                             }
 
                             if (result && angular.isFunction(result.then))
@@ -271,7 +273,8 @@
                                 else
                                     scope.addSeries(series);
                                 scope.isProcessing = false;
-                                scope.states.customBenchmarks.push(customBenchmark);
+                                if (scope.states.customBenchmarks.indexOf(customBenchmark) === -1)
+                                    scope.states.customBenchmarks.push(customBenchmark);
                             }
 
                             validate(customBenchmark, result);
@@ -862,6 +865,7 @@
             const $menuItem = $("<li><span></span></li>")
                 .click(dsc.inertClickHandler);
             $menuItem.children("span").append($input);
+            //$menuItem.css({"min-width": $input.val().length + "em"});
             return $menuItem;
         }
 
