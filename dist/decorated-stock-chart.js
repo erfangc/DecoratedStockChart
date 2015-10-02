@@ -898,7 +898,7 @@
 
         var left = event.clientX;
         if (menuRight > ctnRight)
-            left = event.clientX - $ctxMenu.children().width();
+            left = Math.max(event.clientX - $ctxMenu.children().width(),0);
 
         var top = event.clientY;
         if (menuBtm > ctnBtm)
