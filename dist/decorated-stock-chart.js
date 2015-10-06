@@ -402,7 +402,7 @@
                                 }
                             },
                             axisType: scope.defaultSecurityAttribute.label,
-                            id: "yAxis.1"
+                            id: _.uniqueId("yAxis")
                         },
                         legend: {
                             useHTML: true
@@ -578,7 +578,7 @@
                         /**
                          * select the best axis to add the new series into
                          */
-                        const preferredYAxis = seriesOption.yAxis || dsc.resolvePreferredYAxis(chart, seriesOption);
+                        const preferredYAxis = (seriesOption.yAxis == undefined || seriesOption.yAxis == null) ? dsc.resolvePreferredYAxis(chart, seriesOption) : seriesOption.yAxis;
                         if (preferredYAxis === -1) {
                             /**
                              * add a new axis if we cannot find a preferred series
@@ -793,7 +793,7 @@
      * @return {string}
      */
     root.dsc.addAxisToChart = function (chart, name, scope, axisType) {
-        const axisId = "yAxis." + (chart.yAxis.length + 1);
+        const axisId = _.uniqueId("yAxis");
         chart.addAxis({
             title: {
                 text: name,
@@ -807,7 +807,7 @@
             opposite: chart.axes.length % 2 == 0,
             id: axisId
         });
-        return axisId;
+        return chart.get(axisId);
     };
 
     /**
@@ -847,6 +847,11 @@
         function removeAxis() {
             return $("<li><a><i class='fa fa-remove'></i>&nbsp;Remove Axis</a></li>")
                 .click(function () {
+                    /**
+                     * remove any series that is on the axis
+                     */
+                    while (axis.series && axis.series.length !== 0)
+                        scope.removeSeries(axis.series[0]);
                     axis.remove();
                 });
         }
@@ -870,10 +875,8 @@
         }
 
         $ctxMenu.children(".dropdown-menu")
-            .append(editAxisTitle());
-        if (scope.states.chart.yAxis.length > 1
-            && axis.userOptions.id != scope.states.chart.yAxis[0].userOptions.id)
-            $ctxMenu.children(".dropdown-menu").append(removeAxis());
+            .append(editAxisTitle())
+            .append(removeAxis());
 
         dsc.showCtxMenu($ctxMenu, event);
         // focus on the edit axis title input
@@ -898,7 +901,7 @@
 
         var left = event.clientX;
         if (menuRight > ctnRight)
-            left = Math.max(event.clientX - $ctxMenu.children().width(),0);
+            left = Math.max(event.clientX - $ctxMenu.children().width(), 0);
 
         var top = event.clientY;
         if (menuBtm > ctnBtm)
@@ -922,21 +925,22 @@
     /**
      * moves an series from its current axis to the specified axis
      * @param series
-     * @param axis
+     * @param targetAxis
      * @param scope
      */
-    root.dsc.moveAxis = function (series, axis, scope) {
+    root.dsc.moveAxis = function (series, targetAxis, scope) {
+        const origAxis = series.yAxis;
         const seriesOptions = series.options;
-        if (typeof axis == "number")
-            seriesOptions.yAxis = axis;
-        else
         // figure out the position
-            seriesOptions.yAxis = _.findIndex(scope.states.chart.yAxis, function (x) {
-                return x.userOptions.id == axis.userOptions.id;
-            });
+        seriesOptions.yAxis = _.findIndex(scope.states.chart.yAxis, function (x) {
+            return x.userOptions.id == targetAxis.userOptions.id;
+        });
         seriesOptions.color = series.color;
         series.remove();
         scope.addSeries(seriesOptions);
+        if (dsc.isAxisEmpty(origAxis))
+            origAxis.remove();
+
     };
 
     /**
@@ -980,16 +984,15 @@
         dsc.showCtxMenu($ctxMenu, clickEvent);
         $input.select();
     };
+    /**
+     * test if the given series is the only one left on the given yAxis
+     * @param yAxis
+     */
+    root.dsc.isAxisEmpty = function (yAxis) {
+        return yAxis && yAxis.series.length === 0;
+    };
 
     root.dsc.afterSeriesRemove = function (yAxis, securityId, scope) {
-
-        /**
-         * test if the given series is the only one left on the given yAxis
-         * @param yAxis
-         */
-        function isAxisEmpty(yAxis) {
-            return yAxis && yAxis.series.length === 0;
-        }
 
         function hasNoSeries(securityId) {
             const chart = scope.states.chart;
@@ -1000,7 +1003,7 @@
         }
 
         // figure out if this is the last series on its given axis, if so remove the axis
-        if (isAxisEmpty(yAxis))
+        if (dsc.isAxisEmpty(yAxis))
             yAxis.remove();
         // figure out if this is the last series for the given security, if so remove the security
         if (securityId && hasNoSeries(securityId))
@@ -1230,8 +1233,8 @@
             $dropdown.append($menuItem);
         });
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
-            var axisId = dsc.addAxisToChart(chart, series.name, scope, series.axisType);
-            dsc.moveAxis(series, chart.get(axisId), scope);
+            const axis = dsc.addAxisToChart(chart, series.name, scope, series.userOptions.axisType);
+            dsc.moveAxis(series, axis, scope);
         }));
         return $dropdown;
     };

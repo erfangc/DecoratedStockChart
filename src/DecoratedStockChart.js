@@ -402,7 +402,7 @@
                                 }
                             },
                             axisType: scope.defaultSecurityAttribute.label,
-                            id: "yAxis.1"
+                            id: _.uniqueId("yAxis")
                         },
                         legend: {
                             useHTML: true
@@ -578,7 +578,7 @@
                         /**
                          * select the best axis to add the new series into
                          */
-                        const preferredYAxis = seriesOption.yAxis || dsc.resolvePreferredYAxis(chart, seriesOption);
+                        const preferredYAxis = (seriesOption.yAxis == undefined || seriesOption.yAxis == null) ? dsc.resolvePreferredYAxis(chart, seriesOption) : seriesOption.yAxis;
                         if (preferredYAxis === -1) {
                             /**
                              * add a new axis if we cannot find a preferred series

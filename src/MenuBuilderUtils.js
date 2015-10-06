@@ -185,8 +185,8 @@
             $dropdown.append($menuItem);
         });
         $dropdown.append($("<li><a><i class=\"fa fa-plus\"></i> Move To New Axis</a></li>").click(function () {
-            var axisId = dsc.addAxisToChart(chart, series.name, scope, series.axisType);
-            dsc.moveAxis(series, chart.get(axisId), scope);
+            const axis = dsc.addAxisToChart(chart, series.name, scope, series.userOptions.axisType);
+            dsc.moveAxis(series, axis, scope);
         }));
         return $dropdown;
     };
