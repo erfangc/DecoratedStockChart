@@ -336,6 +336,9 @@
                             if (scope.states.menuDisplays.dateControl)
                                 scope.toggleSlide(!scope.states.menuDisplays.dateControl, 'date-control');
                             scope.states.menuDisplays.dateControl = false;
+                        },
+                        changeTitle: function(title){
+                            scope.states.chart.setTitle({text: title});
                         }
                     };
 
@@ -636,6 +639,16 @@
                             window.navigator.msSaveBlob(new Blob([html]), "time-series-export.xls");
                         else
                             window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+                    };
+
+                    /**
+                     * Export the image of the chart to a PDF
+                     */
+                    scope.exportPDF = function(){
+                        scope.states.chart.exportChart({
+                            type: 'application/pdf',
+                            filename: 'ts-chart-export'
+                        });
                     };
 
                     /**
