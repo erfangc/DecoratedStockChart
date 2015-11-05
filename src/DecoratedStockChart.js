@@ -391,6 +391,10 @@
                                     if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max) {
                                         scope.apiHandle.api.changeDateRange(event.min, event.max);
                                         this.chart.zoomOut();
+                                        // Since this is unrelated to angular, we need run a digest to apply bindings
+                                        scope.$apply(function(){
+                                            scope.states.selectedTimePeriod = null;
+                                        });
                                     }
                                 }
                             }
@@ -663,6 +667,7 @@
                         const start = moment().subtract(parseInt(period),
                             period[period.length - 1].toUpperCase() === "M" ? "month" : "year").toDate();
                         const end = moment().toDate();
+                        scope.states.selectedTimePeriod = period;
                         scope.apiHandle.api.changeDateRange(start, end);
                     };
 

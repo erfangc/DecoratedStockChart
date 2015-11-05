@@ -47,9 +47,8 @@
             <!-- TODO implement these date functionalities -->
             <span style="padding-left:25px;">
                 <span class="clickable dsc-padding-right" ng-repeat="period in customDefaultTimePeriods" ng-click="selectTimePeriod(period)"
-                      style="padding-right:5px;color:#005da0;">
-                    {{period}}
-                </span>
+                      style="padding-right:5px;color:#005da0;"
+                      ng-class="{'dsc-underline': period === states.selectedTimePeriod}">{{period}}</span>
                 <span style="color:#005da0;overflow: hidden"
                       dsc-click-outside
                       dsc-open-state="states.menuDisplays.dateControl"
@@ -88,7 +87,8 @@
                         <hr/>
                         <button class="btn btn-success"
                                 ng-click="alerts.dateChangeError.message = apiHandle.api.changeDateRange(start, end);
-                                          alerts.dateChangeError.message ? null : showDateControl = !showDateControl;">
+                                          alerts.dateChangeError.message ? null : showDateControl = !showDateControl;
+                                          states.selectedTimePeriod = null;">
                             <i class="fa fa-play"></i>
                         </button>
                     </div>
