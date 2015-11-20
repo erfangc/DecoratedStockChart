@@ -108,7 +108,7 @@
                         Search&nbsp;
                     </label>
                     <span class="restrict-dropdown-menu">
-                        <input type="text" placeholder="ex: Brent Crude, Energy CDS..." class="form-control"
+                        <input type="text" placeholder="ex: Brent Crude, CDS..." class="form-control"
                                    ng-model="selected"
                                    typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
                                    typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
@@ -175,10 +175,9 @@
                     </label>
                     <label>
                         Currency&nbsp;
-                        <br/>
-                        <div class="btn-group" dropdown>
-                            USD
-                        </div>
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md" ng-disabled="true" value="USD"/>
+                        </span>
                     </label>
                     <br/>
                     <button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i
