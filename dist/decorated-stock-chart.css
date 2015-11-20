@@ -142,3 +142,9 @@
 .dsc-underline{
     text-decoration: underline;
 }
+
+.dhc-btn-plain{
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #555;
+}
