@@ -455,7 +455,8 @@
                                 name: "Basis of " + origSeries.name + " - " + otherSeries.name,
                                 axisType: origSeries.options.axisType,
                                 securityId: origSeries.options.securityId || null,
-                                data: data
+                                data: data,
+                                type: 'areaspline'
                             }
                         }
                     };
