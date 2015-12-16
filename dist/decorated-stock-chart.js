@@ -490,7 +490,7 @@
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
                             series.id = dsc.generateSeriesID(securityAttrPair[0], $item);
-                            series.axisType = $item.label;
+                            series.axisType = $item.unit || $item.label;;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
@@ -796,7 +796,9 @@
         if (!seriesOption.axisType)
             return chart.yAxis.length === 0 ? -1 : 0;
         return _.findIndex(chart.yAxis, function (axis) {
-            return axis.userOptions.axisType === seriesOption.axisType;
+            return _.reduce(axis.series, function(ser, sum){
+                return sum && ser.options.axisType === seriesOption.axisType;
+            },true);
         });
     };
 

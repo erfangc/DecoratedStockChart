@@ -16,7 +16,9 @@
         if (!seriesOption.axisType)
             return chart.yAxis.length === 0 ? -1 : 0;
         return _.findIndex(chart.yAxis, function (axis) {
-            return axis.userOptions.axisType === seriesOption.axisType;
+            return _.reduce(axis.series, function(ser, sum){
+                return sum && ser.options.axisType === seriesOption.axisType;
+            },true);
         });
     };
 

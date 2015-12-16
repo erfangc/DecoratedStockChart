@@ -490,7 +490,7 @@
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
                             series.id = dsc.generateSeriesID(securityAttrPair[0], $item);
-                            series.axisType = $item.label;
+                            series.axisType = $item.unit || $item.label;;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
