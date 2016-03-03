@@ -46,6 +46,13 @@
     background-color: #fff;
 }
 
+.chart-area-container{
+    position:relative;
+    height: -moz-calc(100% - 90px);
+    height: -webkit-calc(100% - 90px);
+    height: calc(100% - 90px);
+}
+
 .menu-container {
     position: relative;
 }
