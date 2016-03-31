@@ -453,7 +453,7 @@
                             return {
                                 id: origSeries.options.id + ".basisVs." + otherSeries.options.id,
                                 name: "Basis of " + origSeries.name + " - " + otherSeries.name,
-                                axisType: origSeries.options.axisType,
+                                axisType: origSeries.options.axisType + " Basis",
                                 securityId: origSeries.options.securityId || null,
                                 data: data,
                                 type: 'areaspline'
