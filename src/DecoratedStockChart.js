@@ -339,6 +339,13 @@
                         },
                         changeTitle: function(title){
                             scope.states.chart.setTitle({text: title});
+                        },
+                        /**
+                         * Sets size to be exactly the dimensions of the container
+                         */
+                        hardReflow: function(){
+                            var containerStyles = window.getComputedStyle(scope.states.chart.container);
+                            scope.states.chart.setSize(parseInt(containerStyles.width), parseInt(containerStyles.height));
                         }
                     };
 
