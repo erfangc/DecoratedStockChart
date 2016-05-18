@@ -101,6 +101,7 @@
                     apiHandle: "="
                 },
                 link: function (scope, elem, attrs) {
+
                     scope.id = _.uniqueId();
                     scope.alerts = {
                         customBenchmark: {active: false, messages: []},
