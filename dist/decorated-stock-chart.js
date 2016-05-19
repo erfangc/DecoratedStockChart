@@ -197,9 +197,6 @@
                             if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
                         },
-                        getDateRange: function(){
-                          return scope.states.dateRange;
-                        },
                         addMarketIndicator: function ($item) {
                             scope.isProcessing = true;
                             scope.toggleSlide(false, 'indicator-control');
