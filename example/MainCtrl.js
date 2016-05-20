@@ -54,6 +54,14 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         };
     };
 
+    $scope.datesChanged = function(startDate, endDate) {
+        $scope.dates = {
+            start: startDate,
+            end: endDate
+        };
+        return $scope.dates;
+    };
+
     /**
      * custom benchmark simulated behavior
      */

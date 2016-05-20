@@ -98,9 +98,11 @@
                      * the API through which this directive exposes behavior to external (parent) components
                      * this component's behavior can be accessed via scope.apiHandle.api
                      */
-                    apiHandle: "="
+                    apiHandle: "=",
+                    onDateChange: "&"
                 },
                 link: function (scope, elem, attrs) {
+
                     scope.id = _.uniqueId();
                     scope.alerts = {
                         customBenchmark: {active: false, messages: []},
@@ -323,6 +325,9 @@
                             }
                             scope.states.dateRange.start = start;
                             scope.states.dateRange.end = end;
+                            scope.onDateChange({
+                                startDate: start,
+                                endDate: end});
                             // Update all security attributes
                             _.each(scope.states.securityAttrMap, function (pair) {
                                 _.each(pair[1], function (attribute) {
