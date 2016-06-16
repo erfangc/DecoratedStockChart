@@ -9,7 +9,7 @@
                     <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
                            style="width: 12em; display: inline; height:25px;"
                            typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                           typeahead-on-select="apiHandle.api.changeTitle($item.label)"
+                           typeahead-on-select="apiHandle.api.changeDefaultSecurityAttribute($item)"
                            typeahead-focus
                            typeahead-select-on-blur="true"/>
                 </span>
