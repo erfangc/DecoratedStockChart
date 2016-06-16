@@ -344,6 +344,7 @@
                         },
                         changeTitle: function(title){
                             scope.states.chart.setTitle({text: title});
+                            scope.onDefaultAttributeChange({newAttr: scope.defaultSecurityAttribute});
                         },
                         /**
                          * Sets size to be exactly the dimensions of the container
@@ -523,6 +524,8 @@
                             });
                         else
                             processSeries(result);
+
+                        scope.checkForSecurityAttrMap();
                     };
 
                     /**
@@ -552,6 +555,24 @@
                          * remove attr from state
                          */
                         securityAttrPair[1].splice(securityAttrPair[1].indexOf(attr), 1);
+                        scope.checkForSecurityAttrMap();
+
+                    };
+
+
+                    /**
+                     * Hides the defaultSecurityAttribute input box when the multiple attributes added. It also changes the title
+                     * This is fired off when adding or removing attribute.
+                     */
+                    scope.checkForSecurityAttrMap =  function(){
+                        var attributeArray = [];
+                        _.map(scope.states.securityAttrMap, function(el){attributeArray.push(el[1])});
+                        var flattenedAttrArray = _.flatten(attributeArray);
+                        scope.multipleAttributesExist = (_.intersection(flattenedAttrArray, flattenedAttrArray)).length > 1;
+                        scope.multiTitle = [];
+                        _.map(_.intersection(flattenedAttrArray, flattenedAttrArray), function(title){scope.multiTitle.push(title.label)});
+                        scope.multiTitle.join(', ');
+                        scope.states.chart.setTitle({text: scope.multiTitle});
                     };
 
                     /**
