@@ -17,6 +17,16 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         $scope.apiHandle.api.addSecurity(security);
     };
     $scope.defaultSecurityAttribute = {tag: "price", label: "Price"};
+
+    $scope.onDefaultAttributeChange = function(newAttr){
+
+        _.forEach($scope.securities, function(security){
+            $scope.apiHandle.api.removeSecurity(security.id);
+        });
+        _.forEach($scope.securities, function(security){
+            $scope.apiHandle.api.addSecurity(security);
+        });
+    };
     $scope.onSecurityRemove = function (id) {
         $scope.message = "Callback Fired: Security with ID = " + id + " was Removed!";
         $("#alert").slideDown(500);

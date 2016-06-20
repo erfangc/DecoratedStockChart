@@ -168,6 +168,7 @@
                             const securityAttrPair = [security, []];
                             scope.states.securityAttrMap.push(securityAttrPair);
                             scope.addAttr(scope.defaultSecurityAttribute, securityAttrPair);
+
                         },
                         /**
                          * remove a security by ID
@@ -345,6 +346,9 @@
                         changeTitle: function(title){
                             scope.states.chart.setTitle({text: title});
                         },
+                        changeDefaultSecurityAttribute: function(newAttr){
+                            scope.onDefaultAttributeChange({newAttr: newAttr});
+                        },
                         /**
                          * Sets size to be exactly the dimensions of the container
                          */
@@ -502,7 +506,7 @@
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
                             series.id = dsc.generateSeriesID(securityAttrPair[0], $item);
-                            series.axisType = $item.unit || $item.label;;
+                            series.axisType = $item.unit || $item.label;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
@@ -523,6 +527,7 @@
                             });
                         else
                             processSeries(result);
+                        scope.updateDefaultAttributeBox(scope.states.securityAttrMap);
                     };
 
                     /**
@@ -552,6 +557,33 @@
                          * remove attr from state
                          */
                         securityAttrPair[1].splice(securityAttrPair[1].indexOf(attr), 1);
+                        scope.updateDefaultAttributeBox(scope.states.securityAttrMap);
+
+                    };
+
+
+                    /**
+                     * Hides the defaultSecurityAttribute input box when multiple attributes added. It calls a function which updates the title of the chart
+                     * This is fired off when adding or removing attribute.
+                     */
+                    scope.updateDefaultAttributeBox =  function(securityAttrMap){
+                        var attributeArray = [];
+                        _.map(securityAttrMap, function(el){attributeArray.push(el[1])});
+                        var flattenedAttrArray = _.flatten(attributeArray);
+                        scope.multipleAttributesExist = (_.intersection(flattenedAttrArray, flattenedAttrArray)).length > 1;
+                         scope.updateTitleForMultipleAttr(flattenedAttrArray);
+                    };
+
+                    /**
+                     * Updates the title when attributes changed
+                     * @param flattenedAttrArray
+                     */
+
+                    scope.updateTitleForMultipleAttr = function(flattenedAttrArray){
+                        var multiTitle = [];
+                        _.map(_.intersection(flattenedAttrArray, flattenedAttrArray), function(title){multiTitle.push(title.label)});
+                        multiTitle.join(', ');
+                        scope.apiHandle.api.changeTitle(multiTitle);
                     };
 
                     /**
