@@ -5,13 +5,16 @@
             <!-- security & attributes selection -->
             <span dsc-click-outside dsc-open-state="states.menuDisplays.securityControl"
                   dsc-close-callback="toggleSlide(!states.menuDisplays.securityControl, 'security-control')">
-                <span class="restrict-dropdown-menu" ng-hide="multipleAttributesExist">
-                    <input type="text" ng-model="defaultSecurityAttribute" class="form-control"
+                <span class="restrict-dropdown-menu" >
+                    <input type="text" ng-model="defaultSecurityAttribute" class="form-control" ng-hide="multipleAttributesExist"
                            style="width: 12em; display: inline; height:25px;"
                            typeahead="attr as attr.label for attr in availableSecurityAttributes | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
                            typeahead-on-select="apiHandle.api.changeDefaultSecurityAttribute($item)"
                            typeahead-focus
                            typeahead-select-on-blur="true"/>
+                    <input id="multipleLabelInput" type="text" ng-show="multipleAttributesExist" class="form-control"
+                           style="width: 12em; display: inline; height:25px;" placeholder="Multiple" disabled="true"
+                           />
                 </span>
                 <a><i ng-click="toggleSlide(!states.menuDisplays.securityControl, 'security-control')"
                       class="fa clickable"

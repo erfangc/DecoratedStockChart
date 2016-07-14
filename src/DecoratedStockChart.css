@@ -155,3 +155,17 @@
     border: 1px solid #ccc;
     color: #555;
 }
+
+
+#multipleLabelInput::-webkit-input-placeholder {
+    font-style: italic;
+}
+#multipleLabelInput::-moz-placeholder {
+    font-style: italic;
+}
+#multipleLabelInput::-moz-placeholder {
+    font-style: italic;
+}
+#multipleLabelInput:-ms-input-placeholder {
+    font-style: italic;
+}
