@@ -45,7 +45,7 @@
                 }
             },
             axisType: axisType,
-            opposite: chart.axes.length % 2 == 0,
+            opposite: chart.options.yAxis.length % 2 == 0,      //check for only the yAxis. xAxis is always datetime.
             id: axisId
         });
         return chart.get(axisId);
