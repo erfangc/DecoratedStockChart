@@ -107,7 +107,8 @@
                     scope.alerts = {
                         customBenchmark: {active: false, messages: []},
                         generalWarning: {active: false, message: ""},
-                        dateChangeError: {active: false, message: ""}
+                        dateChangeError: {active: false, message: ""},
+                        cdxBenchmark: {active: false, messages: []}
                     };
                     scope.customDefaultTimePeriods = scope.customDefaultTimePeriods || ["1M", "3M", "6M", "1Y", "2Y"];
                     scope.states = {
@@ -138,6 +139,8 @@
                             securityControl: false,
                             benchmarkControl: false,
                             indicatorControl: false,
+                            cdxControl: false,
+                            comparisonControl: false,
                             dateControl: false
                         }
                     };

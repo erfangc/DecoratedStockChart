@@ -99,9 +99,20 @@
             </span>
         </span>
         <span class="flex-sub-container-right">
-            <span dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
-                  dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
+
+            <span dsc-click-outside dsc-open-state="states.menuDisplays.comparisonControl"
+                  dsc-close-callback="toggleSlide(!states.menuDisplays.comparisonControl,'comparison-control')" style="padding-right:8px">
                 <a class="clickable" style="text-decoration:none"
+                   ng-click="toggleSlide(!states.menuDisplays.comparisonControl,'comparison-control');selected='';">
+                    <span class="fake-anchor-tag">Comparison</span>
+                    <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.comparisonControl, 'fa-chevron-down': !states.menuDisplays.comparisonControl}"></i>
+                </a>
+                <div class="comparison-control floating-form-comparison" style="display: none;right:0">
+                    <ul class="tab tab-style">
+                    <li class="position-li-tab">
+                        <span dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
+                              dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
+                <a class="clickable list-element-style" style="text-decoration:none"
                    ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control');selected='';">
                     <span class="fake-anchor-tag">Market Indicators</span>
                     <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>
@@ -112,18 +123,20 @@
                     </label>
                     <span class="restrict-dropdown-menu">
                         <input type="text" placeholder="ex: Brent Crude, CDS..." class="form-control"
-                                   ng-model="selected"
-                                   typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
-                                   typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
-                                   typeahead-focus/>
+                               ng-model="selected"
+                               typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"
+                               typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"
+                               typeahead-focus/>
                     </span>
                     <a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>
                 </div>
             </span>
-            <span dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
-                  dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
-                    style="padding-right:10px" ng-init="customBenchmark = {}">
-                <a class="clickable" style="padding-left:5px;text-decoration:none;"
+                    </li>
+                        <li class="position-li-tab">
+                            <span dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
+                                  dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
+                                  style="padding-right:10px" ng-init="customBenchmark = {}">
+                <a class="clickable list-element-style" style="padding-left:5px;text-decoration:none;"
                    ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');customBenchmark = {};">
                     <span class="fake-anchor-tag">Benchmark</span>
                     <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
@@ -187,6 +200,155 @@
                             class="fa fa-play"></i></button>
                 </div>
             </span>
+                        </li>
+
+                        <li class="position-li-tab">
+                            <span dsc-click-outside dsc-open-state="states.menuDisplays.cdxControl"
+                                  dsc-close-callback="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control')"
+                                  style="padding-right:10px" ng-init="cdxBenchmark = {}">
+                <a class="clickable list-element-style" style="padding-left:5px;text-decoration:none;"
+                   ng-click="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control');cdxBenchmark = {};">
+                    <span class="fake-anchor-tag">CDS Index</span>
+                    <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.cdxControl, 'fa-chevron-down': !states.menuDisplays.cdxControl}"></i>
+                </a>
+                <div class="cdx-control floating-form" style="display: none;right:0;width:220px">
+                    <alert ng-show="alerts.cdxBenchmark.active" close="alerts.cdxBenchmark.active = false" type="danger" style="font-size: 12px;">
+                        There were problems with your input
+                        <br/><br/>
+                        <ul style="list-style:inside;padding-left:0;">
+                            <li ng-repeat="message in alerts.cdxBenchmark.messages">{{message}}</li>
+                        </ul>
+                    </alert>
+                    <label>
+                        Contract Type&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="cdxBenchmark.contract_type"
+                                   typeahead="contract_type for contract_type in cdxBenchmarkOptions.contract_types | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <label>
+                        Maturity&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="cdxBenchmark.maturity"
+                                   typeahead="maturity for maturity in cdxBenchmarkOptions.maturities | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <label>
+                        On-the-run/Off-the-run&nbsp;
+                        <span class="restrict-dropdown-menu-small">
+                            <input type="text" class="form-control length-md"
+                                   ng-model="cdxBenchmark.otr"
+                                   typeahead="otr for otr in cdxBenchmarkOptions.otr | filter:$viewValue:$emptyOrMatch "
+                                   typeahead-focus
+                                   typeahead-select-on-blur="true"/>
+                        </span>
+                    </label>
+                    <br/>
+                    <button class="btn btn-success" ng-click="apiHandle.api.addCdxBenchmark(cdxBenchmark)"><i
+                            class="fa fa-play"></i></button>
+                </div>
+            </span>
+                        </li>
+
+                    </ul>
+                </div>
+            </span>
+
+
+            <!--<span dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"-->
+                  <!--dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">-->
+                <!--<a class="clickable" style="text-decoration:none"-->
+                   <!--ng-click="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control');selected='';">-->
+                    <!--<span class="fake-anchor-tag">Market Indicators</span>-->
+                    <!--<i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.indicatorControl, 'fa-chevron-down': !states.menuDisplays.indicatorControl}"></i>-->
+                <!--</a>-->
+                <!--<div class="indicator-control floating-form" style="display: none;width:250px;right:0">-->
+                    <!--<label>-->
+                        <!--Search&nbsp;-->
+                    <!--</label>-->
+                    <!--<span class="restrict-dropdown-menu">-->
+                        <!--<input type="text" placeholder="ex: Brent Crude, CDS..." class="form-control"-->
+                                   <!--ng-model="selected"-->
+                                   <!--typeahead="attr.label for attr in marketIndexTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"-->
+                                   <!--typeahead-on-select="apiHandle.api.addMarketIndicator($item); selected = '';showIndicatorControl = false;"-->
+                                   <!--typeahead-focus/>-->
+                    <!--</span>-->
+                    <!--<a class="clickable" ng-if="showMoreMarketInfo" ng-click="moreMarketInfoCallback()">Show All</a>-->
+                <!--</div>-->
+            <!--</span>-->
+            <!--<span dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"-->
+                  <!--dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"-->
+                    <!--style="padding-right:10px" ng-init="customBenchmark = {}">-->
+                <!--<a class="clickable" style="padding-left:5px;text-decoration:none;"-->
+                   <!--ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');customBenchmark = {};">-->
+                    <!--<span class="fake-anchor-tag">Benchmark</span>-->
+                    <!--<i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>-->
+                <!--</a>-->
+                <!--<div class="benchmark-control floating-form" style="display: none;right:0;width:220px">-->
+                    <!--<alert ng-show="alerts.customBenchmark.active" close="alerts.customBenchmark.active = false" type="danger" style="font-size: 12px;">-->
+                        <!--There were problems with your input-->
+                        <!--<br/><br/>-->
+                        <!--<ul style="list-style:inside;padding-left:0;">-->
+                            <!--<li ng-repeat="message in alerts.customBenchmark.messages">{{message}}</li>-->
+                        <!--</ul>-->
+                    <!--</alert>-->
+                    <!--<label>-->
+                        <!--Sector&nbsp;-->
+                        <!--<span class="restrict-dropdown-menu-small">-->
+                            <!--<input type="text" class="form-control length-md"-->
+                                   <!--ng-model="customBenchmark.sector"-->
+                                   <!--typeahead="sector for sector in customBenchmarkOptions.sectors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"-->
+                                   <!--typeahead-focus-->
+                                   <!--typeahead-select-on-blur="true"/>-->
+                        <!--</span>-->
+                    <!--</label>-->
+                    <!--<label>-->
+                        <!--Rating&nbsp;-->
+                        <!--<span class="restrict-dropdown-menu-small">-->
+                            <!--<input type="text" class="form-control length-md"-->
+                                   <!--ng-model="customBenchmark.rating"-->
+                                   <!--typeahead="rating for rating in customBenchmarkOptions.ratings | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"-->
+                                   <!--typeahead-focus-->
+                                   <!--typeahead-select-on-blur="true"/>-->
+                        <!--</span>-->
+                    <!--</label>-->
+                    <!--<label>-->
+                        <!--WAL&nbsp;-->
+                        <!--<span class="restrict-dropdown-menu-small">-->
+                            <!--<input type="text" class="form-control length-md"-->
+                                   <!--ng-model="customBenchmark.wal"-->
+                                   <!--typeahead="wal for wal in customBenchmarkOptions.wal | filter:$viewValue:$emptyOrMatch | orderBy:sortWalBuckets"-->
+                                   <!--typeahead-focus-->
+                                   <!--typeahead-select-on-blur="true"/>-->
+                        <!--</span>-->
+                    <!--</label>-->
+                    <!--<label>-->
+                        <!--Analytic&nbsp;-->
+                        <!--<span class="restrict-dropdown-menu-small">-->
+                            <!--<input type="text" class="form-control length-md"-->
+                                   <!--ng-model="customBenchmark.analytic"-->
+                                   <!--typeahead="attr as attr.label for attr in customBenchmarkOptions.analytics | filter:$viewValue:$emptyOrMatch | orderBy:'label.toString()'"-->
+                                   <!--typeahead-focus-->
+                                   <!--typeahead-select-on-blur="true"/>-->
+                        <!--</span>-->
+                    <!--</label>-->
+                    <!--<label>-->
+                        <!--Currency&nbsp;-->
+                        <!--<span class="restrict-dropdown-menu-small">-->
+                            <!--<input type="text" class="form-control length-md" ng-disabled="true" value="USD"/>-->
+                        <!--</span>-->
+                    <!--</label>-->
+                    <!--<br/>-->
+                    <!--<button class="btn btn-success" ng-click="apiHandle.api.addCustomBenchmark(customBenchmark)"><i-->
+                            <!--class="fa fa-play"></i></button>-->
+                <!--</div>-->
+            <!--</span>-->
             <span>
                 <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i class="fa fa-file-excel-o"></i></span>
                 <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportPDF()"><i class="fa fa-file-pdf-o"></i></span>
