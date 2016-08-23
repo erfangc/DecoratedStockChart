@@ -109,7 +109,7 @@
                 </a>
                 <div class="comparison-control floating-form-comparison" style="display: none;right:0">
                     <ul class="tab tab-style">
-                    <li class="position-li-tab">
+                    <li class="position-li-tab" ng-show="showMarketIndicators">
                         <span dsc-click-outside dsc-open-state="states.menuDisplays.indicatorControl"
                               dsc-close-callback="toggleSlide(!states.menuDisplays.indicatorControl,'indicator-control')">
                 <a class="clickable list-element-style" style="text-decoration:none"
@@ -132,7 +132,7 @@
                 </div>
             </span>
                     </li>
-                        <li class="position-li-tab">
+                        <li class="position-li-tab" ng-show="showBenchmark">
                             <span dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
                                   dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
                                   style="padding-right:10px" ng-init="customBenchmark = {}">
@@ -202,39 +202,39 @@
             </span>
                         </li>
 
-                        <li class="position-li-tab">
+                        <li class="position-li-tab" ng-show="showCdxIndex">
                             <span dsc-click-outside dsc-open-state="states.menuDisplays.cdxControl"
                                   dsc-close-callback="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control')"
-                                  style="padding-right:10px" ng-init="cdxBenchmark = {}">
+                                  style="padding-right:10px" ng-init="cdxIndex = {}">
                 <a class="clickable list-element-style" style="padding-left:5px;text-decoration:none;"
-                   ng-click="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control');cdxBenchmark = {};">
+                   ng-click="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control');cdxIndex = {};">
                     <span class="fake-anchor-tag">CDS Index</span>
                     <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.cdxControl, 'fa-chevron-down': !states.menuDisplays.cdxControl}"></i>
                 </a>
                 <div class="cdx-control floating-form" style="display: none;right:0;width:220px">
-                    <alert ng-show="alerts.cdxBenchmark.active" close="alerts.cdxBenchmark.active = false" type="danger" style="font-size: 12px;">
+                    <alert ng-show="alerts.cdxIndex.active" close="alerts.cdxIndex.active = false" type="danger" style="font-size: 12px;">
                         There were problems with your input
                         <br/><br/>
                         <ul style="list-style:inside;padding-left:0;">
-                            <li ng-repeat="message in alerts.cdxBenchmark.messages">{{message}}</li>
+                            <li ng-repeat="message in alerts.cdxIndex.messages">{{message}}</li>
                         </ul>
                     </alert>
                     <label>
                         Contract Type&nbsp;
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
-                                   ng-model="cdxBenchmark.contract_type"
-                                   typeahead="contract_type for contract_type in cdxBenchmarkOptions.contract_types | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   ng-model="cdxIndex.contract_type"
+                                   typeahead="contract_type for contract_type in cdxIndexOptions.contract_types | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
                     </label>
                     <label>
-                        Maturity&nbsp;
+                        Contract Tenor&nbsp;
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
-                                   ng-model="cdxBenchmark.maturity"
-                                   typeahead="maturity for maturity in cdxBenchmarkOptions.maturities | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   ng-model="cdxIndex.contract_tenor"
+                                   typeahead="contract_tenor for contract_tenor in cdxIndexOptions.contract_tenors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
@@ -243,14 +243,14 @@
                         On-the-run/Off-the-run&nbsp;
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
-                                   ng-model="cdxBenchmark.otr"
-                                   typeahead="otr for otr in cdxBenchmarkOptions.otr | filter:$viewValue:$emptyOrMatch "
+                                   ng-model="cdxIndex.otr_flag"
+                                   typeahead="otr_flag for otr_flag in cdxIndexOptions.otr_flags | filter:$viewValue:$emptyOrMatch "
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
                     </label>
                     <br/>
-                    <button class="btn btn-success" ng-click="apiHandle.api.addCdxBenchmark(cdxBenchmark)"><i
+                    <button class="btn btn-success" ng-click="apiHandle.api.addCdxIndex(cdxIndex)"><i
                             class="fa fa-play"></i></button>
                 </div>
             </span>
