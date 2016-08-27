@@ -113,6 +113,41 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
             };
     };
 
+
+    $scope.cdxIndexOptions = {
+        contract_types: ['FINSR','EUR'],
+        contract_tenors: ['5 Year', '7 Year', '10 Year'],
+        otr_flags: ['N','Y']
+    };
+    $scope.onCdxIndexSelect = function (cdxIndex, options) {
+        var errorMessages = [];
+        _.each(cdxIndex, function(value, key){
+            // if( value === "All" )
+            //     return;
+            switch(key){
+                case "contract_type":
+                    if( $scope.cdxIndexOptions.contract_types.indexOf(value) == -1 )
+                        errorMessages.push(value + " is not a valid value for 'Sector'.");
+                    break;
+                case "contract_tenor":
+                    if( $scope.cdxIndexOptions.contract_tenors.indexOf(value) == -1 )
+                        errorMessages.push(value + " is not a valid value for 'WAL'.");
+                    break;
+                case "otr_flag":
+                    if( $scope.cdxIndexOptions.otr_flags.indexOf(value) == -1 )
+                        errorMessages.push(value + " is not a valid value for 'Rating'.");
+                    break;
+            };
+        });
+        if( errorMessages.length > 0 )
+            return {errors: errorMessages};
+        else
+            return {
+                name: [cdxIndex.contract_type, cdxIndex.contract_tenor, cdxIndex.otr_flag].join(" "),
+                data: simulate(domain(options), {tag: "price", label: "Price"}, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
+            };
+    };
+
     $scope.apiHandle = {};
 
     $scope.closeAlert = function () {

@@ -46,6 +46,15 @@
     background-color: #fff;
 }
 
+.floating-form-comparison {
+    position: absolute;
+    z-index: 1;
+    border: 1px solid rgb(219, 219, 219);
+    padding: 5px;
+    margin-top: 2px;
+    background-color: #fff;
+}
+
 .chart-area-container{
     position:relative;
     height: -moz-calc(100% - 90px);
@@ -168,4 +177,47 @@
 }
 #multipleLabelInput:-ms-input-placeholder {
     font-style: italic;
+}
+
+
+
+
+.tab-style {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+.position-li-tab {float: right;}
+
+/* Style the links inside the list items */
+.list-element-style {
+    display: inline-block;
+    color: #337ab7;
+    text-align: center;
+    padding: 5px 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/*!* Change background color of links on hover *!*/
+/*.list-element-style:hover {*/
+    /*background-color: #ddd;*/
+    /*text-decoration: none;*/
+/*}*/
+
+/*!* Create an active/current tablink class *!*/
+/*.list-element-style:focus, .active {*/
+    /*background-color: #ccc;*/
+    /*text-decoration: none;*/
+/*}*/
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
 }
