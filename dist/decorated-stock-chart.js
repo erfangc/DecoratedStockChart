@@ -90,6 +90,8 @@
                      * 'options'
                      */
                     onCustomBenchmarkSelect: "&",
+                    cdxIndexOptions: "=",
+                    onCdxIndexSelect: "&",
                     /**
                      * options object for the underlying Highstock object
                      */
@@ -99,7 +101,10 @@
                      * this component's behavior can be accessed via scope.apiHandle.api
                      */
                     apiHandle: "=",
-                    onDateChange: "&"
+                    onDateChange: "&",
+                    showMarketIndicators: '=?',
+                    showBenchmark: '=?',
+                    showCdxIndex: '=?'
                 },
                 link: function (scope, elem, attrs) {
 
@@ -107,7 +112,8 @@
                     scope.alerts = {
                         customBenchmark: {active: false, messages: []},
                         generalWarning: {active: false, message: ""},
-                        dateChangeError: {active: false, message: ""}
+                        dateChangeError: {active: false, message: ""},
+                        cdxIndex: {active: false, messages: []}
                     };
                     scope.customDefaultTimePeriods = scope.customDefaultTimePeriods || ["1M", "3M", "6M", "1Y", "2Y"];
                     scope.states = {
@@ -134,10 +140,13 @@
                         },
                         marketIndices: [],
                         customBenchmarks: [],
+                        cdxIndex: [],
                         menuDisplays: {
                             securityControl: false,
                             benchmarkControl: false,
                             indicatorControl: false,
+                            cdxControl: false,
+                            comparisonControl: false,
                             dateControl: false
                         }
                     };
@@ -303,6 +312,69 @@
 
                             return true;
                         },
+                        addCdxIndex: function (cdxIndex) {
+                            scope.alerts.cdxIndex.messages = [];
+
+                            const result = scope.onCdxIndexSelect({
+                                cdxIndex: cdxIndex,
+                                options: {dateRange: scope.states.dateRange}
+                            });
+
+                            function validate(cdxIndex, result) {
+                                if (!cdxIndex.contract_type || !cdxIndex.contract_tenor || !cdxIndex.otr_flag)
+                                    scope.alerts.cdxIndex.messages = ["Some fields are missing!"];
+                                else if (result.errors)
+                                    scope.alerts.cdxIndex.messages = result.errors;
+                            }
+
+                            function processSeries(series) {
+                                series.id = ['CdxIndex',
+                                    cdxIndex.contract_type,
+                                    cdxIndex.contract_tenor,
+                                    cdxIndex.otr_flag].join(".");
+
+
+                                /**
+                                 * instruction on how to properly remove the series
+                                 */
+                                series.onRemove = function () {
+                                    scope.states.cdxIndex.splice(scope.states.cdxIndex.indexOf(cdxIndex), 1);
+                                    dsc.removeSeriesById(series.id, scope);
+                                };
+
+                                // Update the data it if it already exists
+                                if (scope.states.chart.get(series.id))
+                                    scope.states.chart.get(series.id).setData(series.data);
+                                else
+                                    scope.addSeries(series);
+                                scope.isProcessing = false;
+                                if (scope.states.cdxIndex.indexOf(cdxIndex) === -1)
+                                    scope.states.cdxIndex.push(cdxIndex);
+                            }
+
+                            validate(cdxIndex, result);
+
+                            if (scope.alerts.cdxIndex.messages.length > 0) {
+                                scope.alerts.cdxIndex.active = true;
+                                return false;
+                            }
+                            else {
+                                scope.alerts.cdxIndex.active = false;
+                                scope.toggleSlide(false, 'cdx-control')
+                            }
+
+                            scope.isProcessing = true;
+                            if (result && angular.isFunction(result.then))
+                                result.then(function (series) {
+                                    processSeries(series.status ? series.data : series);
+                                }, function () {
+                                    scope.isProcessing = false;
+                                });
+                            else
+                                processSeries(result);
+
+                            return true;
+                        },
                         /**
                          * Change the x axis range of the chart given string representations of start and end
                          * @param start
@@ -339,6 +411,8 @@
                             _.each(scope.states.marketIndices, scope.apiHandle.api.addMarketIndicator);
                             // Update all benchmarks
                             _.each(scope.states.customBenchmarks, scope.apiHandle.api.addCustomBenchmark);
+                            //Update all cdx indices
+                            _.each(scope.states.cdxIndex, scope.apiHandle.api.addCdxIndex);
                             if (scope.states.menuDisplays.dateControl)
                                 scope.toggleSlide(!scope.states.menuDisplays.dateControl, 'date-control');
                             scope.states.menuDisplays.dateControl = false;
