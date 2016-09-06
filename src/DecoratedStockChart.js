@@ -317,7 +317,8 @@
 
                             const result = scope.onCdxIndexSelect({
                                 cdxIndex: cdxIndex,
-                                options: {dateRange: scope.states.dateRange}
+                                options: {dateRange: scope.states.dateRange},
+                                tag: scope.defaultSecurityAttribute
                             });
 
                             function validate(cdxIndex, result) {

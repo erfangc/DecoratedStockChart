@@ -3,6 +3,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     /**
      * security related behavior
      */
+
     $scope.securities = [
         {id: 1, label: "T", mean: 0.08, stddev: 0.17, initPrice: 32},
         {id: 2, label: "VZ", mean: 0.05, stddev: 0.15, initPrice: 45},
@@ -119,7 +120,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         contractTenors: ['5 Year', '7 Year', '10 Year'],
         otrFlags: ['N','Y']
     };
-    $scope.onCdxIndexSelect = function (cdxIndex, options) {
+    $scope.onCdxIndexSelect = function (cdxIndex, options, tag) {
         var errorMessages = [];
         _.each(cdxIndex, function(value, key){
             // if( value === "All" )
@@ -144,7 +145,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         else
             return {
                 name: [cdxIndex.contractType, cdxIndex.contractTenor, cdxIndex.otrFlag].join(" "),
-                data: simulate(domain(options), {tag: "price", label: "Price"}, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
+                data: simulate(domain(options), tag, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
             };
     };
 
