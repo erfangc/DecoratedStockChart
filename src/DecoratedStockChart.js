@@ -317,11 +317,12 @@
 
                             const result = scope.onCdxIndexSelect({
                                 cdxIndex: cdxIndex,
-                                options: {dateRange: scope.states.dateRange}
+                                options: {dateRange: scope.states.dateRange},
+                                tag: scope.defaultSecurityAttribute
                             });
 
                             function validate(cdxIndex, result) {
-                                if (!cdxIndex.contract_type || !cdxIndex.contract_tenor || !cdxIndex.otr_flag)
+                                if (!cdxIndex.contractType || !cdxIndex.contractTenor || !cdxIndex.otrFlag)
                                     scope.alerts.cdxIndex.messages = ["Some fields are missing!"];
                                 else if (result.errors)
                                     scope.alerts.cdxIndex.messages = result.errors;
@@ -329,9 +330,9 @@
 
                             function processSeries(series) {
                                 series.id = ['CdxIndex',
-                                    cdxIndex.contract_type,
-                                    cdxIndex.contract_tenor,
-                                    cdxIndex.otr_flag].join(".");
+                                    cdxIndex.contractType,
+                                    cdxIndex.contractTenor,
+                                    cdxIndex.otrFlag].join(".");
 
 
                                 /**

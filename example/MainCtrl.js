@@ -3,6 +3,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     /**
      * security related behavior
      */
+
     $scope.securities = [
         {id: 1, label: "T", mean: 0.08, stddev: 0.17, initPrice: 32},
         {id: 2, label: "VZ", mean: 0.05, stddev: 0.15, initPrice: 45},
@@ -115,26 +116,26 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
 
 
     $scope.cdxIndexOptions = {
-        contract_types: ['FINSR','EUR'],
-        contract_tenors: ['5 Year', '7 Year', '10 Year'],
-        otr_flags: ['N','Y']
+        contractTypes: ['FINSR','EUR'],
+        contractTenors: ['5 Year', '7 Year', '10 Year'],
+        otrFlags: ['N','Y']
     };
-    $scope.onCdxIndexSelect = function (cdxIndex, options) {
+    $scope.onCdxIndexSelect = function (cdxIndex, options, tag) {
         var errorMessages = [];
         _.each(cdxIndex, function(value, key){
             // if( value === "All" )
             //     return;
             switch(key){
-                case "contract_type":
-                    if( $scope.cdxIndexOptions.contract_types.indexOf(value) == -1 )
+                case "contractType":
+                    if( $scope.cdxIndexOptions.contractTypes.indexOf(value) == -1 )
                         errorMessages.push(value + " is not a valid value for 'Sector'.");
                     break;
-                case "contract_tenor":
-                    if( $scope.cdxIndexOptions.contract_tenors.indexOf(value) == -1 )
+                case "contractTenor":
+                    if( $scope.cdxIndexOptions.contractTenors.indexOf(value) == -1 )
                         errorMessages.push(value + " is not a valid value for 'WAL'.");
                     break;
-                case "otr_flag":
-                    if( $scope.cdxIndexOptions.otr_flags.indexOf(value) == -1 )
+                case "otrFlag":
+                    if( $scope.cdxIndexOptions.otrFlags.indexOf(value) == -1 )
                         errorMessages.push(value + " is not a valid value for 'Rating'.");
                     break;
             };
@@ -143,8 +144,8 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
             return {errors: errorMessages};
         else
             return {
-                name: [cdxIndex.contract_type, cdxIndex.contract_tenor, cdxIndex.otr_flag].join(" "),
-                data: simulate(domain(options), {tag: "price", label: "Price"}, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
+                name: [cdxIndex.contractType, cdxIndex.contractTenor, cdxIndex.otrFlag].join(" "),
+                data: simulate(domain(options), tag, {mean: 0.07, stddev: 0.13, initPrice: 100}, true)
             };
     };
 

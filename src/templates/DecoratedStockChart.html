@@ -223,8 +223,8 @@
                         Contract Type&nbsp;
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
-                                   ng-model="cdxIndex.contract_type"
-                                   typeahead="contract_type for contract_type in cdxIndexOptions.contract_types | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   ng-model="cdxIndex.contractType"
+                                   typeahead="contractType for contractType in cdxIndexOptions.contractTypes | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
@@ -233,8 +233,8 @@
                         Contract Tenor&nbsp;
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
-                                   ng-model="cdxIndex.contract_tenor"
-                                   typeahead="contract_tenor for contract_tenor in cdxIndexOptions.contract_tenors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   ng-model="cdxIndex.contractTenor"
+                                   typeahead="contractTenor for contractTenor in cdxIndexOptions.contractTenors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
@@ -243,8 +243,8 @@
                         On-the-run/Off-the-run&nbsp;
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
-                                   ng-model="cdxIndex.otr_flag"
-                                   typeahead="otr_flag for otr_flag in cdxIndexOptions.otr_flags | filter:$viewValue:$emptyOrMatch "
+                                   ng-model="cdxIndex.otrFlag"
+                                   typeahead="otrFlag for otrFlag in cdxIndexOptions.otrFlags | filter:$viewValue:$emptyOrMatch "
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>

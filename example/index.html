@@ -30,7 +30,7 @@
                     more-market-info-callback="moreMarketInfoCallback()"
                     show-market-indicators="true"
                     show-benchmark="true"
-                    show-cdx-index="false"
+                    show-cdx-index="true"
                     custom-buttons="customButtons"
                     on-date-change="datesChanged(startDate,endDate)"
                     highstock-options="highstockOptions"
@@ -45,7 +45,7 @@
                     on-custom-benchmark-select="onCustomBenchmarkSelect(customBenchmark, options)"
 
                     cdx-index-options="cdxIndexOptions"
-                    on-cdx-index-select="onCdxIndexSelect(cdxIndex, options)"
+                    on-cdx-index-select="onCdxIndexSelect(cdxIndex, options, tag)"
 
                     on-default-attribute-change="onDefaultAttributeChange(newAttr)"
                     start-date="2014-01-01"
