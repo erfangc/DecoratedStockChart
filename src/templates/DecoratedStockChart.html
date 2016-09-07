@@ -234,7 +234,7 @@
                         <span class="restrict-dropdown-menu-small">
                             <input type="text" class="form-control length-md"
                                    ng-model="cdxIndex.contractTenor"
-                                   typeahead="contractTenor for contractTenor in cdxIndexOptions.contractTenors | filter:$viewValue:$emptyOrMatch | orderBy:'toString()'"
+                                   typeahead="contractTenor for contractTenor in cdxIndexOptions.contractTenors | filter:$viewValue:$emptyOrMatch"
                                    typeahead-focus
                                    typeahead-select-on-blur="true"/>
                         </span>
