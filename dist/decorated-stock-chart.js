@@ -963,7 +963,7 @@
                 }
             },
             axisType: axisType,
-            opposite: chart.options.yAxis.length % 2 == 0,      //check for only the yAxis. xAxis is always datetime.
+            opposite: chart.options.yAxis.length % 2 == 1,      //check for only the yAxis. xAxis is always datetime.
             id: axisId
         });
         return chart.get(axisId);
