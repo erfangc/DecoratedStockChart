@@ -526,6 +526,9 @@
                                 name: origSeries.name + " " + numDays + " Day SMA",
                                 axisType: origSeries.options.axisType,
                                 data: xy,
+                                color: origSeries.color,
+                                type: 'line',
+                                dashStyle: 'dash',
                                 securityId: origSeries.options.securityId || null
                             };
                         },
