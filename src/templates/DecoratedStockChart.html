@@ -135,9 +135,9 @@
                         <li class="position-li-tab" ng-show="showBenchmark">
                             <span dsc-click-outside dsc-open-state="states.menuDisplays.benchmarkControl"
                                   dsc-close-callback="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control')"
-                                  style="padding-right:10px" ng-init="customBenchmark = {}">
+                                  style="padding-right:10px" ">
                 <a class="clickable list-element-style" style="padding-left:5px;text-decoration:none;"
-                   ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');customBenchmark = {};">
+                   ng-click="toggleSlide(!states.menuDisplays.benchmarkControl, 'benchmark-control');">
                     <span class="fake-anchor-tag">Benchmark</span>
                     <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.benchmarkControl, 'fa-chevron-down': !states.menuDisplays.benchmarkControl}"></i>
                 </a>
@@ -205,9 +205,9 @@
                         <li class="position-li-tab" ng-show="showCdxIndex">
                             <span dsc-click-outside dsc-open-state="states.menuDisplays.cdxControl"
                                   dsc-close-callback="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control')"
-                                  style="padding-right:10px" ng-init="cdxIndex = {}">
+                                  style="padding-right:10px" >
                 <a class="clickable list-element-style" style="padding-left:5px;text-decoration:none;"
-                   ng-click="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control');cdxIndex = {};">
+                   ng-click="toggleSlide(!states.menuDisplays.cdxControl, 'cdx-control');">
                     <span class="fake-anchor-tag">CDS Index</span>
                     <i class="fa" ng-class="{'fa-chevron-up': states.menuDisplays.cdxControl, 'fa-chevron-down': !states.menuDisplays.cdxControl}"></i>
                 </a>
