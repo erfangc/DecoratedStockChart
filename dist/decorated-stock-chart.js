@@ -104,7 +104,7 @@
                     onDateChange: "&",
                     showMarketIndicators: '=?',
                     showBenchmark: '=?',
-                    showCdxIndex: '=?'
+                    showCdxIndex: '='
                 },
                 link: function (scope, elem, attrs) {
 
