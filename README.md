@@ -13,7 +13,9 @@ HTML Template Sample Usage
 
         highstock-options="highstockOptions"
         title="Example Chart of Stock Prices"
-
+        show-market-indicators="true"
+        show-benchmark="true"
+        show-cdx-index="false"
         api-handle="apiHandle"
 
         market-index-typeahead="marketIndexTypeahead(userInput)"
@@ -113,6 +115,7 @@ JavaScript
 | onCustomBenchmarkSelect     | `expression`                     | `customBenchmark: object`, `options: object`                        | `Highcharts.Series` or `promise` that resolves to `Highcharts.Series` | an expression that must return a promise that resolves to a   Highchart.Series object or returns a Highchart.Series object and must accept   an argument 'customBenchmark', 'options'                                              |
 | highstockOptions            | `object`                         |                                                                      |                                                                 | options object for the underlying Highstock object                                                                                                                                                                                 |
 | apiHandle                   | `object`                         |                                                                      |                                                                 | the API through which this directive exposes behavior to external   (parent) components this component's behavior can be accessed via   scope.apiHandle.api                                                                        |
+| show-cdx-index              | `boolean`                        |                                                                      |                                                                 | To show comparison option or not
 
 # API
 | API   Method                    | Accept Argument               | Description                                                                          |
