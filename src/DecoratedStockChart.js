@@ -492,14 +492,14 @@
                         },
                         yAxis: {
                             title: {
-                                text: scope.defaultSecurityAttribute.label,
+                                text: scope.defaultSecurityAttribute.unit || scope.defaultSecurityAttribute.label,
                                 events: {
                                     click: function (event) {
                                         dsc.onAxisClick.call(this, event, scope);
                                     }
                                 }
                             },
-                            axisType: scope.defaultSecurityAttribute.label,
+                            axisType: scope.defaultSecurityAttribute.unit || scope.defaultSecurityAttribute.label,
                             id: _.uniqueId("yAxis")
                         },
                         legend: {
