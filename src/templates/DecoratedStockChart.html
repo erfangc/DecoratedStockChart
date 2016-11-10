@@ -350,8 +350,8 @@
                 <!--</div>-->
             <!--</span>-->
             <span>
-                <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()"><i class="fa fa-file-excel-o"></i></span>
-                <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportPDF()"><i class="fa fa-file-pdf-o"></i></span>
+                <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportXLS()" title="Excel"><i class="fa fa-file-excel-o"></i></span>
+                <span class="clickable" style="padding-right:5px;color:#005da0;" ng-click="exportPDF()" title="PDF"><i class="fa fa-file-pdf-o"></i></span>
                 <span class="clickable" style="padding-right:5px;color:#005da0;" ng-repeat="customButton in customButtons" ng-click="customButton.callback()">
                     <i class="fa" ng-class="customButton.faClass"></i>
                 </span>
