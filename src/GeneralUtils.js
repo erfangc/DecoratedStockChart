@@ -37,7 +37,7 @@
         const axisId = _.uniqueId("yAxis");
         chart.addAxis({
             title: {
-                text: name,
+                text: axisType,
                 events: {
                     click: function (event) {
                         dsc.onAxisClick.call(this, event, scope);
