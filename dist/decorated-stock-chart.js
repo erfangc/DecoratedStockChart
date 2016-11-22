@@ -1199,6 +1199,7 @@
                 nums.splice(0, 1);  // remove the first element of the array
             var sum = 0;
             for (var i in nums)
+                if(!_.isNaN(i))     //This checks if i gets value fastloopAsc and fastloop; filters
                 sum += nums[i];
             var n = period;
             if (nums.length < period)
