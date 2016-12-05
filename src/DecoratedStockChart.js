@@ -765,7 +765,8 @@
                         if (window.navigator.msSaveBlob)
                             window.navigator.msSaveBlob(new Blob([html]), "time-series-export.xls");
                         else
-                            window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+                            // window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+                            saveAs(new Blob([html],'time-series-export.xls'));
                     };
 
                     /**
