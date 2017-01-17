@@ -132,6 +132,7 @@
      */
     root.dsc.showCtxMenu = function ($ctxMenu, event) {
         $ctxMenu.show();
+        //Comment out the following line when MenuBuilder - triggerSeriesContextMenu is changed.
         const $rootDiv = $('div.root');
 
         const ctnRight = $rootDiv.position().left + $rootDiv.width();

@@ -41,6 +41,10 @@
         _.each(dsc.buildMenuItems(args), function (menuItem) {
             $ctxMenu.children(".dropdown-menu").append(menuItem);
         });
+        // TODO the following three lines were added to anchor context menu to text
+        // var legendClicked = args.series.userOptions.name;
+        // var parentLegend = $(args.series.chart.container).find("div.highcharts-legend-item:contains('"+legendClicked+"')")[0];
+        // parentLegend.appendChild($ctxMenu[0]);
         dsc.showCtxMenu($ctxMenu, event);
         return false;
     };
