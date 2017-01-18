@@ -773,10 +773,24 @@
                      * Export the image of the chart to a PDF
                      */
                     scope.exportPDF = function(){
-                        scope.states.chart.exportChart({
+                        var svg = scope.states.chart.getSVGForExport({
                             type: 'application/pdf',
                             filename: 'ts-chart-export'
                         });
+                        var canvas = document.createElement('canvas');
+                        canvg(canvas, svg);
+                        var imgData = canvas.toDataURL('image/jpeg');
+                        var doc = new jsPDF('l', 'pt', 'letter');
+                        var width = doc.internal.pageSize.width;
+                        var height = doc.internal.pageSize.height;
+                        doc.addImage(imgData,'JPEG',0,0,width,height);
+                        doc.output('save','ts-chart-export.pdf');
+
+                        // scope.states.chart.exportChart({
+                        //     type: 'application/pdf',
+                        //     filename: 'ts-chart-export'
+                        // });
+
                     };
 
                     /**

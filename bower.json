@@ -31,6 +31,8 @@
     "font-awesome": "~4.4.0",
     "moment": "~2.10.6",
     "typeahead-focus": "https://github.com/caguthrie/typeaheadFocus.git",
-    "file-saver": "https://github.com/eligrey/FileSaver.js.git"
+    "file-saver": "https://github.com/eligrey/FileSaver.js.git",
+    "canvg": "https://github.com/canvg/canvg.git",
+    "jspdf": "https://github.com/MrRio/jsPDF.git"
   }
 }
