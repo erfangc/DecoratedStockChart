@@ -90,6 +90,8 @@
                      * 'options'
                      */
                     onCustomBenchmarkSelect: "&",
+                    clientBenchmarkTypeahead: "&",
+                    onClientBenchmarkSelect: "&",
                     cdxIndexOptions: "=",
                     onCdxIndexSelect: "&",
                     /**
@@ -104,6 +106,7 @@
                     onDateChange: "&",
                     showMarketIndicators: '=?',
                     showBenchmark: '=?',
+                    showClientBenchmark: '=?',
                     showCdxIndex: '='
                 },
                 link: function (scope, elem, attrs) {
@@ -111,6 +114,7 @@
                     scope.id = _.uniqueId();
                     scope.alerts = {
                         customBenchmark: {active: false, messages: []},
+                        clientBenchmark: {active: false, messages: []},
                         generalWarning: {active: false, message: ""},
                         dateChangeError: {active: false, message: ""},
                         cdxIndex: {active: false, messages: []}
@@ -140,10 +144,12 @@
                         },
                         marketIndices: [],
                         customBenchmarks: [],
+                        clientBenchmark: [],
                         cdxIndex: [],
                         menuDisplays: {
                             securityControl: false,
                             benchmarkControl: false,
+                            clientBenchmarkControl: false,
                             indicatorControl: false,
                             cdxControl: false,
                             comparisonControl: false,
@@ -298,6 +304,65 @@
                             else {
                                 scope.alerts.customBenchmark.active = false;
                                 scope.toggleSlide(false, 'benchmark-control')
+                            }
+
+                            scope.isProcessing = true;
+                            if (result && angular.isFunction(result.then))
+                                result.then(function (series) {
+                                    processSeries(series.status ? series.data : series);
+                                }, function () {
+                                    scope.isProcessing = false;
+                                });
+                            else
+                                processSeries(result);
+
+                            return true;
+                        },
+                        addClientBenchmark: function (clientBenchmark) {
+                            scope.alerts.clientBenchmark.messages = [];
+
+                            const result = scope.onClientBenchmarkSelect({
+                                clientBenchmark: clientBenchmark,
+                                options: {dateRange: scope.states.dateRange}
+                            });
+
+                            function validate(clientBenchmark, result) {
+                                if (!clientBenchmark.indexTicker)
+                                    scope.alerts.clientBenchmark.messages = ["Input is missing!"];
+                                else if (result.errors)
+                                    scope.alerts.clientBenchmark.messages = result.errors;
+                            }
+
+                            function processSeries(series) {
+                                series.id = ['ClientBenchmark',clientBenchmark.indexTicker].join(".");
+
+                                /**
+                                 * instruction on how to properly remove the series
+                                 */
+                                series.onRemove = function () {
+                                    scope.states.clientBenchmark.splice(scope.states.clientBenchmark.indexOf(clientBenchmark), 1);
+                                    dsc.removeSeriesById(series.id, scope);
+                                };
+
+                                // Update the data it if it already exists
+                                if (scope.states.chart.get(series.id))
+                                    scope.states.chart.get(series.id).setData(series.data);
+                                else
+                                    scope.addSeries(series);
+                                scope.isProcessing = false;
+                                if (scope.states.clientBenchmark.indexOf(clientBenchmark) === -1)
+                                    scope.states.clientBenchmark.push(clientBenchmark);
+                            }
+
+                            validate(clientBenchmark, result);
+
+                            if (scope.alerts.clientBenchmark.messages.length > 0) {
+                                scope.alerts.clientBenchmark.active = true;
+                                return false;
+                            }
+                            else {
+                                scope.alerts.clientBenchmark.active = false;
+                                scope.toggleSlide(false, 'client-benchmark-control')
                             }
 
                             scope.isProcessing = true;

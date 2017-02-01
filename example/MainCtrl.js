@@ -65,6 +65,17 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         };
     };
 
+    $scope.clientBenchmarkTypeahead = function (userInput) {
+       return [{indexTicker: "SnP500"},{indexTicker: "F_CDS"},{indexTicker: "E_CDS"}];
+    };
+
+    $scope.onClientBenchmarkSelect = function (index, options) {
+        return {
+            name: index.indexTicker,
+            data: simulate(domain(options), index, {mean: 0.08, stddev: 0.13, initPrice: 100}, true)
+        };
+    };
+
     $scope.datesChanged = function(startDate, endDate) {
         $scope.dates = {
             start: startDate,

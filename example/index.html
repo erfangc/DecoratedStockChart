@@ -30,6 +30,7 @@
                     more-market-info-callback="moreMarketInfoCallback()"
                     show-market-indicators="true"
                     show-benchmark="true"
+                    show-client-benchmark="true"
                     show-cdx-index="false"
                     custom-buttons="customButtons"
                     on-date-change="datesChanged(startDate,endDate)"
@@ -43,6 +44,9 @@
 
                     custom-benchmark-options="customBenchmarkOptions"
                     on-custom-benchmark-select="onCustomBenchmarkSelect(customBenchmark, options)"
+
+                    client-benchmark-typeahead="clientBenchmarkTypeahead(userInput)"
+                    on-client-benchmark-select="onClientBenchmarkSelect(clientBenchmark, options)"
 
                     cdx-index-options="cdxIndexOptions"
                     on-cdx-index-select="onCdxIndexSelect(cdxIndex, options, tag)"
