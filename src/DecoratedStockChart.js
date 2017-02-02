@@ -323,7 +323,8 @@
 
                             const result = scope.onClientBenchmarkSelect({
                                 clientBenchmark: clientBenchmark,
-                                options: {dateRange: scope.states.dateRange}
+                                options: {dateRange: scope.states.dateRange},
+                                tag: scope.defaultSecurityAttribute
                             });
 
                             function validate(clientBenchmark, result) {
