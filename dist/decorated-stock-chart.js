@@ -616,7 +616,8 @@
                                 axisType: origSeries.options.axisType + " Basis",
                                 securityId: origSeries.options.securityId || null,
                                 data: data,
-                                type: 'areaspline'
+                                type: 'areaspline',
+                                color: origSeries.color
                             }
                         }
                     };
