@@ -42,7 +42,7 @@
         // turn the lookup map into HTML
         const body =  _.map(domain, function (x) {
             return "<tr>" +
-                "<td style='background-color: #999999'>" + (zDataExists ? moment(x).format('ddd, MMM DD YYYY, h:mm:ss A'):moment(x).format("YYYY-MM-DD")) + "</td>" +
+                "<td style='background-color: #999999'>" + (zDataExists ? moment.utc(x).format('ddd, MMM DD YYYY, h:mm:ss A'):moment.utc(x).format("YYYY-MM-DD")) + "</td>" +
                 _.map(matrix, function (col) {
                     if(zDataExists){
                         return "<td>" + (col[x] && _.isArray(col[x]) && col[x][0]!== undefined && col[x][0] !== 'undefined' ? col[x][0] : 0) + "</td>" +
