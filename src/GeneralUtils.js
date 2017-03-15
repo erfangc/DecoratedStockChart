@@ -15,6 +15,10 @@
     root.dsc.resolvePreferredYAxis = function (chart, seriesOption) {
         if (!seriesOption.axisType)
             return chart.yAxis.length === 0 ? -1 : 0;
+        //TODO: this is too hacky. Make this generic.
+        if(seriesOption.axisType === "Index Price"){
+            return -1;
+        }
         return _.findIndex(chart.yAxis, function (axis) {
             return _.reduce(axis.series, function(sum, ser){
                 return sum && ser.options.axisType === seriesOption.axisType;
