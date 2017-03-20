@@ -1019,7 +1019,7 @@
         if (!seriesOption.axisType)
             return chart.yAxis.length === 0 ? -1 : 0;
         //TODO: this is too hacky. Make this generic.
-        if(seriesOption.axisType === "Index Price"){
+        if(seriesOption.axisType === "Index Level"){
             return -1;
         }
         return _.findIndex(chart.yAxis, function (axis) {
