@@ -480,6 +480,8 @@
                             _.each(scope.states.customBenchmarks, scope.apiHandle.api.addCustomBenchmark);
                             //Update all cdx indices
                             _.each(scope.states.cdxIndex, scope.apiHandle.api.addCdxIndex);
+                            //Update all client benchmarks
+                            _.each(scope.states.clientBenchmark, scope.apiHandle.api.addClientBenchmark);
                             if (scope.states.menuDisplays.dateControl)
                                 scope.toggleSlide(!scope.states.menuDisplays.dateControl, 'date-control');
                             scope.states.menuDisplays.dateControl = false;
