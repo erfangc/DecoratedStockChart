@@ -166,6 +166,44 @@
                      * define the API exposed to the parent component
                      */
                     scope.apiHandle.api = {
+                        clearCurveStates: function(){
+                            if(!_.isEmpty(scope.states.clientBenchmark)){
+                                _.each(scope.states.clientBenchmark, function(clientBenchmark){
+                                    var id = ['ClientBenchmark',clientBenchmark.indexTicker].join(".");
+                                    dsc.removeSeriesById(id, scope);
+                                });
+                                scope.states.clientBenchmark = [];
+                            }
+                            if(!_.isEmpty(scope.states.customBenchmarks)){
+                                _.each(scope.states.customBenchmarks, function(customBenchmark){
+                                    var id = ['CustomBenchmark',
+                                        customBenchmark.sector,
+                                        customBenchmark.rating,
+                                        customBenchmark.wal,
+                                        customBenchmark.analytic.tag].join(".");
+                                    dsc.removeSeriesById(id, scope);
+                                });
+                                scope.states.customBenchmarks = [];
+                            }
+                            if(!_.isEmpty(scope.states.cdxIndex)){
+                                _.each(scope.states.cdxIndex, function(cdxIndex){
+                                    var id = ['CdxIndex',
+                                        cdxIndex.contractType,
+                                        cdxIndex.contractTenor,
+                                        cdxIndex.otrFlag].join(".");
+                                    dsc.removeSeriesById(id, scope);
+                                });
+                                scope.states.cdxIndex = [];
+                            }
+                            if(!_.isEmpty(scope.states.marketIndices)){
+                                _.each(scope.states.marketIndices, function(marketIndex){
+                                    var id = marketIndex.tag;
+                                    dsc.removeSeriesById(id, scope);
+                                });
+                                scope.states.marketIndices = [];
+                            }
+
+                        },
                         /**
                          * add a security
                          * @param security
