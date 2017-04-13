@@ -66,7 +66,7 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
     };
 
     $scope.clientBenchmarkTypeahead = function (userInput) {
-       return [{indexTicker: "SnP500"},{indexTicker: "F_CDS"},{indexTicker: "E_CDS"}];
+       return [{indexTicker: "SnP500", fullName: 'Standard and Poor'},{indexTicker: "F_CDS"},{indexTicker: "E_CDS"}];
     };
 
     $scope.onClientBenchmarkSelect = function (index, options,tag) {
