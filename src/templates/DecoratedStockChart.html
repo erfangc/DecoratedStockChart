@@ -227,7 +227,7 @@
                                         <span class="restrict-dropdown-menu">
                                         <input type="text" placeholder="Please enter an index" class="form-control"
                                                ng-model="indexTicker"
-                                               typeahead="index.indexTicker+' '+index.fullName for index in clientBenchmarkTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'indexTicker.toString()'"
+                                               typeahead="index.indexTicker+' | '+index.fullName for index in clientBenchmarkTypeahead({userInput: $viewValue}) | filter:$viewValue:$emptyOrMatch | orderBy:'indexTicker.toString()'"
                                                typeahead-on-select="apiHandle.api.addClientBenchmark($item); indexTicker = '';showClientBenchmarkControl = false;"/>
                                         </span>
                                         <br/>
