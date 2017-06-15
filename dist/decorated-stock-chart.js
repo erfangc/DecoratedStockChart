@@ -597,6 +597,14 @@
                             }
                         },
                         yAxis: {
+                            labels: {
+                                formatter: function () {
+                                    if(scope.defaultSecurityAttribute.numToRating !== undefined){
+                                        return scope.defaultSecurityAttribute.numToRating[this.value];
+                                    }
+                                    return this.value;
+                                }
+                            },
                             title: {
                                 text: scope.defaultSecurityAttribute.unit || scope.defaultSecurityAttribute.label,
                                 events: {
@@ -691,6 +699,11 @@
                         function processSeries(series) {
                             series.securityId = securityAttrPair[0].id;
                             series.id = dsc.generateSeriesID(securityAttrPair[0], $item);
+                            var chosenSecurityAttrPair = _.filter(securityAttrPair[1], function(security){
+                                if(security.unit === series.axisType){return security}});
+                            if(chosenSecurityAttrPair.length > 0 && chosenSecurityAttrPair[0].numToRating!==undefined){
+                                series.numToRating = chosenSecurityAttrPair[0].numToRating;
+                            }
                             series.axisType = $item.unit || $item.label;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
