@@ -35,11 +35,24 @@
      * @param name the name of the axis
      * @param scope the scope object (we need this for the axis click event handler)
      * @param axisType a member of the axisType enum
+     * @param tag colTag to get the numToRating map
      * @return {string}
      */
-    root.dsc.addAxisToChart = function (chart, name, scope, axisType) {
+    root.dsc.addAxisToChart = function (chart, name, scope, axisType, tag) {
+        var tag = tag || null;
         const axisId = _.uniqueId("yAxis");
         chart.addAxis({
+            labels: {
+                formatter: function () {
+                    if(scope.defaultSecurityAttribute.numToRating && scope.defaultSecurityAttribute.numToRating[tag] &&
+                        scope.defaultSecurityAttribute.numToRating[tag][this.value] !== null &&
+                        scope.defaultSecurityAttribute.numToRating[tag][this.value] !== undefined)
+                        return scope.defaultSecurityAttribute.numToRating[tag][this.value];
+                    else if(scope.defaultSecurityAttribute.numToRating && scope.defaultSecurityAttribute.numToRating[tag])
+                        return null;
+                    return this.value;
+                }
+            },
             title: {
                 text: axisType,
                 events: {
