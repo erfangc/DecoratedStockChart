@@ -526,6 +526,13 @@
                         },
                         changeTitle: function(title){
                             scope.states.chart.setTitle({text: title});
+                            if(scope.states.chart.yAxis.length > 0){
+                                scope.states.chart.yAxis[0].update({
+                                    title: {
+                                        text: scope.defaultSecurityAttribute.unit
+                                    }
+                                });
+                            }
                         },
                         changeDefaultSecurityAttribute: function(newAttr){
                             scope.onDefaultAttributeChange({newAttr: newAttr});
@@ -599,9 +606,14 @@
                         yAxis: {
                             labels: {
                                 formatter: function () {
-                                    if(scope.defaultSecurityAttribute.numToRating !== undefined){
-                                        return scope.defaultSecurityAttribute.numToRating[this.value];
-                                    }
+                                    if(scope.defaultSecurityAttribute.numToRating &&
+                                        scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag] &&
+                                        scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag][this.value] !== null &&
+                                        scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag][this.value] !== undefined)
+                                        return scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag][this.value];
+                                    else if(scope.defaultSecurityAttribute.numToRating &&
+                                        scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag])
+                                        return "N/A";
                                     return this.value;
                                 }
                             },
@@ -705,6 +717,7 @@
                                 series.numToRating = chosenSecurityAttrPair[0].numToRating;
                             }
                             series.axisType = $item.unit || $item.label;
+                            series.tag = $item.tag;
                             series.onRemove = function () {
                                 scope.removeAttr($item, securityAttrPair);
                             };
@@ -833,7 +846,7 @@
                             /**
                              * add a new axis if we cannot find a preferred series
                              */
-                            dsc.addAxisToChart(chart, seriesOption.axisType || seriesOption.name, scope, seriesOption.axisType, seriesOption.subType);
+                            dsc.addAxisToChart(chart, seriesOption.axisType || seriesOption.name, scope, seriesOption.axisType, seriesOption.tag);
                             seriesOption.yAxis = chart.yAxis.length - 1;
                         }
                         else
@@ -1091,11 +1104,24 @@
      * @param name the name of the axis
      * @param scope the scope object (we need this for the axis click event handler)
      * @param axisType a member of the axisType enum
+     * @param tag colTag to get the numToRating map
      * @return {string}
      */
-    root.dsc.addAxisToChart = function (chart, name, scope, axisType) {
+    root.dsc.addAxisToChart = function (chart, name, scope, axisType, tag) {
+        var tag = tag || null;
         const axisId = _.uniqueId("yAxis");
         chart.addAxis({
+            labels: {
+                formatter: function () {
+                    if(scope.defaultSecurityAttribute.numToRating && scope.defaultSecurityAttribute.numToRating[tag] &&
+                        scope.defaultSecurityAttribute.numToRating[tag][this.value] !== null &&
+                        scope.defaultSecurityAttribute.numToRating[tag][this.value] !== undefined)
+                        return scope.defaultSecurityAttribute.numToRating[tag][this.value];
+                    else if(scope.defaultSecurityAttribute.numToRating && scope.defaultSecurityAttribute.numToRating[tag])
+                        return null;
+                    return this.value;
+                }
+            },
             title: {
                 text: axisType,
                 events: {
