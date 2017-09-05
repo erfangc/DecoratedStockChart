@@ -90,6 +90,7 @@
                      * 'options'
                      */
                     onCustomBenchmarkSelect: "&",
+                    customBenchmark: "=",
                     clientBenchmarkTypeahead: "&",
                     onClientBenchmarkSelect: "&",
                     cdxIndexOptions: "=",

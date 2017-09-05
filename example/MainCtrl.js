@@ -37,6 +37,12 @@ angular.module('Example', ['decorated-stock-chart']).controller("MainCtrl", func
         label: "Price"
     }, {tag: "volume", label: "Volume"}, {tag: "cum_return", label: "Cum Return"}];
     $scope.onAttributeSelect = function (attr, security, options) {
+        $scope.customBenchmark = {
+            sector: "Sector A",
+            rating: "A",
+            wal: "All",
+            analytic: {tag: "price", label: "Price"}
+        };
         return {
             name: security.label + " " + attr.label,
             data: simulate(domain(options), attr, security)
