@@ -537,6 +537,13 @@
                         },
                         changeDefaultSecurityAttribute: function(newAttr){
                             scope.onDefaultAttributeChange({newAttr: newAttr});
+                            if(newAttr.tag.indexOf('rating') >= 0 && scope.states.chart.yAxis && scope.states.chart.yAxis.length > 0)
+                                scope.states.chart.yAxis[0].update({
+                                    floor: newAttr.yAxis ? newAttr.yAxis.floor : undefined,
+                                    ceiling: newAttr.yAxis ? newAttr.yAxis.ceiling : undefined,
+                                    startOnTick: false,
+                                    endOnTick: false
+                                }, true);
                         },
                         /**
                          * Sets size to be exactly the dimensions of the container
@@ -632,6 +639,10 @@
                         legend: {
                             useHTML: true
                         },
+                        floor: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
+                        ceiling: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
+                        startOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
+                        endOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
                         series: [],
                         credits: {enabled: false}
                     }, scope.highstockOptions);
@@ -1131,6 +1142,10 @@
                     }
                 }
             },
+            floor: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
+            ceiling: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
+            startOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
+            endOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
             axisType: axisType,
             opposite: chart.options.yAxis.length % 2 == 1,      //check for only the yAxis. xAxis is always datetime.
             id: axisId
