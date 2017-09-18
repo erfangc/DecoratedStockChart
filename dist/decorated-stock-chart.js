@@ -639,8 +639,8 @@
                         legend: {
                             useHTML: true
                         },
-                        min: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
-                        max: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
+                        floor: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
+                        ceiling: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
                         startOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
                         endOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
                         series: [],
@@ -1142,8 +1142,8 @@
                     }
                 }
             },
-            min: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
-            max: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
+            floor: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
+            ceiling: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
             startOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
             endOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
             axisType: axisType,
