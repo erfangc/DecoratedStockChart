@@ -61,6 +61,10 @@
                     }
                 }
             },
+            min: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.floor : undefined,
+            max: scope.defaultSecurityAttribute.yAxis ? scope.defaultSecurityAttribute.yAxis.ceiling : undefined,
+            startOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
+            endOnTick: scope.defaultSecurityAttribute.yAxis ? false : true,
             axisType: axisType,
             opposite: chart.options.yAxis.length % 2 == 1,      //check for only the yAxis. xAxis is always datetime.
             id: axisId
