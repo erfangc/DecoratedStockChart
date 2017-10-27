@@ -621,7 +621,7 @@
                                         return scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag][this.value];
                                     else if(scope.defaultSecurityAttribute.numToRating &&
                                         scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag])
-                                        return "N/A";
+                                        return null;
                                     return this.value;
                                 }
                             },
