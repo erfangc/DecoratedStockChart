@@ -526,6 +526,7 @@
                             scope.states.menuDisplays.dateControl = false;
                         },
                         changeTitle: function(title){
+                            if(scope.states && scope.states.chart)
                             scope.states.chart.setTitle({text: title});
                             if(scope.states.chart.yAxis.length > 0){
                                 scope.states.chart.yAxis[0].update({
