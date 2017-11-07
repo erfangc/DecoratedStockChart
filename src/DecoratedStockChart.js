@@ -526,6 +526,7 @@
                             scope.states.menuDisplays.dateControl = false;
                         },
                         changeTitle: function(title){
+                            if(scope.states && scope.states.chart)
                             scope.states.chart.setTitle({text: title});
                             if(scope.states.chart.yAxis.length > 0){
                                 scope.states.chart.yAxis[0].update({
@@ -621,7 +622,7 @@
                                         return scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag][this.value];
                                     else if(scope.defaultSecurityAttribute.numToRating &&
                                         scope.defaultSecurityAttribute.numToRating[scope.defaultSecurityAttribute.tag])
-                                        return "N/A";
+                                        return null;
                                     return this.value;
                                 }
                             },
