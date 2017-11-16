@@ -1360,13 +1360,15 @@
 
         const chart = scope.states.chart;
         const series = chart.get(id);
-        const yAxis = series.yAxis;
-        const securityId = series.options.securityId;
+        if(series){
+            const yAxis = series.yAxis;
+            const securityId = series.options.securityId;
 
-        if (angular.isFunction(series.remove))
-            series.remove();
+            if (angular.isFunction(series.remove))
+                series.remove();
 
-        dsc.afterSeriesRemove(yAxis, securityId, scope);
+            dsc.afterSeriesRemove(yAxis, securityId, scope);
+        }
     };
 
 
