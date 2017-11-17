@@ -262,7 +262,8 @@
                             });
 
                             function processSeries(series) {
-                                series.id = $item.tag;
+                                //Checking if tag exists for the item. If not, assume it's an id itself.
+                                series.id = $item.tag ? $item.tag : $item;
 
                                 /**
                                  * instruction on how to properly remove the series
