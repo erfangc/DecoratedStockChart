@@ -309,29 +309,31 @@
                             }
 
                             function processSeries(series) {
-                                series.id = ['CustomBenchmark',
-                                    customBenchmark.sector,
-                                    customBenchmark.rating,
-                                    customBenchmark.wal,
-                                    customBenchmark.analytic.tag].join(".");
+                                if(series.data){
+                                    series.id = ['CustomBenchmark',
+                                        customBenchmark.sector,
+                                        customBenchmark.rating,
+                                        customBenchmark.wal,
+                                        customBenchmark.analytic.tag].join(".");
 
 
-                                /**
-                                 * instruction on how to properly remove the series
-                                 */
-                                series.onRemove = function () {
-                                    scope.states.customBenchmarks.splice(scope.states.customBenchmarks.indexOf(customBenchmark), 1);
-                                    dsc.removeSeriesById(series.id, scope);
-                                };
+                                    /**
+                                     * instruction on how to properly remove the series
+                                     */
+                                    series.onRemove = function () {
+                                        scope.states.customBenchmarks.splice(scope.states.customBenchmarks.indexOf(customBenchmark), 1);
+                                        dsc.removeSeriesById(series.id, scope);
+                                    };
 
-                                // Update the data it if it already exists
-                                if (scope.states.chart.get(series.id))
-                                    scope.states.chart.get(series.id).setData(series.data);
-                                else
-                                    scope.addSeries(series);
-                                scope.isProcessing = false;
-                                if (scope.states.customBenchmarks.indexOf(customBenchmark) === -1)
-                                    scope.states.customBenchmarks.push(customBenchmark);
+                                    // Update the data it if it already exists
+                                    if (scope.states.chart.get(series.id))
+                                        scope.states.chart.get(series.id).setData(series.data);
+                                    else
+                                        scope.addSeries(series);
+                                    scope.isProcessing = false;
+                                    if (scope.states.customBenchmarks.indexOf(customBenchmark) === -1)
+                                        scope.states.customBenchmarks.push(customBenchmark);
+                                }
                             }
 
                             validate(customBenchmark, result);
