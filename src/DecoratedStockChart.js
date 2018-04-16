@@ -243,14 +243,24 @@
                             _.chain(scope.states.chart.series).filter(function (series) {
                                 return series && series.options.securityId == id;
                             }).each(function (series) {
-                                const yAxis = series.yAxis;
-                                series.remove();
-                                dsc.afterSeriesRemove(yAxis, id, scope);
+                                if(series.yAxis){
+                                    const yAxis = series.yAxis;
+                                    series.remove();
+                                    dsc.afterSeriesRemove(yAxis, id, scope);
+                                }
+
                             });
 
                             // fire callback if provided
                             if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
+
+                            if(scope.states.securityAttrMap.length == 0){
+                                scope.states.chart.update({
+                                    navigator: {enabled: false}
+                                });
+                            }
+
                         },
                         addMarketIndicator: function ($item) {
                             scope.isProcessing = true;
@@ -317,13 +327,13 @@
                                         customBenchmark.analytic.tag].join(".");
 
 
-                                    /**
-                                     * instruction on how to properly remove the series
-                                     */
-                                    series.onRemove = function () {
-                                        scope.states.customBenchmarks.splice(scope.states.customBenchmarks.indexOf(customBenchmark), 1);
-                                        dsc.removeSeriesById(series.id, scope);
-                                    };
+                                /**
+                                 * instruction on how to properly remove the series
+                                 */
+                                series.onRemove = function () {
+                                    scope.states.customBenchmarks.splice(scope.states.customBenchmarks.indexOf(customBenchmark), 1);
+                                    dsc.removeSeriesById(series.id, scope);
+                                };
 
                                     // Update the data it if it already exists
                                     if (scope.states.chart.get(series.id))
@@ -564,12 +574,15 @@
                             renderTo: "enriched-highstock-" + scope.id,
                             type: "spline",
                             marginTop: 30,
-                            zoomType: 'x',
+                            zoomType: 'none',
                             resetZoomButton: {
                                 theme: {
                                     display: 'none'
                                 }
                             }
+                        },
+                        navigator: {
+                            enabled: true
                         },
                         title: {
                             text: scope.title || "Untitled",
@@ -600,20 +613,20 @@
                             shared: true
                         },
                         xAxis: {
-                            type: "datetime",
-                            events: {
-                                // If we zoom in on the chart, change the date range to those dates
-                                afterSetExtremes: function (event) {
-                                    if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max) {
-                                        scope.apiHandle.api.changeDateRange(event.min, event.max);
-                                        this.chart.zoomOut();
-                                        // Since this is unrelated to angular, we need run a digest to apply bindings
-                                        scope.$apply(function(){
-                                            scope.states.selectedTimePeriod = null;
-                                        });
-                                    }
-                                }
-                            }
+                            type: "datetime"
+                            // events: {
+                            //     // If we zoom in on the chart, change the date range to those dates
+                            //     afterSetExtremes: function (event) {
+                            //         if (this.getExtremes().dataMin < event.min || this.getExtremes().dataMax > event.max) {
+                            //             scope.apiHandle.api.changeDateRange(event.min, event.max);
+                            //             this.chart.zoomOut();
+                            //             // Since this is unrelated to angular, we need run a digest to apply bindings
+                            //             scope.$apply(function(){
+                            //              scope.states.selectedTimePeriod = null;
+                            //             });
+                            //         }
+                            //     }
+                            // }
                         },
                         yAxis: {
                             labels: {
@@ -869,6 +882,7 @@
                             seriesOption.yAxis = preferredYAxis;
 
                         chart.addSeries(seriesOption);
+                        chart.update({navigator: {enabled: true}});
                         dsc.attachLegendEventHandlers(chart.get(seriesOption.id), scope);
                     };
 
