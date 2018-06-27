@@ -255,11 +255,11 @@
                             if (_.isFunction(scope.onSecurityRemove))
                                 scope.onSecurityRemove({id: id});
 
-                            if(scope.states.securityAttrMap.length == 0){
-                                scope.states.chart.update({
-                                    navigator: {enabled: false}
-                                });
-                            }
+                            // if(scope.states.securityAttrMap.length == 0){
+                            //     scope.states.chart.update({
+                            //         navigator: {enabled: false}
+                            //     });
+                            // }
 
                         },
                         addMarketIndicator: function ($item) {
@@ -582,9 +582,6 @@
                                 }
                             }
                         },
-                        navigator: {
-                            enabled: true
-                        },
                         title: {
                             text: scope.title || "Untitled",
                             events: {
@@ -883,7 +880,7 @@
                             seriesOption.yAxis = preferredYAxis;
 
                         chart.addSeries(seriesOption);
-                        chart.update({navigator: {enabled: true}});
+                        // chart.update({navigator: {enabled: true}});
                         dsc.attachLegendEventHandlers(chart.get(seriesOption.id), scope);
                     };
 
